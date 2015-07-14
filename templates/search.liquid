@@ -1,0 +1,38 @@
+<h2 class="desktop-12">{{ 'general.search.title' | t }}</h2>
+{% paginate search.results by 24 %}  	
+
+<div id="search-bar" class="desktop-12 mobile-3">
+  <form action="/search" method="get">
+    <p>{{ 'general.search.results_for_html' | t: terms: search.terms }}</p> 
+    <input type="text" name="q" id="q" placeholder="{{ 'general.search.placeholder' | t }}" />
+  </form>
+</div>
+
+{% if search.performed %}
+
+
+
+<ul id="collection-loop" style="width: 100%">
+  {% for item in search.results %} 
+  <li class="product desktop-3 mobile-half{% cycle ' first', '', '', ' last' %}" data-alpha="{{ collection.title }}">  
+    {% if item.featured_image %}
+    <div class="collection-image">
+      <a href="{{item.url}}" title="">{{ item.featured_image | product_img_url: 'large' | img_tag }}</a>     
+    </div>
+
+    <div id="product-info">
+      <h3>{{ item.title | link_to: item.url }}<br />{{ item.price | money }}</h3>
+    </div>
+    {% else %}
+    <h3><a href="{{item.url}}">{{ item.title }}</a></h3>
+    <span>{{ item.content | strip_html | truncatewords: 40 | highlight: search.terms }}</span>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+
+{% include 'pagination' %}
+
+{% endif %}
+
+{% endpaginate %}

@@ -1,0 +1,43 @@
+<h1 class="desktop-12 mobile-3" style="margin-bottom: 20px;">{% if current_tags %}{{ blog.title | link_to: blog.url }} &raquo; {{ current_tags.first }}{% else %}{{ blog.title }}{% endif %}</h1>
+{% paginate blog.articles by 5 %}
+
+<ul id="blog-articles" class="desktop-9 mobile-3">
+  {% for article in blog.articles  %}
+    <li class="single-article">
+        <div class="article-body">
+            <h2><a href="{{ article.url }}">{{ article.title }}</a></h2>
+          {% assign published_at = article.published_at | date: format: 'month_date_year' %}
+            <p>{{ 'blogs.article.posted_on_date_html' | t: date: published_at }}</p>
+            {{ article.excerpt_or_content }}
+        </div>
+    </li>
+  {% endfor %}
+</ul>
+
+<div id="sidebar" class="desktop-3 mobile-3">
+  <h3>{{ 'blogs.sidebar.title' | t }}</h3>
+  <ul id="posts">
+    {% for article in blog.articles  %}
+    <li><a href="{{article.url}}">{{ article.title }}</a>
+      <p>{{ article.published_at | date: "%b %d %Y" }}</p>
+      <p>{{ article.content | strip_html | truncate: 140 }}</p>
+    </li>
+    {% endfor %} 
+    <h3 style="margin: 20px 0">{{ 'blogs.sidebar.categories' | t }}</h3>
+    {% for tag in blog.all_tags %}
+    <li class="tags">
+      <a href="{{ shop.url}}/blogs/{{ blog.handle }}/tagged/{{ tag | handleize }}">{{ tag }}</a>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+  
+  
+  <div class="clear"></div>
+  
+
+{% include 'pagination' %}
+
+{% endpaginate %}
+
+

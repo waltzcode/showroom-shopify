@@ -1,0 +1,94 @@
+<div id="shopping-cart" class="desktop-12">
+
+  <h2>{{ 'cart.general.title' | t }}</h2>
+  {% if cart.item_count == 0 %}
+  <p>{{ 'cart.general.empty' | t }}</p>
+
+  <div id="search-bar" style="margin-bottom: 30px">
+    <form action="/search" method="get">
+      <h3>{{ 'general.search.title' | t }}</h3> 
+      <input type="text" name="q" id="q" placeholder="{{ 'general.search.placeholder' | t }}" />
+    </form>
+  </div>
+
+
+  <div style="margin-top: 30px">
+    {% include 'collection-listing' %}
+  </div>  
+
+  {% else %}
+  <script type="text/javascript">
+    function remove_item(id) {
+      document.getElementById('updates_'+id).value = 0;
+      document.getElementById('cartform').submit();
+    }
+  </script>
+  <form action="/cart" method="post" id="cartform">
+
+    <table>
+      <thead>
+        <tr>
+          <th>{{ 'cart.general.product' | t }}</th>
+          <th>{{ 'cart.general.price' | t }}</th>
+          <th style="text-align: center;">{{ 'cart.general.qty' | t }}</th>
+          <th style="text-align: center;">{{ 'cart.general.remove' | t }}</th>
+          <th>{{ 'cart.general.price' | t }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in cart.items %}
+        <tr>
+          <td>
+            <div class="cart-item">
+              <div class="cart-image">
+                <a href="{{ item.url }}" title="{{ item.product.title | escape }}">
+                  <img src="{{ item | img_url: 'small' }}" alt="{{ item.title | escape }}" />
+                </a>
+              </div>
+              <div class="cart-title">
+                {% if settings.vendor %}<p>{{ item.vendor }}</p>{% endif %}
+                <p>{{ item.title }}</p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <p>{{ item.price | money }}{% if item.variant.compare_at_price > item.price %}<br /><del>{{ item.variant.compare_at_price | money }}</del>{% endif %}</p>          
+          </td>
+          <td>
+            <input type="text" size="4" name="updates[{{ item.id }}]" id="updates_{{ item.variant.id }}" value="{{ item.quantity }}" onfocus="this.select();" style="min-width: 0; max-width: 50px; text-align: center; margin: 0 auto 10px; "/>    
+          </td>
+          <td style="text-align: center">
+            <p><a href="#" onclick="remove_item({{ item.variant.id }}); return false;">X</a></p>
+          </td>
+          <td>
+            <p>{{ item.line_price | money }}</p>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="clear"></div>
+
+    <div id="cart-notes" class="desktop-6 tablet-6 mobile-3">
+      <label for="note"><strong>{{ 'cart.general.note' | t }}</strong></label>
+      <textarea name="note" id="note" rows="5" cols="60">{{cart.note}}</textarea>  
+    </div>
+
+    <div id="basket-right" class="desktop-3 tablet-6 mobile-3">
+      <h4>{{ 'cart.general.subtotal' | t }} {{ cart.total_price | money }}</h4>
+      <input type="submit" name="update" id="update-cart" value="{{ 'cart.general.update' | t }}" class="button" />
+      <input type="submit" name="checkout" id="checkout" value="{{ 'cart.general.checkout' | t }}" class="button" />
+      <div class="clear"></div>
+      {% if additional_checkout_buttons %} 
+      {{ content_for_additional_checkout_buttons }} 
+      {% endif %}
+    </div>  
+
+  </form>
+  {% endif %}
+
+
+
+</div>
+

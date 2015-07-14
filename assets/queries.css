@@ -1,0 +1,147 @@
+/*
+* Mr Parker Shopify Theme
+* Copyright 2013, Underground Media
+* www.undergroundmedia.co.uk
+* Sitting in an English garden waiting for the sun
+*/
+
+
+/* #Media Queries
+================================================== */
+
+
+/* Smaller than standard 980 (devices and browsers) */
+@media only screen and (max-width: 980px) {
+
+  #left-images img, #right-images img { margin-bottom: 16px! important; }
+  #product-description {
+    border-right: 0;
+    padding-right: 0;
+  }
+  #related { display: none; }
+
+}
+
+
+
+
+/* All Mobile Sizes (devices and browser) */
+@media only screen and (max-width: 740px) {
+
+  ul#featured-posts li { margin-bottom: 20px; clear: left;  }
+  #logo { margin-bottom: 10px; text-align: center; margin-top: 100px; }
+  ul#cart { text-align: center;  }
+  .search { width: 100%; }
+  #q { width: 100%; }
+  #footer ul { text-align: center; margin-bottom: 20px; }
+  #mce-EMAIL { width: 100%; }
+  .button { width: 100%; }
+  #navigation { position: initial! important; }
+  #left-images img.last, #right-images img.last { margin-bottom: 20px! important; }
+  nav.primary select { display: block! important; height: 25px; width: 100%; } 
+  ul#nav { display: none! important; } 
+  #mobile-product { display: block! important; }
+  #product-description { padding: 0! important; border: 0! important; }
+  #related { display: none; }
+  #looked-at { display: none! important; }
+  #add { width: 100%; }
+  input { width: 100%; min-width: 100%; }
+  #update-cart, #checkout { width: 100%; }
+  .flex-direction-nav { display: none; }
+
+  #order_shipping { margin-top: 20px; }  
+
+  #promo-images img { margin-bottom: 20px; }
+
+  header { position: fixed; z-index: 2; width: 100%; }
+  div#message { text-align: center;}
+  li.searchbox { display: none! important; }
+
+  .first { clear: none; }
+
+  ul#product-loop li.product:nth-child(2n+1) { clear: left; }
+  #product-description h2, #product-description h1, #product-price {
+    text-align: center;
+  }
+
+  .swatch { text-align: center; }
+  .swatch .swatch-element { display: inline-block; float: none; margin: 0 5px; }
+
+  .selector-wrapper {
+    text-align: center;
+  }
+
+  .selector-wrapper select {
+    float: none;
+    margin: 0 auto;
+  }
+
+
+}
+
+
+/* 
+Max width before this PARTICULAR table gets nasty
+This query will take effect for any screen smaller than 760px
+and also iPads specifically.
+*/
+@media 
+  only screen and (max-width: 760px),
+  (min-device-width: 768px) and (max-device-width: 1024px)  {
+
+    /* Force table to not be like tables anymore */
+    table, thead, tbody, th, td, tr { 
+      display: block; 
+    }
+
+    /* Hide table headers (but not display: none;, for accessibility) */
+    thead tr { 
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+    }
+
+    tr { border: 1px solid #ccc; margin: 20px 0;}
+
+    td { 
+      /* Behave  like a "row" */
+      border: none;
+      border-bottom: 1px solid #eee; 
+      position: relative;
+      padding: 10px; 
+      text-align: center;
+    }
+
+
+    #shopping-cart table input { margin-top: 20px! important; }
+
+    .cart-item { display: block; }
+    .cart-image, .cart-title { display: block; width: 100%;}
+
+    #basket-right h4 { font-weight: normal; text-align: center; margin: 20px 0 30px; }
+
+    #shopping-cart table td:nth-of-type(2):before { content: "Item Price"; }
+    #shopping-cart table td:nth-of-type(3):before { content: "Quantity"; }
+    #shopping-cart table td:nth-of-type(4):before { content: "Remove"; }
+    #shopping-cart table td:nth-of-type(5):before { content: "Total"; }
+
+
+  }    
+
+/* Mobile Landscape Size to Tablet Portrait (devices and browsers) */
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+  #mc-embedded-subscribe { width: 100%; }
+  li.icons a { float: none; }
+  #mce-EMAIL { text-align: center; }
+}
+
+/* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
+@media only screen and (max-width: 479px) {
+
+  ul#cart li {  }
+  #mc-embedded-subscribe { width: 100%; }
+  li.icons a { float: none; }
+  #mce-EMAIL { text-align: center; }
+
+}
+

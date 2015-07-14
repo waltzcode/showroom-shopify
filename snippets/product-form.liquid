@@ -1,0 +1,140 @@
+<form action="/cart/add" method="post" data-money-format="{{ shop.money_format }}" id="product-form-{{ product.id }}" {% if product.available == false %}style="border-bottom: 0"{% endif %}>
+  {% if product.options.size > 1 %}
+  <div class="select">
+    <select id="product-select-{{ product.id }}" name='id'>
+      {% for variant in product.variants %}
+      <option {% if variant == product.selected_or_first_available_variant %} selected="selected" {% endif %} value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money }}</option>
+      {% endfor %}
+    </select>
+  </div>
+      {% if settings.swatches %}
+  {% for option in product.options %}
+  {% include 'swatch' with option %}
+  {% endfor %}
+  {% endif %}
+  {% elsif product.options.size == 1 and product.variants.size > 1 %}
+  <div class="select">
+    <select id="product-select-{{ product.id }}" name='id'>
+      {% for variant in product.variants %}
+      <option {% if variant == product.selected_or_first_available_variant %} selected="selected" {% endif %} value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  {% if settings.swatches %}  
+  {% for option in product.options %}
+  {% include 'swatch' with option %}
+  {% endfor %}
+  {% endif %}
+  {% else %}
+  <div class="what-is-it">
+    {% if product.options.first != 'Title' %}
+    <label>{{ product.options.first }}:</label>{% for variant in product.variants %}<span class="it-is">{{ variant.option1 | escape }}</span>{% endfor %}
+    {% endif %}
+  </div>
+  <div class="product-variants"></div><!-- product variants -->  
+  <input  type="hidden" id="{{ variant.id }}" name="id" value="{{ product.variants[0].id }}" />    
+  {% endif %}
+  
+  {% if product.available %}
+  <input type="submit" name="button" class="add clearfix" value="{{ 'products.product.add_to_cart' | t }}" />
+  {% endif %}
+  
+  
+  
+</form>    
+
+
+{% if settings.popups %}
+<ul id="popups">
+  <li class="first"><a href="#pop-one" class="fancybox">{{ pages.[settings.popup-one].title }}</a></li>
+  {% if settings.popup-2 %}<li><a href="#pop-two" class="fancybox">{{ pages.[settings.popup-two].title }}</a></li>{% endif %}
+  {% if settings.popup-3 %}<li><a href="#pop-three" class="fancybox">{{ pages.[settings.popup-three].title }}</a></li>{% endif %}
+  {% if settings.popup-4 %}<li class="last"><a href="#pop-four" class="fancybox">{{ 'products.product.popup_question' | t }}</a></li>{% endif %}
+</ul>
+<div id="pop-one" style="display: none">{{ pages.[settings.popup-one].content }}</div>
+<div id="pop-two" style="display: none">{{ pages.[settings.popup-two].content }}</div>
+<div id="pop-three" style="display: none">{{ pages.[settings.popup-three].content }}</div>
+<div id="pop-four" style="display: none">{% include 'question' %}</div>
+{% endif %}
+
+<script>
+  
+  // Shopify Product form requirement
+  selectCallback = function(variant, selector) {
+    var $product = $('#product-' + selector.product.id);    
+    
+    {% if settings.swatches %}
+    // BEGIN SWATCHES
+    if (variant) {
+      for (i=0;i<variant.options.length;i++) {
+        jQuery('.swatch[data-option-index="' + i + '"] :radio[value="' + variant.options[i] +'"]').prop('checked', true);
+      }      
+    }
+    // END SWATCHES
+    {% endif %}
+    
+    if (variant && variant.available == true) {
+      if(variant.compare_at_price > variant.price){
+        $('.was', $product).html(Shopify.formatMoney(variant.compare_at_price, $('form', $product).data('money-format')))        
+      } else {
+        $('.was', $product).text('')
+      } 
+      $('.product-price', $product).html(Shopify.formatMoney(variant.price, $('form', $product).data('money-format'))) 
+
+
+      if (variant.inventory_management != '' && variant.inventory_quantity <= 0) {
+        $('.add', $product).removeClass('disabled').removeAttr('disabled').val('PRE ORDER');
+      } else {          
+
+        $('.add', $product).removeClass('disabled').removeAttr('disabled').val('{{ 'products.product.add_to_cart' | t }}');
+                                                                               }
+
+                                                                               } else {
+                                                                               var message = variant ? "Out of Stock" : "{{ 'products.product.unavailable' | t }}";
+                                                                               $('.was', $product).text('')
+        $('.product-price', $product).text(message);
+        $('.add', $product).addClass('disabled').attr('disabled', 'disabled').val(message); 
+      } 
+    
+    
+    if (variant && variant.featured_image) {
+      var original_image = $("#{{ product.id }}"), new_image = variant.featured_image;
+      Shopify.Image.switchImage(new_image, original_image[0], function (new_image_src, original_image, element) {
+        
+        $(element).parents('a').attr('href', new_image_src);
+        $(element).attr('src', new_image_src);   
+        $(element).attr('data-image', new_image_src);   
+        $(element).attr('data-zoom-image',new_image_src);
+        
+        $('.zoomImg').attr('src', new_image_src);
+        
+      });
+    }
+    
+  }; 
+</script>
+
+{% if product.variants.size > 1 or product.options.size > 1 %}
+<script type="text/javascript">
+  
+  
+  $(function() {
+    
+    $product = $('#product-' + {{ product.id }});
+    new Shopify.OptionSelectors("product-select-{{ product.id }}", { product: {{ product | json }}, onVariantSelected:
+                                selectCallback{% if template contains 'product'%}, enableHistoryState: true{% endif %} });
+    
+    {% if settings.swatches %} 
+    jQuery('.swatch :radio').change(function() {
+      var optionIndex = jQuery(this).parents('.swatch').attr('data-option-index');
+      var optionValue = jQuery(this).val();
+      jQuery('#product-{{ product.id }} .single-option-selector').eq(optionIndex).find('option').filter(function() { return jQuery(this).text() == optionValue }).parent().val(optionValue).trigger('change');	   
+    }); 
+   {% endif %}
+      
+  });    
+  
+  
+</script>
+{% endif %}
+

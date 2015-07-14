@@ -1,0 +1,120 @@
+{% paginate collection.products by 30 %}
+<div id="sidebar" class="desktop-3 mobile-3">
+  <h1>{{ collection.title }}</h1>
+
+  <ul>
+      {% if settings.collection-linklist-1-title ==  blank %}
+      <h4>{{ 'collections.sidebar.linklist_1_title' | t }}</h4>
+      {% else %}
+      <h4>{{ settings.collection-linklist-1-title }}</h4>
+      {% endif %}
+    
+    {% for link in linklists[settings.collection-side-1].links %}
+    <li>{{ link.title | link_to: link.url }}</li>
+    {% endfor %}
+  </ul>
+
+  {% if settings.collection-links-2 %}
+  <ul>
+
+      {% if settings.collection-linklist-2-title ==  blank %}
+      <h4>{{ 'collections.sidebar.linklist_2_title' | t }}</h4>
+      {% else %}
+      <h4>{{ settings.collection-linklist-2-title }}</h4>
+      {% endif %}        
+    
+    {% for link in linklists[settings.collection-side-2].links %}
+    <li>{{ link.title | link_to: link.url }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  {% if settings.collection-links-3 %}
+  <ul>
+
+       {% if settings.collection-linklist-3-title ==  blank %}
+      <h4>{{ 'collections.sidebar.linklist_3_title' | t }}</h4>
+      {% else %}
+      <h4>{{ settings.collection-linklist-3-title }}</h4>
+      {% endif %}      
+    
+    
+    {% for link in linklists[settings.collection-side-3].links %}
+    <li>{{ link.title | link_to: link.url }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  {% if settings.collection-links-4 %}
+  <ul>
+    
+      {% if settings.collection-linklist-4-title ==  blank %}
+      <h4>{{ 'collections.sidebar.linklist_4_title' | t }}</h4>
+      {% else %}
+      <h4>{{ settings.collection-linklist-4-title }}</h4>
+      {% endif %}        
+    
+    {% for link in linklists[settings.collection-side-4].links %}
+    <li>{{ link.title | link_to: link.url }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  <!-- Start Filtering -->
+  {% if settings.filters %}	
+  <div id="side-filter">
+    {% include 'dropdown-filter' %}
+  </div>
+  {% endif %}
+
+  {% if settings.shop-by-designer %}
+  {% if collection.handle == "all" %}
+  <ul>
+
+      {% if settings.shop-by-designer-title ==  blank %}
+      <h4>{{ 'collections.sidebar.designers' | t }}</h4>
+      {% else %}
+      <h4>{{ settings.shop-by-designer-title }}</h4>
+      {% endif %}       
+    
+    
+    {% for product_vendor in shop.vendors %}
+    <li>{{ product_vendor | link_to_vendor  }}</li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <ul>
+
+      {% if settings.shop-by-designer-title ==  blank %}
+      <h4>{{ 'collections.sidebar.designers' | t }}</h4>
+      {% else %}
+      <h4>{{ settings.shop-by-designer-title }}</h4>
+      {% endif %}       
+   
+    {% for product_vendor in collection.all_vendors %}
+    <li class="{{ product_vendor | handelize }}">{{ product_vendor | link_to_vendor }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  {% endif %}
+
+</div>
+
+<div id="collection-description" class="desktop-9 mobile-3">
+  {{ collection.description }}
+
+
+
+<ul id="product-loop" class="desktop-12 mobile-3">
+
+  {% for product in collection.products %}
+  <li class="product desktop-4 mobile-half{% cycle ' first', '', '' %}" data-alpha="{{ product.title }}" data-price="{{ product.price }}">   
+    {% include 'product-listing' %}
+  </li>
+  {% endfor %}
+
+</ul>
+
+</div>
+
+{% include 'pagination' %}
+
+{% endpaginate %}

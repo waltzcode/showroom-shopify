@@ -1,0 +1,23 @@
+<h3 class="desktop-12 tablet-6 mobile-3">{{ 'collections.general.all_collections' | t }}</h3>
+
+<ul id="collection-loop" style="width: 100%">
+  {% for collection in collections %}
+  <li class="product desktop-3 mobile-half{% cycle ' first', '', '', ' last' %}" data-alpha="{{ collection.title }}">     
+    <div class="collection-image">
+      <a href="{{ collection.url }}" title="{{ collection_title }}">
+        {% if collection.image %}
+        {{ collection.image.src | collection_img_url: 'grande' | img_tag: collection_title }}
+        {% else %}
+        {{ collection.products.first.featured_image | product_img_url: 'grande' | img_tag: collection_title }}
+        {% endif %}
+      </a>     
+    </div>
+
+    <div id="product-info">
+      <a href="{{ collection.url }}" title="{{ collection_title }} collection">
+        <h3>{{ collection.title }}<br />{{ collection.products_count }} {{ 'collections.general.items' | t }}</h3>
+      </a>
+    </div>
+  </li>
+  {% endfor %}
+</ul>

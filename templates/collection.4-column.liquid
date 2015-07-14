@@ -1,0 +1,26 @@
+{% paginate collection.products by 30 %}
+<div id="collection-description" class="desktop-12">
+  <h1>{{ collection.title }}</h1>
+  {{ collection.description }}
+</div>
+
+{% if settings.filters %}
+<div id="full-width-filter" class="desktop-12 tablet-6 mobile-3">
+  {% include 'dropdown-filter' %}
+</div>
+{% endif %}
+
+
+<ul id="product-loop" style="width: 100%">
+  {% for product in collection.products %}
+  <li class="product desktop-4 mobile-half{% cycle ' first', '', ' last' %}" data-alpha="{{ product.title }}" data-price="{{ product.price }}">  
+    {% include 'product-listing' %}
+
+  </li>
+  {% endfor %}
+
+</ul>
+
+{% include 'pagination' %}
+
+{% endpaginate %}

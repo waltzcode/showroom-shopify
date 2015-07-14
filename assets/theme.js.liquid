@@ -1,0 +1,42 @@
+$(document).ready(function() {  
+
+  $.shifter({
+    maxWidth: "740px"
+  });  
+
+  // Call Fancybox globally on all elements with class fancybox
+  $(".fancybox").fancybox({
+    helpers: {
+      overlay: {
+        locked: false
+      }
+    }
+  }); 
+
+  $('.flexslider').flexslider({
+    animation: "fade",
+    controlNav: true,
+    slideshowSpeed: {{ settings.slideshow-speed }},
+    directionNav: true
+  });
+
+  $('.coll-filter').customSelect();
+
+  {% if settings.info-hover %}
+  $('.product').hover(function(){ $(this).children('#product-info').show(); }, function(){ $(this).children('#product-info').hide(); })
+  {% endif %}
+
+  //<![CDATA[
+  jQuery(function() {
+    jQuery('#sidebar ul li a').each(function() {
+      if (jQuery(this).attr('href')  ===  window.location.pathname) {
+        jQuery(this).addClass('current');
+      }
+    });
+  });  
+  //]]>
+
+
+}); 
+
+   

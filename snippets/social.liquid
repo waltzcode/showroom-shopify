@@ -1,0 +1,18 @@
+<div id="social">
+
+  <span class="twitter">
+    <a href="//twitter.com/share"{% if template == 'product' or template == 'article' or template == 'blog' %} data-url="{{ shop.url }}{{ social.url }}"{% endif %} data-text="{% if template == 'product' %}{{ product.title | escape }} by {{ product.vendor | escape }}{% elsif template == 'blog' %}{{ social.title | escape }}{% else %}{{ page_title | escape }}{% endif %}" class="twitter-share-button" data-count="none">Tweet</a>
+    <script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>
+  </span>
+
+  <span class="facebook">
+    <iframe src="//www.facebook.com/plugins/like.php?href={{ shop.url }}{{ social.url }}&layout=button_count&show_faces=true&width=450&action=like&colorscheme=light&height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:85px; height:30px" allowTransparency="true"></iframe>
+  </span>
+  {% if template == 'product' %}
+  <span class="pinterest">
+    <a href="//pinterest.com/pin/create/button/?url={{ shop.url }}{{ social.url }}&media={% for image in product.images %}{% if forloop.first %}{{ image | product_img_url: 'large' }}{% endif %}{% endfor %} 
+             &description={{ product.title }}" class="pin-it-button" count-layout="horizontal">Pin It</a>
+    <script type="text/javascript" src="//assets.pinterest.com/js/pinit.js"></script>
+  </span>
+  {% endif %}
+</div>
