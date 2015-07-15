@@ -108,14 +108,74 @@ app.factory('CheckSessionId', function($cookies, $http, $q) {
   return deferred.promise;
 });
 
-
 app.controller('myCtrl', [
-  "$scope","$http","CheckSessionId", "$sce","VG_STATES",
-  function($scope, $http, CheckSessionId, $sce, VG_STATES) {
+  "$scope","$http","CheckSessionId", "$sce","VG_STATES", "$filter",
+  function($scope, $http, CheckSessionId, $sce, VG_STATES, $filter) {
     
   $scope.cdn = Constants.showroomCDN;
-  $scope.theme = '{{ 'videogular.min.css' | asset_url }}';
-  $scope.currentAPI;
+  $scope.theme = '';
+  $scope.currentAPI = null;
+
+  $scope.buildVideos = function(config) {
+    var instance = this;
+    instance.response = config.response;
+    instance.currencySymbol = config.currencySymbol || '$';
+    instance.exceprtTitleLength = config.exceprtTitleLength || 30;
+    instance.excerptMore = config.excerptMore || '...';
+    instance.videoSize = config.videoSize || '400';
+    instance.thumbnailSize = config.thumbnailSize || '700';
+
+    if (instance.response.code == 1000) { // Check if request is correct
+      var shows = instance.response.payload.listShows;
+      var products = instance.response.payload.listProducts;
+      var videos = [];
+
+      var productPrice, productName, productTitle, productMetaData;
+
+      angular.forEach(shows, function(show, index) {
+
+        productPrice = $filter('currency')(products[index].price, instance.currencySymbol, 2);
+        productTitle = products[index].name;
+        productName = $filter('excerptTitle')(products[index].name, instance.exceprtTitleLength, instance.exceprtTitleLength);
+        productMetaData = $filter('jsonParse')(products[index].metaData);
+
+        videos[index] = { 
+          preload: 'none',
+            sources: [
+              {
+                src: $sce.trustAsResourceUrl($scope.cdn + shows[index].videoSets[instance.videoSize]),
+                type: 'video/mp4'
+              }
+            ],
+            poster: $sce.trustAsResourceUrl($scope.cdn + shows[index].thumbnailSets[instance.thumbnailSize]),
+            onPlayerReady: function($API) {
+              var instance = this;
+              instance.API = $API;
+            }, 
+            play: function() {
+              var instance = this;
+              if ($scope.currentAPI && $scope.currentAPI.currentState == VG_STATES.PLAY) {
+                $scope.currentAPI.stop();
+              }
+              if (instance.API && instance.API.currentState != VG_STATES.PLAY) {
+                $scope.currentAPI = instance.API;
+                instance.API.play();
+              }
+            },
+            likeCounter: shows[index].likeCounter,
+            viewCounter: shows[index].viewCounter,
+            commentCounter: shows[index].commentCounter,
+            shareCounter: shows[index].shareCounter,
+            productName: productName,
+            productTitle: productTitle,
+            price: productPrice,
+            productLinkUrl: $filter('productLink')(productMetaData.url),
+            productLinkTarget: $filter('productTarget')(productMetaData.url)
+        }; // end videos[index]
+      }); // end angular.forEach
+      return videos;
+    } // endif
+  };
     
   CheckSessionId
   .then(function(sessionId) {
@@ -124,139 +184,12 @@ app.controller('myCtrl', [
     var newestUrl = Constants.getNewestFeedURL + sessionId;
     
     // Featured shows
-    $http.get(featuredUrl)
-    .success(function(response) {
-      if (response.code == 1000) {
-       	$scope.featuredVideos = [];
-        $scope.featuredShows = response.payload.listShows;
-        $scope.featuredProducts = response.payload.listProducts;
-        
-        angular.forEach($scope.featuredShows, function(show, index) {
-          $scope.featuredVideos[index] = {
-            preload: 'none',
-            sources: [
-              {
-                src: $sce.trustAsResourceUrl($scope.cdn + $scope.featuredShows[index].videoSets['400']),
-                type: 'video/mp4'
-              }
-            ],
-            poster: $sce.trustAsResourceUrl($scope.cdn + $scope.featuredShows[index].thumbnailSets['700']),
-            onPlayerReady: function($API) {
-              var instance = this;
-              instance.API = $API;
-            }, 
-            play: function() {
-              var instance = this;
-              if ($scope.currentAPI && $scope.currentAPI.currentState == VG_STATES.PLAY) {
-                $scope.currentAPI.stop();
-              }
-              if (instance.API && instance.API.currentState != VG_STATES.PLAY) {
-                $scope.currentAPI = instance.API;
-                instance.API.play();
-              }
-            },
-            likeCounter: $scope.featuredShows[index].likeCounter,
-            viewCounter: $scope.featuredShows[index].viewCounter,
-            commentCounter: $scope.featuredShows[index].commentCounter,
-            shareCounter: $scope.featuredShows[index].shareCounter
-          };
-        });
-      }
-    })
-    .error(function(data) {
-      alert(data);
-    });
-    
-    
+    $http.get(featuredUrl).success(function(response) {$scope.featuredVideos = $scope.buildVideos({response: response});}) .error(function(data) {console.error(data); });
     // Popular shows
-    $http.get(popularUrl)
-    .success(function(response) {
-      if (response.code == 1000) {
-       	$scope.popularVideos = [];
-        $scope.popularShows = response.payload.listShows;
-        $scope.popularProducts = response.payload.listProducts;
-        
-        angular.forEach($scope.popularShows, function(show, index) {
-          $scope.popularVideos[index] = {
-            preload: 'none',
-            sources: [
-              {
-                src: $sce.trustAsResourceUrl($scope.cdn + $scope.popularShows[index].videoSets['400']),
-                type: 'video/mp4'
-              }
-            ],
-            poster: $sce.trustAsResourceUrl($scope.cdn + $scope.popularShows[index].thumbnailSets['700']),
-            onPlayerReady: function($API) {
-              var instance = this;
-              instance.API = $API;
-            }, 
-            play: function() {
-              var instance = this;
-              if ($scope.currentAPI && $scope.currentAPI.currentState == VG_STATES.PLAY) {
-                $scope.currentAPI.stop();
-              }
-              if (instance.API && instance.API.currentState != VG_STATES.PLAY) {
-                $scope.currentAPI = instance.API;
-                instance.API.play();
-              }
-            },
-            likeCounter: $scope.popularShows[index].likeCounter,
-            viewCounter: $scope.popularShows[index].viewCounter,
-            commentCounter: $scope.popularShows[index].commentCounter,
-            shareCounter: $scope.popularShows[index].shareCounter
-          };
-        });
-      }
-    })
-    .error(function(data) {
-      alert(data);
-    });
-    
+    $http.get(popularUrl).success(function(response) {$scope.popularVideos = $scope.buildVideos({response: response}); }) .error(function(data) {console.error(data); });
     // Newest shows
-    $http.get(newestUrl)
-    .success(function(response) {
-      if (response.code == 1000) {
-       	$scope.newestVideos = [];
-        $scope.newestShows = response.payload.listShows;
-        $scope.newestProducts = response.payload.listProducts;
-        
-        angular.forEach($scope.newestShows, function(show, index) {
-          $scope.newestVideos[index] = {
-            preload: 'none',
-            sources: [
-              {
-                src: $sce.trustAsResourceUrl($scope.cdn + $scope.newestShows[index].videoSets['400']),
-                type: 'video/mp4'
-              }
-            ],
-            poster: $sce.trustAsResourceUrl($scope.cdn + $scope.newestShows[index].thumbnailSets['700']),
-            onPlayerReady: function($API) {
-              var instance = this;
-              instance.API = $API;
-            }, 
-            play: function() {
-              var instance = this;
-              if ($scope.currentAPI && $scope.currentAPI.currentState == VG_STATES.PLAY) {
-                $scope.currentAPI.stop();
-              }
-              if (instance.API && instance.API.currentState != VG_STATES.PLAY) {
-                $scope.currentAPI = instance.API;
-                instance.API.play();
-              }
-            },
-            likeCounter: $scope.newestShows[index].likeCounter,
-            viewCounter: $scope.newestShows[index].viewCounter,
-            commentCounter: $scope.newestShows[index].commentCounter,
-            shareCounter: $scope.newestShows[index].shareCounter
-          };
-        });
-      }
-    })
-    .error(function(data) {
-      alert(data);
-    });
-    
+    $http.get(newestUrl).success(function(response) {$scope.newestVideos = $scope.buildVideos({response: response}); }) .error(function(data) {console.error(data); });
   }, function(error) {
-    console.log("Deo lay duoc sessionId, error: " + error);
+    console.error("Deo lay duoc sessionId, error: " + error);
   });
 }]);

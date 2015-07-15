@@ -1,0 +1,28 @@
+<div class="show-wrapper">
+  <videogular vg-player-ready="video.onPlayerReady($API)" ng-mouseover="video.play()">
+    <vg-media vg-src="video.sources" vg-preload="video.preload"></vg-media>
+    <vg-poster vg-url='video.poster'>sdfdsf</vg-poster>
+  </videogular>
+  <div class="product-info bs-clearfix">
+    <span class="product-title" title="{[{video.productTitle}]}">{[{video.productName}]}</span>
+    <span class="product-price">{[{video.price}]}</span>
+  </div>
+  <div class="product-action bs-clearfix">
+    <a href="#">
+      <span ng-bind="video.viewCounter"></span>
+      <span class="fa fa-eye"></span>
+    </a>
+    <a href="#">
+      <span ng-bind="video.likeCounter"></span>
+      <span class="fa fa-thumbs-up"></span>
+    </a>
+    <a href="#">
+      <span ng-bind="video.commentCounter"></span>
+      <span class="fa fa-comments"></span>
+    </a>
+    <a href="{[{video.productLinkUrl}]}" target="{[{video.productLinkTarget}]}">
+      <span class="fa fa-shopping-cart"></span>
+      <span>BUY</span>
+    </a>
+  </div>
+</div>

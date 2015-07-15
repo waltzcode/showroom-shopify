@@ -35,6 +35,7 @@
   {{ 'queries.css' | asset_url | stylesheet_tag }}
   {{ 'jquery.fancybox.css' | asset_url | stylesheet_tag }}
   {{ 'font-awesome.css' | asset_url | stylesheet_tag }}
+  {{ 'videogular.css' | asset_url | stylesheet_tag }}
 
 
   <!-- JS
@@ -103,10 +104,12 @@
 <body class="gridlock shifter {{ template }}">
     <header>
       <div class="row">
-
-        <div id="message" class="desktop-6 mobile-3">
-          {{ 'layout.top_bar.free_shipping' | t }}
-        </div>
+        <ul id="topNav" class="desktop-6 mobile-3">
+          <li><a href="/"><img src="{{ 'top-logo.png' | asset_url }}" alt="{{ shop.name }}"/></a></li>
+          <li><a href="#">SIGN IN/UP</a></li>
+          <li><a href="#">INVITE FRIENDS</a></li>
+          <li><a href="#">DOWNLOAD APP</a></li>
+        </ul>
 
         <ul id="cart" class="desktop-6 mobile-3">
           <li class="searchbox">
@@ -114,17 +117,9 @@
               <input type="text" name="q" id="q" placeholder="{{ 'general.search.placeholder' | t }}" />
             </form>
           </li>
-          {% if shop.customer_accounts_enabled %}
-          {% if customer  %}
-          <li><a href="/account">{{ 'layout.customer.my_account' | t }}</a>&nbsp;{{ 'layout.customer.log_out' | t | customer_logout_link }}</li>
-          {% else %}
-          <li>{{ 'layout.customer.log_in' | t | customer_login_link }}</li>
-          <li>{{ 'layout.customer.create_account' | t | customer_register_link }}</li>
-          {% endif %}
-          {% endif %}
-          {% if settings.show_multiple_currencies %}
-          <li>{% include 'currency-selector' %}</li>
-          {% endif %}
+          <li class="cart-count">
+            <a href="#">MESSAGES (0)</a>
+          </li>
           <li class="cart-count">
             <a href="/cart">{{ 'layout.cart.my_cart' | t }} ({{ cart.item_count }})</a>
           </li>
@@ -140,17 +135,21 @@
     <!-- End Header -->
 
       <div class="row">
-        <div id="navigation">
-
-          <div id="logo" class="desktop-3 mobile-3">
+        <div id="logo" class="desktop-12 mobile-12 bs-clearfix">
             {% if settings.use_logo_image %}
-            <a href="/"><img src="{{ 'logo.png' | asset_url }}" alt="{{ shop.name }}" style="border: 0;"/></a>
+            <a href="/">
+              <img src="{{ 'logo.png' | asset_url }}" alt="{{ shop.name }}" style="border: 0;"/>
+              <span class="shop-name">{{ shop.name }}</span>
+            </a>
             {% else %}
             <a href="/">{{ shop.name }}</a>
             {% endif %}
           </div>
+      </div>
 
-          <nav class="desktop-9 mobile-3">
+      <div class="row">
+        <div id="navigation">
+          <nav class="desktop-12 mobile-12">
 
             <ul id="nav">
               {% for link in linklists.main-menu.links %}

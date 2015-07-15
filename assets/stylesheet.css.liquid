@@ -345,10 +345,15 @@ header {
   background: {{ settings.header_background }}; 
   color: {{ settings.header_color }};
   line-height: 40px;
+  text-transform: uppercase;
   font-family: {{ settings.header_font }};
   font-weight: {{ settings.header_weight }};
   margin-bottom: 20px;
   font-size: {{ settings.header_size }};
+}
+
+header select { 
+  color: #333;
 }
 
 header a {
@@ -363,6 +368,25 @@ header a:visited {
 header a:hover {
   color: {{ settings.header_hover_color }};
   text-decoration: none; 
+}
+
+ul#topNav {
+  list-style: none;
+}
+
+ul#topNav li {
+  display: block;
+  float: left;
+}
+
+ul#topNav li a {
+  line-height: 40px;
+  padding: 0 10px;
+  display: block;
+}
+
+ul#topNav li a img {
+  display: block;
 }
 
 #message { 
@@ -390,11 +414,33 @@ ul#cart li {
 #logo a {
   margin: 0;
   padding: 0;
+  display: inline-block;
+  text-decoration: none;
+  margin: 0 auto 10px auto;
+  width: 220px;
+  display: block;
+}
+
+#logo a img {
+  display: block;
+  height: 60px;
+  width: auto;
+  float: left;
+  margin: 0 auto;
+}
+
+#logo a span.shop-name {
+  line-height: 60px;
+  display: inline-block;
+  text-transform: uppercase;
+  font-size: 25px;
+  color: #999;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 {% if settings.use_logo_image %}
 nav { 
-  position: absolute;
   bottom: 5px;
   right: 0;
 }
@@ -414,6 +460,7 @@ ul#nav {
   background: {{ settings.navigation }};
   list-style: none;
   line-height: 40px;
+  text-align: center;
 }
 
 ul#nav li {
@@ -606,12 +653,12 @@ h2 span { background: {{ settings.background }}; }
 }
 
 #homepage-products span, #homepage-collections span, #homepage-blog span, #follow-us span {
-  padding: 0 10px;
+  padding: 0;
 }
 
 #homepage-products .product-loop .product-info {
-  padding: 5px 0;
-
+  padding: 5px 10px;
+  line-height: 30px;
 }
 
 #homepage-products .product-loop .product-info span {
@@ -622,6 +669,8 @@ h2 span { background: {{ settings.background }}; }
 #homepage-products .product-loop .product-info span.product-title {
   float: left;
   text-transform: uppercase;
+  font-size: 15px;
+  color: #888;
 }
 
 #homepage-products .product-loop .product-info span.product-price {
@@ -634,12 +683,12 @@ h2 span { background: {{ settings.background }}; }
 #homepage-products .product-loop .product-action a {
   display: block;
   text-decoration: none;
-  font-size: 14px;
-  line-height: 30px;
+  font-size: 16px;
+  line-height: 35px;
   color: #888;
-  width: 33.3333%;
+  width: 25%;
+  float: left;
   text-align: center;
-  margin-top: 5px;
 }
 
 #homepage-products .product-loop .product-action a:hover {
