@@ -22,7 +22,7 @@
 
   <meta name="product_type" content="{{ product.type }}" />
   <meta name="product_sku" content="{{ product.variants.first.sku }}" />
-  
+
   {% include 'fb-open-graph-tags' %}
   {% include 'twitter-card' %}
 
@@ -52,7 +52,7 @@
   {{ 'jquery.placeholder.js' | asset_url | script_tag }}
   {{ 'jquery.fs.shifter.js' | asset_url | script_tag }}
   {{ 'jquery.cookie.js' | asset_url | script_tag }}
-  
+
   {% if template contains 'product' %}
   {{ 'jquery.zoom.js' | asset_url | script_tag }}
   {% endif %}
@@ -93,19 +93,19 @@
             href: "#subscribe_popup"
           });
         }
-      }); 
+      });
     };
 
-  </script>  
+  </script>
   {% endif %}
-  
+
 </head>
 
 <body class="gridlock shifter {{ template }}">
     <header>
       <div class="row">
         <ul id="topNav" class="desktop-6 mobile-3">
-          <li><a href="/"><img src="{{ 'top-logo.png' | asset_url }}" alt="{{ shop.name }}"/></a></li>
+          <li class="top-logo"><a href="/"><img src="{{ 'top-logo.png' | asset_url }}" alt="{{ shop.name }}"/></a></li>
           <li><a href="#">SIGN IN/UP</a></li>
           <li><a href="#">INVITE FRIENDS</a></li>
           <li><a href="#">DOWNLOAD APP</a></li>
@@ -123,13 +123,13 @@
           <li class="cart-count">
             <a href="/cart">{{ 'layout.cart.my_cart' | t }} ({{ cart.item_count }})</a>
           </li>
-        </ul> 
-        
+        </ul>
+
          <span class="shifter-handle">Menu</span>
 
       </div>
     </header>
-    <div class="shifter-page">    
+    <div class="shifter-page">
 
 
     <!-- End Header -->
@@ -176,7 +176,7 @@
         <!-- Hide Breadcrumbs from homepage -->
         {% if template != "index" %}
         {% if settings.breadcrumb %}
-        {% include 'breadcrumb' %}	
+        {% include 'breadcrumb' %}
         {% endif %}
         {% endif %}
         {{ content_for_layout }}
@@ -210,7 +210,7 @@
           <h4>{{ 'layout.footer.social_and_email_title' | t }}</h4>
           <li>{% include 'mailing' %}
           <li class="icons">
-            {% if settings.show_instagram %}<a href="{{ settings.instagram_url }}" target="_blank"><i class="fa fa-instagram"></i></a>{% endif %}          
+            {% if settings.show_instagram %}<a href="{{ settings.instagram_url }}" target="_blank"><i class="fa fa-instagram"></i></a>{% endif %}
             {% if settings.show_facebook %}<a href="{{ settings.facebook_url }}" target="_blank"><i class="fa fa-facebook"></i></a>{% endif %}
             {% if settings.show_twitter %}<a href="http://www.twitter.com/{{ settings.twittername }}" target="_blank"><i class="fa fa-twitter"></i></a>{% endif %}
             {% if settings.show_pinterest %} <a href="{{ settings.pinterest_url }}" target="_blank"><i class="fa fa-pinterest"></i></a>{% endif %}
@@ -231,15 +231,15 @@
           {% if settings.jcb %}<img src="{{ 'jcb.png' | asset_url }}">{% endif %}
           {% if settings.maestro %}<img src="{{ 'maestro.png' | asset_url }}"/>{% endif %}
           {% if settings.mastercard %}<img src="{{ 'mastercard.png' | asset_url }}"/>{% endif %}
-          {% if settings.paypal %}<img src="{{ 'paypa.png' | asset_url }}"/>{% endif %}  
-          {% if settings.solo %}<img src="{{ 'solo.png' | asset_url }}"/>{% endif %}  
-          {% if settings.visa %}<img src="{{ 'visa.png' | asset_url }}"/>{% endif %}	
+          {% if settings.paypal %}<img src="{{ 'paypa.png' | asset_url }}"/>{% endif %}
+          {% if settings.solo %}<img src="{{ 'solo.png' | asset_url }}"/>{% endif %}
+          {% if settings.visa %}<img src="{{ 'visa.png' | asset_url }}"/>{% endif %}
           <br />
           <p>{{ 'layout.footer.copyright' | t }} &copy; {{ 'now' | date: "%Y" }} {{ shop.name }} </p>
         </div>
 
       </div>
-     
+
   {% include 'popup' %}
 
   </div>
@@ -250,14 +250,14 @@
       {% if linklists[child_list_handle] and linklists[child_list_handle].links.size > 0 %}
       <ul class="sub">
         {% for l in linklists[child_list_handle].links %}
-        <li><a href="{{ l.url }}">{{ l.title }}</a></li>          
+        <li><a href="{{ l.url }}">{{ l.title }}</a></li>
         {% endfor %}
       </ul>
       {% endif %}
     </li>
-    {% endfor %}      
+    {% endfor %}
   </nav>
-  
+
   <!-- Begin Recently Viewed Products -->
   <script type="text/javascript" charset="utf-8">
     //<![CDATA[
@@ -296,7 +296,7 @@
 
   <!-- End Recently Viewed Products -->
 
-  
+
   <div id="fb-root"></div>
   <script>(function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0];
@@ -307,10 +307,10 @@
 }(document, 'script', 'facebook-jssdk'));</script>
 
 
-  
+
   {% include 'ajaxify-cart' %}
   {% include 'currencies' %}
-  
+
   {% if template == 'index' %}
 	<!-- AngularJS -->
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>
