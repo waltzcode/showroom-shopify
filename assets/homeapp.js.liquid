@@ -125,7 +125,7 @@ app.controller('myCtrl', [
     instance.videoSize = config.videoSize || '400';
     instance.thumbnailSize = config.thumbnailSize || '700';
 
-    if (instance.response.code == 1000) { // Check if request is correct
+    if (instance.response.code == 1000) { // Check if request is correctu
       var shows = instance.response.payload.listShows;
       var products = instance.response.payload.listProducts;
       var videos = [];
