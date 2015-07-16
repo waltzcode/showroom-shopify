@@ -15,7 +15,7 @@ var app = angular.module('myApp', [
   "com.2fdevs.videogular",
   "com.2fdevs.videogular.plugins.poster"
 ]);
-    
+
 app.config(function ($interpolateProvider) {
   $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
 });
@@ -75,11 +75,11 @@ app.factory('CheckSessionId', function($cookies, $http, $q) {
     bundleVersion: Constants.serviceVersion,
     langCode: ''
   };
-  
+
   if (sessionId) {
     $cookies.put(Constants.sessionParam, sessionId, {
       expires: exp
-    }); 
+    });
     deferred.resolve(sessionId);
   } else {
     $http({
@@ -90,28 +90,28 @@ app.factory('CheckSessionId', function($cookies, $http, $q) {
     .success(function(response) {
       sessionId = response.payload.sessionId;
       if (response.code == 1000) {
-        
+
         $cookies.put(Constants.sessionParam, response.payload.sessionId, {
           expires: exp
-        }); 
+        });
       	deferred.resolve(response.payload.sessionId);
-      } else { 
+      } else {
         deferred.reject('Error when register session');
       }
-      
+
     })
     .error(function(data) {
       deferred.reject(data);
     });
   }
-  
+
   return deferred.promise;
 });
 
 app.controller('myCtrl', [
   "$scope","$http","CheckSessionId", "$sce","VG_STATES", "$filter",
   function($scope, $http, CheckSessionId, $sce, VG_STATES, $filter) {
-    
+
   $scope.cdn = Constants.showroomCDN;
   $scope.theme = '';
   $scope.currentAPI = null;
@@ -136,10 +136,10 @@ app.controller('myCtrl', [
 
         productPrice = $filter('currency')(products[index].price, instance.currencySymbol, 2);
         productTitle = products[index].name;
-        productName = $filter('excerptTitle')(products[index].name, instance.exceprtTitleLength, instance.exceprtTitleLength);
+        productName = $filter('excerptTitle')(products[index].name, instance.exceprtTitleLength, instance.excerptMore);
         productMetaData = $filter('jsonParse')(products[index].metaData);
 
-        videos[index] = { 
+        videos[index] = {
           preload: 'none',
             sources: [
               {
@@ -151,7 +151,7 @@ app.controller('myCtrl', [
             onPlayerReady: function($API) {
               var instance = this;
               instance.API = $API;
-            }, 
+            },
             play: function() {
               var instance = this;
               if ($scope.currentAPI && $scope.currentAPI.currentState == VG_STATES.PLAY) {
@@ -176,13 +176,13 @@ app.controller('myCtrl', [
       return videos;
     } // endif
   };
-    
+
   CheckSessionId
   .then(function(sessionId) {
     var featuredUrl = Constants.getFeaturedFeedURL + sessionId;
     var popularUrl = Constants.getPopularFeedURL + sessionId;
     var newestUrl = Constants.getNewestFeedURL + sessionId;
-    
+
     // Featured shows
     $http.get(featuredUrl).success(function(response) {$scope.featuredVideos = $scope.buildVideos({response: response});}) .error(function(data) {console.error(data); });
     // Popular shows
