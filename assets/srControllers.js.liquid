@@ -1,0 +1,130 @@
+'use strict';
+var showroomControllers = angular.module('showroomControllers',[]);
+
+showroomControllers.controller('homeController', [
+	'showService',
+	'videoService',
+	'$scope',
+	'$rootScope',
+	'$log',
+	'$q',
+	function(showService, videoService, $scope, $rootScope, $log, $q) {
+		$rootScope.removeHeader = false;
+		$rootScope.removeBrand = false;
+		$rootScope.removeNav = false;
+		$rootScope.removeFooter = false;
+		$log.debug("Start getting all video");
+
+		var gettingPersonalFeed = function() {
+			if ($rootScope.loggedIn) {
+				return showService.getPersonalFeed({pageNumber: 0, pageSize: 15})
+				.then(function(response) {
+					$scope.myVideos = videoService.parseVideo({response: response.data});
+					console.debug("Finish getting my video");
+				});
+			} else {
+				$scope.$watch($rootScope.loggedIn, function() {
+					showService.getPersonalFeed({pageNumber: 0, pageSize: 15})
+						.then(function(response) {
+							$scope.myVideos = videoService.parseVideo({response: response.data});
+							console.debug("Finish getting my video");
+						});
+				});
+			}
+		};
+		var gettingFeaturedVideos = function() {
+			return showService.getGlobalFeaturedFeed({pageNumber: 0, pageSize: 15})
+			.then(function(response) {
+				$scope.featuredVideos = videoService.parseVideo({response: response.data});
+				console.debug("Finish getting featured video");
+			});
+		};
+		var gettingPopularVideos = function() {
+			return showService.getGlobalMostLikeFeed({pageNumber: 0, pageSize: 15})
+			.then(function(response) {
+				$scope.popularVideos = videoService.parseVideo({response: response.data});
+				console.debug("Finish getting popular video");
+			});
+		};
+		var gettingNewestVideos = function() {
+			return showService.getGlobalLastestFeed({pageNumber: 0, pageSize: 15})
+			.then(function(response) {
+				$scope.newestVideos = videoService.parseVideo({response: response.data});
+				console.debug("Finish getting newest video");
+			});
+		};
+		$q.all([
+			gettingPersonalFeed(),
+			gettingFeaturedVideos(),
+			gettingPopularVideos(),
+			gettingNewestVideos()
+		])
+		.catch(function(error) {
+			$log.error('Error when getting video: ' + error);
+		})
+		.finally(function() {
+			$log.debug("Finish getting all video");
+		});
+	}
+]);
+
+showroomControllers.controller('loginController', [
+	'userService',
+	'$scope',
+	'$rootScope',
+	'$log',
+	'$location',
+	function(userService, $scope, $rootScope, $log, $location) {
+		// Display Settings
+		$rootScope.removeHeader = true;
+		$rootScope.removeBrand = true;
+		$rootScope.removeNav = true;
+		$rootScope.removeFooter = true;
+
+		if ($rootScope.loggedIn) {
+			$location.patch('/');
+		}
+
+		$scope.email = '';
+		$scope.password = '';
+
+		$scope.loginEmail = function() {
+			userService.loginEmailAccount({
+				email: $scope.email,
+				password: $scope.password
+			}).then(function(response) {
+				$log.debug(response);
+				if (response.code == 1000) {
+					$rootScope.loggedIn = true;
+					// update user info to rootScope
+					userService.getLoggedInAccountInfo()
+						.then(function(response) {
+							if (response.code == 1000) {
+								$rootScope.userInfo = response.payload;
+							}
+						}, function(error) {
+							$log.error(error);
+						}).finally(function() {
+							$location.path('/');
+						});
+				}
+			}).catch(function(error) {
+				$log.error(error);
+			});
+		};
+
+		$scope.connectFacebook = function() {
+			$log.debug('I will connect with facebook');
+		}
+	}
+]);
+
+showroomControllers.controller('headerController', [
+	'userService',
+	'$scope',
+	'$rootScope',
+	'$log',
+	function(userService, $scope, $rootScope, $log) {
+
+	}
+]);

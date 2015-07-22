@@ -24,42 +24,6 @@ app.config(function ($sceProvider) {
   $sceProvider.enabled(false);
 });
 
-app.filter('jsonParse', function() {
-  return function(input) {
-    return angular.isObject(input) ? input : JSON.parse(input);
-  };
-});
-
-app.filter('productLink', function() {
-  return function(link) {
-    if (link.indexOf('showroom-store.myshopify.com') == -1 && link.indexOf('amazon.com') == -1) {
-      return '/pages/ext-product?url='+link;
-    }
-    return link;
-  };
-});
-
-app.filter('productTarget', function() {
-  return function(link) {
-    if (link.indexOf('amazon.com') == -1) {
-      return '_self';
-    }
-    return '_blank';
-  };
-});
-
-app.filter('excerptTitle', function() {
-  return function(input, length, excerpt_more) {
-    if (input.length > length) {
-      input = input.substring(0, length);
-      input = input.substring(0, input.lastIndexOf(' ') + 1);
-      input += excerpt_more;
-    }
-
-    return input;
-  };
-});
-
 app.factory('CheckSessionId', function($cookies, $http, $q) {
   var deferred = $q.defer();
   var sessionId = $cookies.get(Constants.sessionParam);

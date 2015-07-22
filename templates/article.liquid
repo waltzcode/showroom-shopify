@@ -9,23 +9,23 @@
   <h1>{{ article.title }}</h1>
     {% assign published_at = article.published_at | date: format: 'month_date_year' %}
   <p>{{ 'blogs.article.posted_on_date_html' | t: date: published_at }}</p>
-  
+
   {{ article.content }}
   {% include 'social' with article %}
-  
+
   {% if blog.comments_enabled? %}
   <div id="comments">
     <h4>{{ 'blogs.comments.comments_with_count' | t: count: number_of_comments }}</h4>
-    
+
 
     <ul>
       {% for comment in article.comments %}
       <li>
         <div class="comment-details">
           {{ comment.author }}: {{ comment.created_at | date: "%B %d, %Y" }}
-        </div>	
+        </div>
         <div class="gravatar desktop-1 mobile-1">
-          <img src="//www.gravatar.com/avatar/{{ comment.email | remove: ' ' | strip_newlines | downcase | md5 }}" />		
+          <img src="//www.gravatar.com/avatar/{{ comment.email | remove: ' ' | strip_newlines | downcase | md5 }}" />
         </div>
         <div class="comment desktop-11 mobile-2">
           {{ comment.content }}
@@ -33,9 +33,9 @@
       </li>
       {% endfor %}
     </ul>
-    
-    
-    <div id="pagination">				
+
+
+    <div id="pagination">
       {% if paginate.previous %}
       {{ '<' | link_to: paginate.previous.url }}
       {% endif %}
@@ -54,7 +54,7 @@
       {{ '>' | link_to: paginate.next.url }}
       {% endif %}
     </div>
-    
+
     <!-- Comment Form -->
         <div id="comment-form">
           {% form article %}
@@ -69,12 +69,12 @@
           		<div class="notice">{{ 'success' | t }}</div>
           	{% endif %}
           {% endif %}
-          
+
           {% if form.errors %}
           <div class="notice error">{{ 'general.forms.post_error' | t }}</div>
           {% endif %}
-          
-          
+
+
          <dl>
             <dt class="{% if form.errors contains 'author' %}error{% endif %}"><label for="comment_author">{{ 'blogs.comments.name' | t }}</label></dt>
             <dd><input type="text" id="comment_author" name="comment[author]" size="40" value="{{form.author}}" class="{% if form.errors contains 'author' %}input-error{% endif %}" /></dd>
@@ -85,19 +85,19 @@
             <dt class="{% if form.errors contains 'body' %}error{% endif %}"><label for="comment_body">{{ 'blogs.comments.message' | t }}</label></dt>
             <dd><textarea id="comment_body" name="comment[body]" cols="40" rows="5" class="{% if form.errors contains 'body' %}input-error{% endif %}">{{form.body}}</textarea></dd>
           </dl>
-          
+
           {% if blog.moderated? %}
           <p class="hint">{{ 'blogs.comments.moderated' | t }}</p>
-          {% endif %}    
-          
+          {% endif %}
+
           <input type="submit" value="{{ 'blogs.comments.post' | t }}" />
           {% endform %}
     </div>
   </div>
-  {% endif %}   
-  
-  
-</div>   
+  {% endif %}
+
+
+</div>
 
 
 <div id="sidebar" class="desktop-3 mobile-3">
@@ -108,7 +108,7 @@
       <p>{{ article.published_at | date: "%b %d %Y" }}</p>
       <p>{{ article.content | strip_html | truncate: 140 }}</p>
     </li>
-    {% endfor %} 
+    {% endfor %}
     <h3 style="margin: 20px 0">{{ 'blogs.sidebar.title' | t }}</h3>
     {% for tag in blog.all_tags %}
     <li class="tags">
@@ -119,4 +119,4 @@
 </div>
 
 
-{% endpaginate %}        
+{% endpaginate %}

@@ -1,0 +1,355 @@
+'use strict';
+var showroomServices = angular.module('showroomServices', [
+	'ngCookies',
+	'ngSanitize',
+	'com.2fdevs.videogular',
+	'com.2fdevs.videogular.plugins.poster',
+]);
+// Session Service
+showroomServices.factory('sessionFactory', [
+	"$cookies", "$http", "$q", "SHOWROOM_CONSTANTS",
+	function($cookies, $http, $q, SHOWROOM_CONSTANTS) {
+		var deferred = $q.defer();
+		var sessionId = $cookies.get(SHOWROOM_CONSTANTS.sessionParam);
+		var now = new Date();
+		var exp = new Date(now.getTime() + 40*50*1000);
+		/**
+		 * Generates a GUID string.
+		 * @returns {String} The generated GUID.
+		 * @example af8a8416-6e18-a307-bd9c-f2c947bbb3aa
+		 * @author Slavik Meltser (slavik@meltser.info).
+		 * @link http://slavik.meltser.info/?p=142
+		 */
+		var guid = function() {
+		    function _p8(s) {
+		        var p = (Math.random().toString(16)+"000000000").substr(2,8);
+		        return s ? "-" + p.substr(0,4) + "-" + p.substr(4,4) : p ;
+		    }
+		    return _p8() + _p8(true) + _p8(true) + _p8();
+		}
+
+		var data = {
+			deviceId: guid(),
+			model: 'WC_MR.Richard',
+			name: 'Website Client',
+			osName: '',
+			osVersion: '',
+			bundleId: SHOWROOM_CONSTANTS.serviceBundleId,
+			bundleVersion: SHOWROOM_CONSTANTS.serviceVersion,
+			langCode: ''
+		};
+
+		if (sessionId) {
+			$cookies.put(SHOWROOM_CONSTANTS.sessionParam, sessionId, {
+				expires: exp
+			});
+			deferred.resolve(sessionId);
+		} else {
+			$http({
+				url: SHOWROOM_CONSTANTS.serviceHost + SHOWROOM_CONSTANTS.registerSessionURL,
+				method: 'POST',
+				data: data
+			})
+			.success(function(response) {
+				sessionId = response.payload.sessionId;
+				if (response.code == 1000) {
+					$cookies.put(SHOWROOM_CONSTANTS.sessionParam, response.payload.sessionId, {
+						expires: exp
+					});
+					deferred.resolve(response.payload.sessionId);
+				} else {
+					deferred.reject('Error when register session');
+				}
+			})
+			.error(function(data) {
+				deferred.reject(data);
+			});
+		}
+		return deferred.promise;
+	}
+]);
+// User Service
+showroomServices.factory('userService',[
+	'SHOWROOM_CONSTANTS', 'sessionFactory', '$http', '$q',
+	function(SHOWROOM_CONSTANTS, sessionFactory, $http, $q) {
+		var userService = {};
+		userService.registerEmailAccount = function(data) {
+			var deferred = $q.defer();
+			return sessionFactory
+			.then(function(sessionId) {
+					var registerEmailAccountURL = SHOWROOM_CONSTANTS.serviceHost + SHOWROOM_CONSTANTS.registerEmailAccountURL + sessionId;
+					$http.post(registerEmailAccountURL, data)
+					.success(function(response) {
+						deferred.resolve(response);
+					})
+					.error(function(error) {
+						deferred.reject(error);
+					});
+				}, function(error) {
+					deferred.reject(error);
+				});
+			return deferred.promise;
+		};
+
+		userService.resetEmailAccountPassword = function(data) {
+			var deferred = $q.defer();
+			sessionFactory.then(
+				function(sessionId) {
+					var resetEmailAccountPasswordURL = SHOWROOM_CONSTANTS.serviceHost + SHOWROOM_CONSTANTS.resetEmailAccountPasswordURL + sessionId;
+					$http.post(resetEmailAccountPasswordURL, data)
+					.success(function(response) {
+						deferred.resolve(response);
+					})
+					.error(function(error) {
+						deferred.reject(error);
+					});
+				}, function(error) {
+					deferred.reject(error);
+				});
+			return deferred.promise;
+		};
+
+		userService.changeEmailAccountPassword = function(data) {
+			var deferred = $q.defer();
+			sessionFactory.then(
+				function(sessionId) {
+					var changeEmailAccountPasswordURL = SHOWROOM_CONSTANTS.serviceHost + SHOWROOM_CONSTANTS.changeEmailAccountPasswordURL + sessionId;
+					$http.post(changeEmailAccountPasswordURL, data)
+					.success(function(response) {
+						deferred.resolve(response);
+					})
+					.error(function(error) {
+						deferred.reject(error);
+					});
+				}, function(error) {
+					deferred.reject(error);
+				});
+			return deferred.promise;
+		};
+
+		userService.loginEmailAccount = function(data) {
+			var deferred = $q.defer();
+			sessionFactory.then(
+				function(sessionId) {
+					var loginEmailAccountURL = SHOWROOM_CONSTANTS.serviceHost + SHOWROOM_CONSTANTS.loginEmailAccountURL + sessionId;
+					$http.put(loginEmailAccountURL, data)
+					.success(function(response) {
+						deferred.resolve(response);
+					})
+					.error(function(error) {
+						deferred.reject(error);
+					});
+				}, function(error) {
+					deferred.reject(error);
+				});
+			return deferred.promise;
+		};
+
+		userService.loginFacebookAccount = function(data) {
+			var deferred = $q.defer();
+			sessionFactory.then(
+				function(sessionId) {
+					var loginFacebookAccountURL = SHOWROOM_CONSTANTS.serviceHost + SHOWROOM_CONSTANTS.loginFacebookAccountURL + sessionId;
+					$http.put(loginFacebookAccountURL, data)
+					.success(function(response) {
+						deferred.resolve(response);
+					})
+					.error(function(error) {
+						deferred.reject(error);
+					});
+				}, function(error) {
+					deferred.reject(error);
+				});
+			return deferred.promise;
+		};
+
+		userService.getLoggedInAccountInfo = function() {
+			var deferred = $q.defer();
+			sessionFactory.then(
+				function(sessionId) {
+					var getLoggedInAccountInfoURL = SHOWROOM_CONSTANTS.serviceHost + SHOWROOM_CONSTANTS.getLoggedInAccountInfoURL + sessionId;
+					$http.get(getLoggedInAccountInfoURL)
+					.success(function(response) {
+						deferred.resolve(response);
+					})
+					.error(function(error) {
+						deferred.reject(error);
+					});
+				}, function(error) {
+					deferred.reject(error);
+				});
+			return deferred.promise;
+		}
+
+		userService.logout = function() {
+			var deferred = $q.defer();
+			sessionFactory.then(
+				function(sessionId) {
+					var logoutURL = SHOWROOM_CONSTANTS.serviceHost + SHOWROOM_CONSTANTS.logoutURL + sessionId;
+					$http.get(logoutURL)
+					.success(function(response) {
+						deferred.resolve(response);
+					})
+					.error(function(error) {
+						deferred.reject(error);
+					});
+				}, function(error) {
+					deferred.reject(error);
+				});
+			return deferred.promise;
+		}
+
+		return userService;
+	}
+]);
+// Show Service
+showroomServices.factory('showService', [
+	'SHOWROOM_CONSTANTS', 'sessionFactory', '$http', '$q',
+	function(SHOWROOM_CONSTANTS, sessionFactory, $http, $q) {
+		var showService = {
+			getGlobalLastestFeed: function(pagging) {
+				return sessionFactory
+					.then(function(sessionId) {
+						var pageNumber = pagging.pageNumber || 0;
+						var pageSize = pagging.pageSize || 15;
+						var url = SHOWROOM_CONSTANTS.serviceHost
+							+ SHOWROOM_CONSTANTS.getGlobalLastestFeedURL
+							+ pageNumber + '/' + pageSize + '/'
+							+ sessionId;
+						return $http.get(url);
+					});
+			},
+			getGlobalMostLikeFeed: function(pagging) {
+				return sessionFactory
+					.then(function(sessionId) {
+						var pageNumber = pagging.pageNumber || 0;
+						var pageSize = pagging.pageSize || 15;
+						var url = SHOWROOM_CONSTANTS.serviceHost
+							+ SHOWROOM_CONSTANTS.getGlobalMostLikeFeedURL
+							+ pageNumber + '/' + pageSize + '/'
+							+ sessionId;
+						return $http.get(url);
+					});
+			},
+			getGlobalMostViewFeed: function(pagging) {
+				return sessionFactory
+					.then(function(sessionId) {
+						var pageNumber = pagging.pageNumber || 0;
+						var pageSize = pagging.pageSize || 15;
+						var url = SHOWROOM_CONSTANTS.serviceHost
+							+ SHOWROOM_CONSTANTS.getGlobalMostViewFeedURL
+							+ pageNumber + '/' + pageSize + '/'
+							+ sessionId;
+						return $http.get(url);
+					});
+			},
+			getGlobalMostShareFeed: function(pagging) {
+				return sessionFactory
+					.then(function(sessionId) {
+						var pageNumber = pagging.pageNumber || 0;
+						var pageSize = pagging.pageSize || 15;
+						var url = SHOWROOM_CONSTANTS.serviceHost
+							+ SHOWROOM_CONSTANTS.getGlobalMostShareFeedURL
+							+ pageNumber + '/' + pageSize + '/'
+							+ sessionId;
+						return $http.get(url);
+					});
+			},
+			getGlobalFeaturedFeed: function(pagging) {
+				return sessionFactory
+					.then(function(sessionId) {
+						var pageNumber = pagging.pageNumber || 0;
+						var pageSize = pagging.pageSize || 15;
+						var url = SHOWROOM_CONSTANTS.serviceHost
+							+ SHOWROOM_CONSTANTS.getGlobalFeaturedFeedURL
+							+ pageNumber + '/' + pageSize + '/'
+							+ sessionId;
+						return $http.get(url);
+					});
+			},
+			getPersonalFeed: function(pagging) {
+				return sessionFactory
+					.then(function(sessionId) {
+						var pageNumber = pagging.pageNumber || 0;
+						var pageSize = pagging.pageSize || 15;
+						var url = SHOWROOM_CONSTANTS.serviceHost
+							+ SHOWROOM_CONSTANTS.getPersonalFeedURL
+							+ pageNumber + '/' + pageSize + '/'
+							+ sessionId;
+						return $http.get(url);
+					});
+			}
+		};
+		return showService;
+	}
+]);
+// Videos Service
+showroomServices.factory('videoService',[
+	'SHOWROOM_CONSTANTS',
+	'VG_STATES',
+	'$filter',
+	'$sce',
+	'$rootScope',
+	function(SHOWROOM_CONSTANTS, VG_STATES, $filter, $sce, $rootScope) {
+		var buildVideo = function(config) {
+			var instance = this;
+			instance.response = config.response;
+			instance.currencySymbol = config.currencySymbol || '$';
+			instance.exceprtTitleLength = config.exceprtTitleLength || 30;
+			instance.excerptMore = config.excerptMore || '...';
+			instance.videoSize = config.videoSize || '400';
+			instance.thumbnailSize = config.thumbnailSize || '700';
+
+			if (instance.response.code == 1000) { // Check if request is correct
+				var shows = instance.response.payload.listShows;
+				var products = instance.response.payload.listProducts;
+				var videos = [];
+				var productPrice, productName, productTitle, productMetaData;
+
+				angular.forEach(shows, function(show, index) {
+					productPrice = $filter('currency')(products[index].price, instance.currencySymbol, 2);
+					productTitle = products[index].name;
+					productName = $filter('excerptTitle')(products[index].name, instance.exceprtTitleLength, instance.excerptMore);
+					productMetaData = $filter('jsonParse')(products[index].metaData);
+
+					videos[index] = {
+						preload: 'none',
+						sources: [{
+							src: $sce.trustAsResourceUrl(SHOWROOM_CONSTANTS.showroomCDN + shows[index].videoSets[instance.videoSize]),
+							type: 'video/mp4'
+						}],
+						poster: $sce.trustAsResourceUrl(SHOWROOM_CONSTANTS.showroomCDN + shows[index].thumbnailSets[instance.thumbnailSize]),
+						onPlayerReady: function($API) {
+							var instance = this;
+							instance.API = $API;
+						},
+						play: function() {
+							var instance = this;
+							if ($rootScope.currentAPI && $rootScope.currentAPI.currentState == VG_STATES.PLAY) {
+								$rootScope.currentAPI.stop();
+							}
+							if (instance.API && instance.API.currentState != VG_STATES.PLAY) {
+								$rootScope.currentAPI = instance.API;
+								instance.API.play();
+							}
+						},
+						likeCounter: shows[index].likeCounter,
+						viewCounter: shows[index].viewCounter,
+						commentCounter: shows[index].commentCounter,
+						shareCounter: shows[index].shareCounter,
+						productName: productName,
+						productTitle: productTitle,
+						price: productPrice,
+						productLinkUrl: $filter('productLink')(productMetaData.url),
+						productLinkTarget: $filter('productTarget')(productMetaData.url)
+					}; // end videos[index]
+				}); // end angular.forEach
+				return videos;
+			};
+		};
+
+		return {
+			parseVideo: buildVideo
+		};
+	}
+]);

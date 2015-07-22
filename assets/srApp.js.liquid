@@ -1,0 +1,87 @@
+'use strict';
+var showroomApp = angular.module('showroomApp',[
+	'ngRoute',
+	'showroomConstants',
+	'showroomServices',
+	'showroomControllers',
+	'showroomFilters',
+	'showroomDirectives'
+]);
+
+showroomApp.config(function ($interpolateProvider) {
+  $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
+});
+
+showroomApp.config(function($sceDelegateProvider, $sceProvider) {
+	$sceDelegateProvider.resourceUrlWhitelist([
+		// Allow same origin resource loads.
+		'self',
+		// Allow loading from our assets domain.  Notice the difference between * and **.
+		'http://cdn.shopify.com/**',
+		'https://cdn.shopify.com/**'
+	]);
+
+	//$sceProvider.enabled(false);
+});
+
+// showroomApp.config(function ($sceProvider) {
+//   $sceProvider.enabled(false);
+// });
+
+// Routing configuration
+showroomApp.config(function ($routeProvider) {
+	$routeProvider.
+		when('/', {
+			templateUrl: "{{ 'views-home.html' | asset_url }}",
+			controller: 'homeController'
+		}).
+		when('/login',{
+			templateUrl: "{{ 'views-login.html' | asset_url }}",
+			controller: 'loginController'
+		}).
+		otherwise({
+			templateUrl: "{{ 'views-home.html' | asset_url }}",
+			controller: 'homeController'
+		});
+});
+
+showroomApp.run([
+	'$rootScope',
+	'$log',
+	'userService',
+	'$q',
+	'$interval',
+	function($rootScope, $log, userService, $q, $interval) {
+		var checkFinished = false;
+
+		$log.debug('Start checking user ....');
+		userService.getLoggedInAccountInfo()
+		.then(function(response) {
+			if (response.code == 1000) {
+				$rootScope.loggedIn = true;
+				$rootScope.userInfo = response.payload;
+				$log.debug("User has logged in ...")
+
+			}
+		}, function(error) {
+			$log.error(error);
+		})
+		.finally(function() {
+			$log.debug('Finish checking user ....');
+		});
+
+		$log.debug('Starting create logout method....')
+		$rootScope.logout = function() {
+			userService.logout()
+				.then(function(response) {
+					$log.debug(response.message);
+					$rootScope.loggedIn = false;
+					$rootScope.userInfo = undefined;
+				})
+				.catch(function(error) {
+					$log.error(error);
+				});
+
+		};
+	}
+]);

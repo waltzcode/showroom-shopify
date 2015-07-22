@@ -10,25 +10,25 @@
     <div class="bigimage desktop-10">
       <img id="{{ product.id }}" src="{{ featured_image | img_url: 'master' }}" alt='{{ image.alt }}' title="{{ product.title }}"/>
     </div>
-    {% endif %}    
+    {% endif %}
     <a href="{{ image | product_img_url: 'master' }}" data-image-id="{{ image.id }}" class="clicker">
       <img class="thumbnail desktop-2" src="{{ image | product_img_url: 'medium' }}" data-image-id="{{ image.id }}" alt="{{ image.alt | escape }}" />
     </a>
-    {% endfor %} 
+    {% endfor %}
   </div>
 
 
 
   <script type="text/javascript">
     $(document).ready(function(){
-      $('.bigimage').zoom();		
+      $('.bigimage').zoom();
       $('a.clicker').click(function() {
         var newImage = $(this).attr('href');
-        $( '.bigimage img' ).attr({ src: newImage }); 
+        $( '.bigimage img' ).attr({ src: newImage });
         return false;
       });
 
-    });    
+    });
   </script>
 
 
@@ -48,7 +48,7 @@
         {% else %}
         <span class="product-price" itemprop="price">{{ 'products.product.sold_out' | t }}</span>
         {% endif %}
-      </p>  
+      </p>
 
       {% include 'product-form' %}
 
@@ -57,7 +57,7 @@
       <div class="desc">
         {% include 'social' with product %}
 
-        {% if collection %}       
+        {% if collection %}
         <span class="backto">
           {{ 'products.product.back_to' | t }} {{ collection.title | link_to: collection.url }}
         </span>
@@ -67,20 +67,20 @@
           {{ 'products.product.previous_product_html' | t | link_to: prev_url }}
           {% endif %}
         </span>
-        {% if collection.next_product %} 
+        {% if collection.next_product %}
         {% capture next_url %}{{ collection.next_product}}#content{% endcapture %}
         <span class="next-prod">
           {{ 'products.product.next_product_html' | t | link_to: next_url }}
         </span>
         {% endif %}
-        {% endif %}          
+        {% endif %}
 
       </div>
     </div>
 
     <div id="related" class="desktop-2 tablet-6">
       {% include 'related-products' %}
-    </div>	
+    </div>
 
   </div>
   <div class="clear"></div>

@@ -1,0 +1,38 @@
+'use strict';
+var showroomFilters = angular.module('showroomFilters', []);
+
+showroomFilters.filter('jsonParse', function() {
+  return function(input) {
+    return angular.isObject(input) ? input : JSON.parse(input);
+  };
+});
+
+showroomFilters.filter('productLink', function() {
+  return function(link) {
+    if (link.indexOf('showroom-store.myshopify.com') == -1 && link.indexOf('amazon.com') == -1) {
+      return '/pages/ext-product?url='+link;
+    }
+    return link;
+  };
+});
+
+showroomFilters.filter('productTarget', function() {
+  return function(link) {
+    if (link.indexOf('amazon.com') == -1) {
+      return '_self';
+    }
+    return '_blank';
+  };
+});
+
+showroomFilters.filter('excerptTitle', function() {
+  return function(input, length, excerpt_more) {
+    if (input.length > length) {
+      input = input.substring(0, length);
+      input = input.substring(0, input.lastIndexOf(' ') + 1);
+      input += excerpt_more;
+    }
+
+    return input;
+  };
+});

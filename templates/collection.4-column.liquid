@@ -13,7 +13,7 @@
 
 <ul id="product-loop" style="width: 100%">
   {% for product in collection.products %}
-  <li class="product desktop-4 mobile-half{% cycle ' first', '', ' last' %}" data-alpha="{{ product.title }}" data-price="{{ product.price }}">  
+  <li class="product desktop-4 mobile-half{% cycle ' first', '', ' last' %}" data-alpha="{{ product.title }}" data-price="{{ product.price }}">
     {% include 'product-listing' %}
 
   </li>

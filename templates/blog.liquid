@@ -1,3 +1,80 @@
+<header>
+  <div class="row">
+    <ul id="topNav" class="desktop-6 mobile-3">
+      <li class="top-logo"><a href="/#/"><img src="{{ 'top-logo.png' | asset_url }}" alt="{{ shop.name }}"/></a></li>
+      <li><a href="/#/login">SIGN IN/UP</a></li>
+      <li><a href="/#/invite">INVITE FRIENDS</a></li>
+      <li><a target="_blank" href="https://itunes.apple.com/GB/app/id787053829?mt=8">DOWNLOAD APP</a></li>
+    </ul>
+
+    <ul id="cart" class="desktop-6 mobile-3">
+      <li class="searchbox">
+        <form action="/search" method="get">
+          <input type="text" name="q" id="q" placeholder="{{ 'general.search.placeholder' | t }}" />
+        </form>
+      </li>
+      <li class="cart-count">
+        <a href="#">MESSAGES (0)</a>
+      </li>
+      <li class="cart-count">
+        <a href="/cart">{{ 'layout.cart.my_cart' | t }} ({{ cart.item_count }})</a>
+      </li>
+    </ul>
+
+     <span class="shifter-handle">Menu</span>
+
+  </div>
+</header>
+<div class="shifter-page">
+
+
+<!-- End Header -->
+
+  <div class="row">
+    <div id="logo" class="desktop-12 mobile-12 bs-clearfix">
+        {% if settings.use_logo_image %}
+        <a href="/#/home">
+          <img src="{{ 'logo.png' | asset_url }}" alt="{{ shop.name }}" style="border: 0;"/>
+          <span class="shop-name">{{ shop.name }}</span>
+        </a>
+        {% else %}
+        <a href="/">{{ shop.name }}</a>
+        {% endif %}
+      </div>
+  </div>
+
+  <div class="row">
+    <div id="navigation">
+      <nav class="desktop-12 mobile-12">
+
+        <ul id="nav">
+          {% for link in linklists.main-menu.links %}
+          <li>{{ link.title | link_to: link.url }}
+            {% capture child_list_handle %}{{ link.title | handleize }}{% endcapture %}
+            {% if linklists[child_list_handle] and linklists[child_list_handle].links.size > 0 %}
+            <span class="down"><i class="fa fa-chevron-down"></i></span>
+            <ul>
+              {% for l in linklists[child_list_handle].links %}
+              <li><a href="{{ l.url }}">{{ l.title }}</a></li>
+              {% endfor %}
+            </ul>
+            {% endif %}
+          </li>
+          {% endfor %}
+
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <div id="content" class="row">
+    <div class="desktop-12 mobile-3" id="nav-border"></div>
+    <!-- Hide Breadcrumbs from homepage -->
+    {% if template != "index" %}
+    {% if settings.breadcrumb %}
+    {% include 'breadcrumb' %}
+    {% endif %}
+    {% endif %}
 <h1 class="desktop-12 mobile-3" style="margin-bottom: 20px;">{% if current_tags %}{{ blog.title | link_to: blog.url }} &raquo; {{ current_tags.first }}{% else %}{{ blog.title }}{% endif %}</h1>
 {% paginate blog.articles by 5 %}
 
@@ -22,7 +99,7 @@
       <p>{{ article.published_at | date: "%b %d %Y" }}</p>
       <p>{{ article.content | strip_html | truncate: 140 }}</p>
     </li>
-    {% endfor %} 
+    {% endfor %}
     <h3 style="margin: 20px 0">{{ 'blogs.sidebar.categories' | t }}</h3>
     {% for tag in blog.all_tags %}
     <li class="tags">
@@ -31,13 +108,11 @@
     {% endfor %}
   </ul>
 </div>
-  
-  
+
+
   <div class="clear"></div>
-  
+
 
 {% include 'pagination' %}
 
 {% endpaginate %}
-
-

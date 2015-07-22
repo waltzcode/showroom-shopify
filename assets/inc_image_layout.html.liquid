@@ -1,0 +1,40 @@
+{% if settings.layout-choose == 'standard-layout' %}
+
+<div id="left-images" class="desktop-7 mobile-3">
+  <a href="{{ settings.homepage-left-1-url }}"><img src="{{ 'hompage-left-1.jpg' | asset_url }}" alt="{{ settings.homepage-left-1-alt }}"></a>
+  <a href="{{ settings.homepage-left-2-url }}"><img src="{{ 'hompage-left-2.jpg' | asset_url }}" alt="{{ settings.homepage-left-2-alt }}" class="last"></a>
+</div>
+
+<div id="right-images" class="desktop-5 mobile-3">
+  <a href="{{ settings.homepage-right-1-url }}"><img src="{{ 'hompage-right-1.jpg' | asset_url }}" alt="{{ settings.homepage-right-1-alt }}"></a>
+  <a href="{{ settings.homepage-right-2-url }}"><img src="{{ 'hompage-right-2.jpg' | asset_url }}" alt="{{ settings.homepage-right-2-alt }}"></a>
+  <a href="{{ settings.homepage-right-3-url }}"><img src="{{ 'hompage-right-3.jpg' | asset_url }}" alt="{{ settings.homepage-right-3-alt }}" class="last"></a>
+</div>
+
+{% elsif settings.layout-choose == 'slideshow' %}
+
+<div id="homepage1" class="desktop-12">
+  <div class="flexslider">
+    <ul class="slides">
+      <li><a href="{{ settings.slide1_url }}"><img src="{{ 'slide1.jpg' | asset_url }}" alt="{{shop.name}}" /></a></li>
+      {% if settings.slide-2-check %}<li><a href="{{ settings.slide2_url }}"><img src="{{ 'slide2.jpg' | asset_url }}" alt="{{ settings.slide1_alt }}" /></a></li>{% endif %}
+      {% if settings.slide-3-check %}<li><a href="{{ settings.slide3_url }}"><img src="{{ 'slide3.jpg' | asset_url }}" alt="{{ settings.slide2_alt }}" /></a></li>{% endif %}
+      {% if settings.slide-4-check %}<li><a href="{{ settings.slide4_url }}"><img src="{{ 'slide4.jpg' | asset_url }}" alt="{{ settings.slide3_alt }}" /></a></li>{% endif %}
+      {% if settings.slide-5-check %}<li><a href="{{ settings.slide5_url }}"><img src="{{ 'slide5.jpg' | asset_url }}" alt="{{ settings.slide5_alt }}" /></a></li>{% endif %}
+      {% if settings.slide-6-check %}<li><a href="{{ settings.slide6_url }}"><img src="{{ 'slide6.jpg' | asset_url }}" alt="{{ settings.slide6_alt }}" /></a></li>{% endif %}
+      {% if settings.slide-7-check %}<li><a href="{{ settings.slide7_url }}"><img src="{{ 'slide7.jpg' | asset_url }}" alt="{{ settings.slide7_alt }}" /></a></li>{% endif %}
+      {% if settings.slide-8-check %}<li><a href="{{ settings.slide8_url }}"><img src="{{ 'slide8.jpg' | asset_url }}" alt="{{ settings.slide8_alt }}" /></a></li>{% endif %}
+      {% if settings.slide-9-check %}<li><a href="{{ settings.slide9_url }}"><img src="{{ 'slide9.jpg' | asset_url }}" alt="{{ settings.slide9_alt }}" /></a></li>{% endif %}
+      {% if settings.slide-10-check %}<li><a href="{{ settings.slide10_url }}"><img src="{{ 'slide10.jpg' | asset_url }}" alt="{{ settings.slide10_alt }}" /></a></li>{% endif %}
+    </ul>
+  </div>
+</div>
+
+<script type="text/javascript">
+   $('.flexslider').flexslider({
+      animation: "slide",
+      directionNav: true
+   });
+</script>
+
+{% endif %}

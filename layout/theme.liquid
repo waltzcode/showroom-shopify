@@ -2,7 +2,7 @@
 <!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
 <!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
 <!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
-<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en" ng-app="showroomApp"> <!--<![endif]-->
 <head>
 
   <meta charset="utf-8" />
@@ -102,13 +102,16 @@
 </head>
 
 <body class="gridlock shifter {{ template }}">
-    <header>
+    <header ng-if="!removeHeader" ng-controller="headerController">
       <div class="row">
         <ul id="topNav" class="desktop-6 mobile-3">
-          <li class="top-logo"><a href="/"><img src="{{ 'top-logo.png' | asset_url }}" alt="{{ shop.name }}"/></a></li>
-          <li><a href="#">SIGN IN/UP</a></li>
-          <li><a href="#">INVITE FRIENDS</a></li>
-          <li><a href="#">DOWNLOAD APP</a></li>
+          <li class="top-logo"><a href="/#/"><img src="{{ 'top-logo.png' | asset_url }}" alt="{{ shop.name }}"/></a></li>
+          <li>
+             <a href="/#/login" ng-if="!loggedIn">SIGN IN/UP</a>
+             <a href="" ng-if="loggedIn" ng-click="logout();">SIGN OUT</a>
+          </li>
+          <li><a href="/#/invite">INVITE FRIENDS</a></li>
+          <li><a target="_blank" href="https://itunes.apple.com/GB/app/id787053829?mt=8">DOWNLOAD APP</a></li>
         </ul>
 
         <ul id="cart" class="desktop-6 mobile-3">
@@ -128,16 +131,13 @@
          <span class="shifter-handle">Menu</span>
 
       </div>
-    </header>
+    </header><!-- End Header -->
+
     <div class="shifter-page">
-
-
-    <!-- End Header -->
-
-      <div class="row">
+      <div class="row" ng-if="!removeBrand">
         <div id="logo" class="desktop-12 mobile-12 bs-clearfix">
             {% if settings.use_logo_image %}
-            <a href="/">
+            <a href="/#/">
               <img src="{{ 'logo.png' | asset_url }}" alt="{{ shop.name }}" style="border: 0;"/>
               <span class="shop-name">{{ shop.name }}</span>
             </a>
@@ -147,7 +147,7 @@
           </div>
       </div>
 
-      <div class="row">
+      <div class="row" ng-if="!removeNav">
         <div id="navigation">
           <nav class="desktop-12 mobile-12">
 
@@ -172,7 +172,7 @@
       </div>
 
       <div id="content" class="row">
-        <div class="desktop-12 mobile-3" id="nav-border"></div>
+        <div class="desktop-12 mobile-3" id="nav-border" ng-show="showNav"></div>
         <!-- Hide Breadcrumbs from homepage -->
         {% if template != "index" %}
         {% if settings.breadcrumb %}
@@ -184,7 +184,7 @@
 
       <!-- End Content -->
 
-      <div id="footer" class="row">
+      <div id="footer" class="row" ng-if="!removeFooter">
         <div id="footer-border" class="desktop-12 tablet-6 mobile-3">
         </div>
 
@@ -237,7 +237,6 @@
           <br />
           <p>{{ 'layout.footer.copyright' | t }} &copy; {{ 'now' | date: "%Y" }} {{ shop.name }} </p>
         </div>
-
       </div>
 
   {% include 'popup' %}
@@ -257,6 +256,8 @@
     </li>
     {% endfor %}
   </nav>
+
+  <div id="fb-root"></div>
 
   <!-- Begin Recently Viewed Products -->
   <script type="text/javascript" charset="utf-8">
@@ -297,31 +298,42 @@
   <!-- End Recently Viewed Products -->
 
 
-  <div id="fb-root"></div>
-  <script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=127142210767229&version=v2.0";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
+<script>
+   window.fbAsyncInit = function() {
+      FB.init({
+         appId      : '920084234700331',
+         xfbml      : true,
+         version    : 'v2.4'
+      });
+   };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
 
 
-
-  {% include 'ajaxify-cart' %}
-  {% include 'currencies' %}
-
-  {% if template == 'index' %}
+   {% include 'ajaxify-cart' %}
+   {% include 'currencies' %}
 	<!-- AngularJS -->
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular-cookies.js"></script>
+   {{ 'angular.min.js' | asset_url | script_tag }}
+   {{ 'angular-route.min.js' | asset_url | script_tag }}
+   {{ 'angular-cookies.min.js' | asset_url | script_tag }}
   	{{ 'angular-sanitize.min.js' | asset_url | script_tag }}
   	{{ 'videogular.min.js' | asset_url | script_tag }}
   	{{ 'vg-controls.min.js' | asset_url | script_tag }}
   	{{ 'vg-buffering.min.js' | asset_url | script_tag }}
   	{{ 'vg-poster.min.js' | asset_url | script_tag }}
   	{{ 'vg-overlay-play.min.js' | asset_url | script_tag }}
-  	{{ 'homeapp.js' | asset_url | script_tag }}
-  {% endif %}
+   {{ 'srApp.js' | asset_url | script_tag }}
+   {{ 'srConstants.js' | asset_url | script_tag }}
+   {{ 'srServices.js' | asset_url | script_tag }}
+   {{ 'srControllers.js' | asset_url | script_tag }}
+   {{ 'srDirectives.js' | asset_url | script_tag }}
+   {{ 'srFilters.js' | asset_url | script_tag }}
 </body>
 </html>

@@ -8,7 +8,7 @@
       {% else %}
       <h4>{{ settings.collection-linklist-1-title }}</h4>
       {% endif %}
-    
+
     {% for link in linklists[settings.collection-side-1].links %}
     <li>{{ link.title | link_to: link.url }}</li>
     {% endfor %}
@@ -21,8 +21,8 @@
       <h4>{{ 'collections.sidebar.linklist_2_title' | t }}</h4>
       {% else %}
       <h4>{{ settings.collection-linklist-2-title }}</h4>
-      {% endif %}        
-    
+      {% endif %}
+
     {% for link in linklists[settings.collection-side-2].links %}
     <li>{{ link.title | link_to: link.url }}</li>
     {% endfor %}
@@ -35,9 +35,9 @@
       <h4>{{ 'collections.sidebar.linklist_3_title' | t }}</h4>
       {% else %}
       <h4>{{ settings.collection-linklist-3-title }}</h4>
-      {% endif %}      
-    
-    
+      {% endif %}
+
+
     {% for link in linklists[settings.collection-side-3].links %}
     <li>{{ link.title | link_to: link.url }}</li>
     {% endfor %}
@@ -45,13 +45,13 @@
   {% endif %}
   {% if settings.collection-links-4 %}
   <ul>
-    
+
       {% if settings.collection-linklist-4-title ==  blank %}
       <h4>{{ 'collections.sidebar.linklist_4_title' | t }}</h4>
       {% else %}
       <h4>{{ settings.collection-linklist-4-title }}</h4>
-      {% endif %}        
-    
+      {% endif %}
+
     {% for link in linklists[settings.collection-side-4].links %}
     <li>{{ link.title | link_to: link.url }}</li>
     {% endfor %}
@@ -59,7 +59,7 @@
   {% endif %}
 
   <!-- Start Filtering -->
-  {% if settings.filters %}	
+  {% if settings.filters %}
   <div id="side-filter">
     {% include 'dropdown-filter' %}
   </div>
@@ -73,9 +73,9 @@
       <h4>{{ 'collections.sidebar.designers' | t }}</h4>
       {% else %}
       <h4>{{ settings.shop-by-designer-title }}</h4>
-      {% endif %}       
-    
-    
+      {% endif %}
+
+
     {% for product_vendor in shop.vendors %}
     <li>{{ product_vendor | link_to_vendor  }}</li>
     {% endfor %}
@@ -87,8 +87,8 @@
       <h4>{{ 'collections.sidebar.designers' | t }}</h4>
       {% else %}
       <h4>{{ settings.shop-by-designer-title }}</h4>
-      {% endif %}       
-   
+      {% endif %}
+
     {% for product_vendor in collection.all_vendors %}
     <li class="{{ product_vendor | handelize }}">{{ product_vendor | link_to_vendor }}</li>
     {% endfor %}
@@ -106,7 +106,7 @@
 <ul id="product-loop" class="desktop-12 mobile-3">
 
   {% for product in collection.products %}
-  <li class="product desktop-4 mobile-half{% cycle ' first', '', '' %}" data-alpha="{{ product.title }}" data-price="{{ product.price }}">   
+  <li class="product desktop-4 mobile-half{% cycle ' first', '', '' %}" data-alpha="{{ product.title }}" data-price="{{ product.price }}">
     {% include 'product-listing' %}
   </li>
   {% endfor %}

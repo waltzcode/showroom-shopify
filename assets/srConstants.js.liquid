@@ -1,0 +1,31 @@
+'use strict';
+var showroomConstants = angular.module('showroomConstants', []);
+
+showroomConstants.constant('SHOWROOM_CONSTANTS', {
+	// Service service
+	serviceHost: '//services.showroomapp.net',
+	// Showroom shopify website param
+	sessionParam: 'showroomSId',
+	serviceBundleId: 'showroom.ios',
+	serviceVersion: '1.0.8',
+	// Session Services
+	registerSessionURL: '/session/register',
+	// Global Feed Services - need add page nummber and page size path param.
+	getGlobalLastestFeedURL: '/feed/latest/',
+	getGlobalMostLikeFeedURL: '/feed/most/like/',
+	getGlobalMostViewFeedURL: '/feed/most/view/',
+	getGlobalMostShareFeedURL: '/feed/most/share/',
+	getGlobalFeaturedFeedURL: '/feed/featured/',
+	// Personal Feed
+	getPersonalFeedURL: '/account/me/feed/',
+	// User Services
+	registerEmailAccountURL: '/account/email/register/',
+	resetEmailAccountPasswordURL: '/account/email/resetpassword/',
+	changeEmailAccountPasswordURL: '/account/email/changepassword/',
+	loginEmailAccountURL: '/account/email/login/',
+	loginFacebookAccountURL: '/account/facebook/login/',
+	getLoggedInAccountInfoURL: '/account/me/info/',
+	logoutURL: '/account/me/logout/',
+	// Showroom CDN
+	showroomCDN: '//cdn.showroomapp.tv/'
+});
