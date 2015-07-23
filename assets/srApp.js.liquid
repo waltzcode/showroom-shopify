@@ -50,27 +50,22 @@ showroomApp.run([
 	'$log',
 	'userService',
 	'$q',
-	'$interval',
-	function($rootScope, $log, userService, $q, $interval) {
-		var checkFinished = false;
-
-		$log.debug('Start checking user ....');
+	function($rootScope, $log, userService, $q) {
+		
+		// Check if use is logged in.
 		userService.getLoggedInAccountInfo()
-		.then(function(response) {
-			if (response.code == 1000) {
-				$rootScope.loggedIn = true;
-				$rootScope.userInfo = response.payload;
-				$log.debug("User has logged in ...")
+			.then(function(response) {
+				if (response.code == 1000) {
+					$rootScope.loggedIn = true;
+					$rootScope.userInfo = response.payload;
+					$log.debug("User has logged in ...")
 
-			}
-		}, function(error) {
-			$log.error(error);
-		})
-		.finally(function() {
-			$log.debug('Finish checking user ....');
-		});
+				}
+			}, function(error) {
+				$log.error(error);
+			});
 
-		$log.debug('Starting create logout method....')
+		// create global logout function.
 		$rootScope.logout = function() {
 			userService.logout()
 				.then(function(response) {
@@ -81,7 +76,6 @@ showroomApp.run([
 				.catch(function(error) {
 					$log.error(error);
 				});
-
 		};
 	}
 ]);

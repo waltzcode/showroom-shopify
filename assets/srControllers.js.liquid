@@ -15,20 +15,30 @@ showroomControllers.controller('homeController', [
 		$rootScope.removeFooter = false;
 		$log.debug("Start getting all video");
 
-		var gettingPersonalFeed = function() {
+		var gettingPersonalFeedAndShow = function() {
 			if ($rootScope.loggedIn) {
-				return showService.getPersonalFeed({pageNumber: 0, pageSize: 15})
+				showService.getPersonalFeed({pageNumber: 0, pageSize: 15})
 				.then(function(response) {
-					$scope.myVideos = videoService.parseVideo({response: response.data});
-					console.debug("Finish getting my video");
+					$scope.myFeedVideos = videoService.parseVideo({response: response.data});
+					console.debug("Finish getting my feed");
+				});
+				showService.getPersonalShow({pageNumber: 0, pageSize: 15})
+				.then(function(response) {
+					$scope.myShowVideos = videoService.parseVideo({response: response.data});
+					console.debug("Finish getting my feed");
 				});
 			} else {
 				$scope.$watch($rootScope.loggedIn, function() {
 					showService.getPersonalFeed({pageNumber: 0, pageSize: 15})
-						.then(function(response) {
-							$scope.myVideos = videoService.parseVideo({response: response.data});
-							console.debug("Finish getting my video");
-						});
+					.then(function(response) {
+						$scope.myFeedVideos = videoService.parseVideo({response: response.data});
+						console.debug("Finish getting my feed");
+					});
+					showService.getPersonalShow({pageNumber: 0, pageSize: 15})
+					.then(function(response) {
+						$scope.myShowVideos = videoService.parseVideo({response: response.data});
+						console.debug("Finish getting my feed");
+					});
 				});
 			}
 		};
@@ -54,7 +64,7 @@ showroomControllers.controller('homeController', [
 			});
 		};
 		$q.all([
-			gettingPersonalFeed(),
+			gettingPersonalFeedAndShow(),
 			gettingFeaturedVideos(),
 			gettingPopularVideos(),
 			gettingNewestVideos()
@@ -70,17 +80,19 @@ showroomControllers.controller('homeController', [
 
 showroomControllers.controller('loginController', [
 	'userService',
+	'facebookService',
 	'$scope',
 	'$rootScope',
 	'$log',
 	'$location',
-	function(userService, $scope, $rootScope, $log, $location) {
+	function(userService, facebookService, $scope, $rootScope, $log, $location) {
 		// Display Settings
 		$rootScope.removeHeader = true;
 		$rootScope.removeBrand = true;
 		$rootScope.removeNav = true;
 		$rootScope.removeFooter = true;
 
+		$scope.errors = [];
 		if ($rootScope.loggedIn) {
 			$location.patch('/');
 		}
@@ -114,7 +126,45 @@ showroomControllers.controller('loginController', [
 		};
 
 		$scope.connectFacebook = function() {
-			$log.debug('I will connect with facebook');
+			// login facebook for this app
+			facebookService.login()
+				.then(function(response) {
+					if (response.status === 'connected') {
+						// Logged into your app and Facebook.
+						return facebookService.checkLoginStatus();
+					} else {
+						return Error('Nothing');
+					}
+				})
+				.then(function(response) { // after check facebook login status
+					if (response.status === 'connected') {
+						return userService.loginFacebookAccount({socialToken: response.authResponse.accessToken});
+					}
+					else {
+						return Error('Nothing');
+					}
+				})
+				.then(function(response) {
+					if (response.code === 1000) {
+						$log.debug(response);
+						if (response.code == 1000) {
+							$rootScope.loggedIn = true;
+							// update user info to rootScope
+							userService.getLoggedInAccountInfo()
+								.then(function(response) {
+									if (response.code == 1000) {
+										$rootScope.userInfo = response.payload;
+									}
+								}, function(error) {
+									$log.error(error);
+								}).finally(function() {
+									$location.path('/');
+								});
+						}
+					}
+				}).catch(function(error) {
+					$log.error(error);
+				});
 		}
 	}
 ]);

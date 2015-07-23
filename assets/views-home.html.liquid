@@ -46,10 +46,20 @@
 
   <!--My code-->
 
-  <h2 ng-if="loggedIn && myVideos && (myVideos.length > 0)"><span>My Feed</span></h2>
+  <h2 ng-if="loggedIn && myShowVideos && (myShowVideos.length > 0)"><span>My Show</span></h2>
 
-  <ul ng-if="loggedIn && myVideos && (myVideos.length > 0)" class="product-loop"  style="width: 100%">
-    <li ng-repeat="video in myVideos" class="show desktop-4 tablet-half mobile-full">
+  <ul ng-if="loggedIn && myShowVideos && (myShowVideos.length > 0)" class="product-loop"  style="width: 100%">
+    <li ng-repeat="video in myShowVideos" class="show desktop-4 tablet-half mobile-full">
+      <div class="show-wrapper" ng-include="'{{ 'inc_list_show.html' | asset_url }}'"></div>
+    </li>
+  </ul>
+
+  <div class="bs-clearfix"></div>
+
+  <h2 ng-if="loggedIn && myFeedVideos && (myFeedVideos.length > 0)"><span>My Feed</span></h2>
+
+  <ul ng-if="loggedIn && myFeedVideos && (myFeedVideos.length > 0)" class="product-loop"  style="width: 100%">
+    <li ng-repeat="video in myFeedVideos" class="show desktop-4 tablet-half mobile-full">
       <div class="show-wrapper" ng-include="'{{ 'inc_list_show.html' | asset_url }}'"></div>
     </li>
   </ul>

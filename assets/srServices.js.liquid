@@ -278,6 +278,18 @@ showroomServices.factory('showService', [
 							+ sessionId;
 						return $http.get(url);
 					});
+			},
+			getPersonalShow: function(pagging) {
+				return sessionFactory
+					.then(function(sessionId) {
+						var pageNumber = pagging.pageNumber || 0;
+						var pageSize = pagging.pageSize || 15;
+						var url = SHOWROOM_CONSTANTS.serviceHost
+							+ SHOWROOM_CONSTANTS.getPersonalShowURL
+							+ pageNumber + '/' + pageSize + '/'
+							+ sessionId;
+						return $http.get(url);
+					});
 			}
 		};
 		return showService;
@@ -351,5 +363,36 @@ showroomServices.factory('videoService',[
 		return {
 			parseVideo: buildVideo
 		};
+	}
+]);
+// Facebook Service
+showroomServices.factory('facebookService',[
+	'$q',
+	'$window',
+	function($q, $window) {
+		return {
+			checkLoginStatus: function() {
+				var deferred = $q.defer();
+				$window.FB.getLoginStatus(function(response) {
+					if (!response || response.error) {
+						deferred.reject(response.error || 'Facebook::Error when check login status.')
+					} else {
+						deferred.resolve(response);
+					}
+				});
+				return deferred.promise;
+			},
+			login: function() {
+				var deferred = $q.defer();
+				$window.FB.login(function(response) {
+					if (!response || response.error) {
+						deferred.reject(response.error || 'Facebook::Error when login')
+					} else {
+						deferred.resolve(response);
+					}
+				}, {scope: 'public_profile,email'});
+				return deferred.promise;
+			}
+		}
 	}
 ]);
