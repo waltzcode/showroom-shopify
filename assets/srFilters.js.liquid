@@ -2,16 +2,16 @@
 var showroomFilters = angular.module('showroomFilters', []);
 
 showroomFilters.filter('jsonParse', function() {
-  return function(input) {
+   return function(input) {
     return angular.isObject(input) ? input : JSON.parse(input);
-  };
+   };
 });
 
 showroomFilters.filter('productLink', function() {
   return function(link) {
     if (link.indexOf('showroom-store.myshopify.com') == -1 && link.indexOf('amazon.com') == -1) {
       return '/pages/ext-product?url='+link;
-    }
+   }
     return link;
   };
 });

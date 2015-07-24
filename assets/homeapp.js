@@ -15,7 +15,7 @@ var app = angular.module('myApp', [
   "com.2fdevs.videogular",
   "com.2fdevs.videogular.plugins.poster"
 ]);
-    
+
 app.config(function ($interpolateProvider) {
   $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
 });
@@ -31,6 +31,7 @@ app.filter('jsonParse', function() {
 });
 
 app.factory('CheckSessionId', function($cookies, $http, $q) {
+  'use strict';
   var deferred = $q.defer();
   var sessionId = $cookies.get(Constants.sessionParam);
   var now = new Date();
@@ -45,11 +46,11 @@ app.factory('CheckSessionId', function($cookies, $http, $q) {
     bundleVersion: Constants.serviceVersion,
     langCode: ''
   };
-  
+
   if (sessionId) {
     $cookies.put(Constants.sessionParam, sessionId, {
       expires: exp
-    }); 
+    });
     deferred.resolve(sessionId);
   } else {
     $http({
@@ -60,21 +61,21 @@ app.factory('CheckSessionId', function($cookies, $http, $q) {
     .success(function(response) {
       sessionId = response.payload.sessionId;
       if (response.code == 1000) {
-        
+
         $cookies.put(Constants.sessionParam, response.payload.sessionId, {
           expires: exp
-        }); 
+        });
       	deferred.resolve(response.payload.sessionId);
-      } else { 
+      } else {
         deferred.reject('Error when register session');
       }
-      
+
     })
     .error(function(data) {
       deferred.reject(data);
-    })
+    });
   }
-  
+
   return deferred.promise;
 });
 
@@ -82,17 +83,16 @@ app.factory('CheckSessionId', function($cookies, $http, $q) {
 app.controller('myCtrl', [
   "$scope","$http","CheckSessionId", "$sce","VG_STATES",
   function($scope, $http, CheckSessionId, $sce, VG_STATES) {
-    
+
   $scope.cdn = Constants.showroomCDN;
   $scope.theme = '//cdn.shopify.com/s/files/1/0853/2260/t/6/assets/videogular.min.css?10437709724679761488';
-  $scope.currentAPI;
-    
+
   CheckSessionId
   .then(function(sessionId) {
     var featuredUrl = Constants.getFeaturedFeedURL + sessionId;
     var popularUrl = Constants.getPopularFeedURL + sessionId;
     var newestUrl = Constants.getNewestFeedURL + sessionId;
-    
+
     // Featured shows
     $http.get(featuredUrl)
     .success(function(response) {
@@ -100,7 +100,7 @@ app.controller('myCtrl', [
        	$scope.featuredVideos = [];
         $scope.featuredShows = response.payload.listShows;
         $scope.featuredProducts = response.payload.listProducts;
-        
+
         angular.forEach($scope.featuredShows, function(show, index) {
           $scope.featuredVideos[index] = {
             preload: 'none',
@@ -114,7 +114,7 @@ app.controller('myCtrl', [
             onPlayerReady: function($API) {
               var instance = this;
               instance.API = $API;
-            }, 
+            },
             play: function() {
               var instance = this;
               if ($scope.currentAPI && $scope.currentAPI.currentState == VG_STATES.PLAY) {
@@ -136,8 +136,8 @@ app.controller('myCtrl', [
     .error(function(data) {
       alert(data);
     });
-    
-    
+
+
     // Popular shows
     $http.get(popularUrl)
     .success(function(response) {
@@ -145,7 +145,7 @@ app.controller('myCtrl', [
        	$scope.popularVideos = [];
         $scope.popularShows = response.payload.listShows;
         $scope.popularProducts = response.payload.listProducts;
-        
+
         angular.forEach($scope.popularShows, function(show, index) {
           $scope.popularVideos[index] = {
             preload: 'none',
@@ -159,7 +159,7 @@ app.controller('myCtrl', [
             onPlayerReady: function($API) {
               var instance = this;
               instance.API = $API;
-            }, 
+            },
             play: function() {
               var instance = this;
               if ($scope.currentAPI && $scope.currentAPI.currentState == VG_STATES.PLAY) {
@@ -181,7 +181,7 @@ app.controller('myCtrl', [
     .error(function(data) {
       alert(data);
     });
-    
+
     // Newest shows
     $http.get(newestUrl)
     .success(function(response) {
@@ -189,7 +189,7 @@ app.controller('myCtrl', [
        	$scope.newestVideos = [];
         $scope.newestShows = response.payload.listShows;
         $scope.newestProducts = response.payload.listProducts;
-        
+
         angular.forEach($scope.newestShows, function(show, index) {
           $scope.newestVideos[index] = {
             preload: 'none',
@@ -203,7 +203,7 @@ app.controller('myCtrl', [
             onPlayerReady: function($API) {
               var instance = this;
               instance.API = $API;
-            }, 
+            },
             play: function() {
               var instance = this;
               if ($scope.currentAPI && $scope.currentAPI.currentState == VG_STATES.PLAY) {
@@ -225,7 +225,7 @@ app.controller('myCtrl', [
     .error(function(data) {
       alert(data);
     });
-    
+
   }, function(error) {
     console.log("Deo lay duoc sessionId, error: " + error);
   });
