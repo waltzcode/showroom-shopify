@@ -6,8 +6,14 @@
 		</a>
 	</div>
 	<div class="login-form">
-		<h1>Sign In</h1>
+		<h1>Sign Up</h1>
 		<form id="loginForm" novalidate="true">
+			<div>
+				<input type="text" placeholder="First name">
+			</div>
+			<div>
+				<input type="text" placeholder="Last name">
+			</div>
 			<div>
 				<input type="email" placeholder="Email" ng-model="email">
 			</div>
@@ -15,19 +21,12 @@
 				<input type="password" placeholder="password" ng-model="password">
 			</div>
 			<div>
-				<button type="submit" id="loginBtn" ng-click="loginEmail()">Sign in</button>
+				<button type="submit" id="loginBtn">Submit</button>
 			</div>
 		</form>
 		<div class="helper-links">
-			<a href="/#/forgotpwd" class="forgot-password">Forgot password?</a>
-			<a href="/#/signup" class="signup">Join us Now!</a>
+			<span>Already a member?</span>
+			<a href="/#/login" class="signup">Login here</a>
 		</div>
-	</div>
-	<h2 class="connect-line"><span>Or</span></h2>
-	<div class="social-buttons">
-		<button id="facebookBtn" ng-click="connectFacebook()">
-			<i class="fa fa-facebook-square fa-lg"></i>
-			Connect with Facebook
-		</button>
 	</div>
 </div>

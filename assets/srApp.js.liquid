@@ -28,38 +28,49 @@ showroomApp.config(function($sceDelegateProvider, $sceProvider) {
 //   $sceProvider.enabled(false);
 // });
 
-// Routing configuration
+/**
+ * Routing configuration
+ */
 showroomApp.config(function ($routeProvider) {
 	$routeProvider.
 		when('/', {
 			templateUrl: "{{ 'views-home.html' | asset_url }}",
 			controller: 'homeController'
-		}).
-		when('/login',{
+		})
+		.when('/login',{
 			templateUrl: "{{ 'views-login.html' | asset_url }}",
 			controller: 'loginController'
-		}).
-		otherwise({
+		})
+		.when('/signup',{
+			templateUrl: "{{ 'views-signup.html' | asset_url}}",
+			controller: 'loginController'
+		})
+		.when('/forgotpwd',{
+			templateUrl: "{{ 'views-reset-password.html' | asset_url}}",
+			controller: 'loginController'
+		})
+		.otherwise({
 			templateUrl: "{{ 'views-home.html' | asset_url }}",
 			controller: 'homeController'
 		});
 });
 
+/**
+ * Start up
+ */
 showroomApp.run([
 	'$rootScope',
 	'$log',
 	'userService',
 	'$q',
 	function($rootScope, $log, userService, $q) {
-		
+
 		// Check if use is logged in.
 		userService.getLoggedInAccountInfo()
 			.then(function(response) {
 				if (response.code == 1000) {
 					$rootScope.loggedIn = true;
 					$rootScope.userInfo = response.payload;
-					$log.debug("User has logged in ...");
-
 				}
 			}, function(error) {
 				$log.error(error);

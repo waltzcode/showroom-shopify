@@ -26,7 +26,7 @@ showroomServices.factory('sessionFactory', [
 		        return s ? "-" + p.substr(0,4) + "-" + p.substr(4,4) : p ;
 		    }
 		    return _p8() + _p8(true) + _p8(true) + _p8();
-		}
+		};
 
 		var data = {
 			deviceId: guid(),
@@ -75,7 +75,7 @@ showroomServices.factory('userService',[
 		var userService = {};
 		userService.registerEmailAccount = function(data) {
 			var deferred = $q.defer();
-			return sessionFactory
+			sessionFactory
 			.then(function(sessionId) {
 					var registerEmailAccountURL = SHOWROOM_CONSTANTS.serviceHost + SHOWROOM_CONSTANTS.registerEmailAccountURL + sessionId;
 					$http.post(registerEmailAccountURL, data)
@@ -179,7 +179,7 @@ showroomServices.factory('userService',[
 					deferred.reject(error);
 				});
 			return deferred.promise;
-		}
+		};
 
 		userService.logout = function() {
 			var deferred = $q.defer();
@@ -197,7 +197,7 @@ showroomServices.factory('userService',[
 					deferred.reject(error);
 				});
 			return deferred.promise;
-		}
+		};
 
 		return userService;
 	}
@@ -212,10 +212,9 @@ showroomServices.factory('showService', [
 					.then(function(sessionId) {
 						var pageNumber = pagging.pageNumber || 0;
 						var pageSize = pagging.pageSize || 15;
-						var url = SHOWROOM_CONSTANTS.serviceHost
-							+ SHOWROOM_CONSTANTS.getGlobalLastestFeedURL
-							+ pageNumber + '/' + pageSize + '/'
-							+ sessionId;
+						var url = SHOWROOM_CONSTANTS.serviceHost +
+							SHOWROOM_CONSTANTS.getGlobalLastestFeedURL +
+							pageNumber + '/' + pageSize + '/' + sessionId;
 						return $http.get(url);
 					});
 			},
@@ -224,10 +223,9 @@ showroomServices.factory('showService', [
 					.then(function(sessionId) {
 						var pageNumber = pagging.pageNumber || 0;
 						var pageSize = pagging.pageSize || 15;
-						var url = SHOWROOM_CONSTANTS.serviceHost
-							+ SHOWROOM_CONSTANTS.getGlobalMostLikeFeedURL
-							+ pageNumber + '/' + pageSize + '/'
-							+ sessionId;
+						var url = SHOWROOM_CONSTANTS.serviceHost +
+							SHOWROOM_CONSTANTS.getGlobalMostLikeFeedURL +
+							pageNumber + '/' + pageSize + '/' + sessionId;
 						return $http.get(url);
 					});
 			},
@@ -236,10 +234,9 @@ showroomServices.factory('showService', [
 					.then(function(sessionId) {
 						var pageNumber = pagging.pageNumber || 0;
 						var pageSize = pagging.pageSize || 15;
-						var url = SHOWROOM_CONSTANTS.serviceHost
-							+ SHOWROOM_CONSTANTS.getGlobalMostViewFeedURL
-							+ pageNumber + '/' + pageSize + '/'
-							+ sessionId;
+						var url = SHOWROOM_CONSTANTS.serviceHost +
+							SHOWROOM_CONSTANTS.getGlobalMostViewFeedURL +
+							pageNumber + '/' + pageSize + '/' + sessionId;
 						return $http.get(url);
 					});
 			},
@@ -248,10 +245,9 @@ showroomServices.factory('showService', [
 					.then(function(sessionId) {
 						var pageNumber = pagging.pageNumber || 0;
 						var pageSize = pagging.pageSize || 15;
-						var url = SHOWROOM_CONSTANTS.serviceHost
-							+ SHOWROOM_CONSTANTS.getGlobalMostShareFeedURL
-							+ pageNumber + '/' + pageSize + '/'
-							+ sessionId;
+						var url = SHOWROOM_CONSTANTS.serviceHost +
+							SHOWROOM_CONSTANTS.getGlobalMostShareFeedURL +
+							pageNumber + '/' + pageSize + '/' + sessionId;
 						return $http.get(url);
 					});
 			},
@@ -260,10 +256,9 @@ showroomServices.factory('showService', [
 					.then(function(sessionId) {
 						var pageNumber = pagging.pageNumber || 0;
 						var pageSize = pagging.pageSize || 15;
-						var url = SHOWROOM_CONSTANTS.serviceHost
-							+ SHOWROOM_CONSTANTS.getGlobalFeaturedFeedURL
-							+ pageNumber + '/' + pageSize + '/'
-							+ sessionId;
+						var url = SHOWROOM_CONSTANTS.serviceHost +
+							SHOWROOM_CONSTANTS.getGlobalFeaturedFeedURL +
+							pageNumber + '/' + pageSize + '/' + sessionId;
 						return $http.get(url);
 					});
 			},
@@ -272,10 +267,9 @@ showroomServices.factory('showService', [
 					.then(function(sessionId) {
 						var pageNumber = pagging.pageNumber || 0;
 						var pageSize = pagging.pageSize || 15;
-						var url = SHOWROOM_CONSTANTS.serviceHost
-							+ SHOWROOM_CONSTANTS.getPersonalFeedURL
-							+ pageNumber + '/' + pageSize + '/'
-							+ sessionId;
+						var url = SHOWROOM_CONSTANTS.serviceHost +
+							SHOWROOM_CONSTANTS.getPersonalFeedURL + pageNumber + '/' + pageSize + '/' +
+							sessionId;
 						return $http.get(url);
 					});
 			},
@@ -284,10 +278,9 @@ showroomServices.factory('showService', [
 					.then(function(sessionId) {
 						var pageNumber = pagging.pageNumber || 0;
 						var pageSize = pagging.pageSize || 15;
-						var url = SHOWROOM_CONSTANTS.serviceHost
-							+ SHOWROOM_CONSTANTS.getPersonalShowURL
-							+ pageNumber + '/' + pageSize + '/'
-							+ sessionId;
+						var url = SHOWROOM_CONSTANTS.serviceHost +
+							SHOWROOM_CONSTANTS.getPersonalShowURL +
+							pageNumber + '/' + pageSize + '/' + sessionId;
 						return $http.get(url);
 					});
 			}
@@ -357,7 +350,7 @@ showroomServices.factory('videoService',[
 					}; // end videos[index]
 				}); // end angular.forEach
 				return videos;
-			};
+			}
 		};
 
 		return {
@@ -375,7 +368,7 @@ showroomServices.factory('facebookService',[
 				var deferred = $q.defer();
 				$window.FB.getLoginStatus(function(response) {
 					if (!response || response.error) {
-						deferred.reject(response.error || 'Facebook::Error when check login status.')
+						deferred.reject(response.error || 'Facebook::Error when check login status.');
 					} else {
 						deferred.resolve(response);
 					}
@@ -386,13 +379,13 @@ showroomServices.factory('facebookService',[
 				var deferred = $q.defer();
 				$window.FB.login(function(response) {
 					if (!response || response.error) {
-						deferred.reject(response.error || 'Facebook::Error when login')
+						deferred.reject(response.error || 'Facebook::Error when login');
 					} else {
 						deferred.resolve(response);
 					}
 				}, {scope: 'public_profile,email'});
 				return deferred.promise;
 			}
-		}
+		};
 	}
 ]);

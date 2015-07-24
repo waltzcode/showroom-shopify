@@ -13,31 +13,26 @@ showroomControllers.controller('homeController', [
 		$rootScope.removeBrand = false;
 		$rootScope.removeNav = false;
 		$rootScope.removeFooter = false;
-		$log.debug("Start getting all video");
 
 		var gettingPersonalFeedAndShow = function() {
 			if ($rootScope.loggedIn) {
 				showService.getPersonalFeed({pageNumber: 0, pageSize: 15})
 				.then(function(response) {
 					$scope.myFeedVideos = videoService.parseVideo({response: response.data});
-					console.debug("Finish getting my feed");
 				});
 				showService.getPersonalShow({pageNumber: 0, pageSize: 15})
 				.then(function(response) {
 					$scope.myShowVideos = videoService.parseVideo({response: response.data});
-					console.debug("Finish getting my feed");
 				});
 			} else {
 				$scope.$watch($rootScope.loggedIn, function() {
 					showService.getPersonalFeed({pageNumber: 0, pageSize: 15})
 					.then(function(response) {
 						$scope.myFeedVideos = videoService.parseVideo({response: response.data});
-						console.debug("Finish getting my feed");
 					});
 					showService.getPersonalShow({pageNumber: 0, pageSize: 15})
 					.then(function(response) {
 						$scope.myShowVideos = videoService.parseVideo({response: response.data});
-						console.debug("Finish getting my feed");
 					});
 				});
 			}
@@ -46,21 +41,18 @@ showroomControllers.controller('homeController', [
 			return showService.getGlobalFeaturedFeed({pageNumber: 0, pageSize: 15})
 			.then(function(response) {
 				$scope.featuredVideos = videoService.parseVideo({response: response.data});
-				console.debug("Finish getting featured video");
 			});
 		};
 		var gettingPopularVideos = function() {
 			return showService.getGlobalMostLikeFeed({pageNumber: 0, pageSize: 15})
 			.then(function(response) {
 				$scope.popularVideos = videoService.parseVideo({response: response.data});
-				console.debug("Finish getting popular video");
 			});
 		};
 		var gettingNewestVideos = function() {
 			return showService.getGlobalLastestFeed({pageNumber: 0, pageSize: 15})
 			.then(function(response) {
 				$scope.newestVideos = videoService.parseVideo({response: response.data});
-				console.debug("Finish getting newest video");
 			});
 		};
 		$q.all([
@@ -71,9 +63,6 @@ showroomControllers.controller('homeController', [
 		])
 		.catch(function(error) {
 			$log.error('Error when getting video: ' + error);
-		})
-		.finally(function() {
-			$log.debug("Finish getting all video");
 		});
 	}
 ]);
@@ -130,17 +119,8 @@ showroomControllers.controller('loginController', [
 			facebookService.login()
 				.then(function(response) {
 					if (response.status === 'connected') {
-						// Logged into your app and Facebook.
-						return facebookService.checkLoginStatus();
-					} else {
-						return Error('Nothing');
-					}
-				})
-				.then(function(response) { // after check facebook login status
-					if (response.status === 'connected') {
 						return userService.loginFacebookAccount({socialToken: response.authResponse.accessToken});
-					}
-					else {
+					} else {
 						return Error('Nothing');
 					}
 				})
@@ -165,7 +145,7 @@ showroomControllers.controller('loginController', [
 				}).catch(function(error) {
 					$log.error(error);
 				});
-		}
+		};
 	}
 ]);
 
