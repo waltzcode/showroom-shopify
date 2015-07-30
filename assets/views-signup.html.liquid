@@ -7,18 +7,35 @@
 	</div>
 	<div class="login-form">
 		<h1>Sign Up</h1>
-		<form id="loginForm" novalidate="true">
+
+		<form id="signupForm" name="signupForm" novalidate ng-submit="signup()">
 			<div>
-				<input type="text" placeholder="First name">
+				<span class="error-messages" ng-bind="message"></span>
 			</div>
 			<div>
-				<input type="text" placeholder="Last name">
+				<input type="text" name="firstName" placeholder="First name" ng-model="firstName" required>
+				<span class="error-messages" ng-show="signupForm.firstName.$invalid && showMessages">
+					<span ng-show="signupForm.firstName.$error.required">First name is required</span>
+				</span>
 			</div>
 			<div>
-				<input type="email" placeholder="Email" ng-model="email">
+				<input type="text" name="lastName" placeholder="Last name" ng-model="lastName" required>
+				<span class="error-messages" ng-show="signupForm.lastName.$invalid && showMessages">
+					<span ng-show="signupForm.lastName.$error.required">Last name is required</span>
+				</span>
 			</div>
 			<div>
-				<input type="password" placeholder="password" ng-model="password">
+				<input type="email" name="email" placeholder="Email" ng-model="email" required>
+				<span class="error-messages" ng-show="signupForm.email.$invalid && showMessages">
+					<span ng-show="signupForm.email.$error.required">Email is required</span>
+					<span ng-show="signupForm.email.$error.email">Invalid Email</span>
+				</span>
+			</div>
+			<div>
+				<input type="password" name="password" placeholder="password" ng-model="password" required>
+				<span class="error-messages" ng-show="signupForm.password.$invalid && showMessages">
+					<span ng-show="signupForm.password.$error.required">Email is required</span>
+				</span>
 			</div>
 			<div>
 				<button type="submit" id="loginBtn">Submit</button>
@@ -26,7 +43,7 @@
 		</form>
 		<div class="helper-links">
 			<span>Already a member?</span>
-			<a href="/#/login" class="signup">Login here</a>
+			<a href="/#/login" class="signup" style="text-align: left">Login here</a>
 		</div>
 	</div>
 </div>

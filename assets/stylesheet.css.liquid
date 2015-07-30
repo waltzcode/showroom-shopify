@@ -310,7 +310,8 @@ select {
   min-width: 200px;
   max-width: 100%;
   display: block;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
+  margin-top: 15px;
   background: #fff;
   font-size: {{ settings.font-size }};
 }
@@ -605,7 +606,6 @@ ul#nav li ul li a{
   color: {{ settings.nav_color }};
 }
 
-
 .searchbox {
   padding: 0;
 }
@@ -628,6 +628,7 @@ ul#nav li ul li a{
   max-width: 100px;
   text-align: right;
   display: inline-block;
+  margin: 0;
 }
 
 .searchbox form #q:focus {
@@ -709,27 +710,22 @@ h2 span { background: {{ settings.background }}; }
 }
 
 #homepage-products .product-loop .product-info {
-  padding: 5px 10px;
+  padding: 5px 0 0;
   line-height: 30px;
+  font-size: 18px;
+  color: #000;
 }
 
 #homepage-products .product-loop .product-info span {
-  color: #333;
   display: block;
 }
 
 #homepage-products .product-loop .product-info span.product-title {
   float: left;
-  text-transform: uppercase;
-  font-size: 15px;
-  color: #888;
 }
 
 #homepage-products .product-loop .product-info span.product-price {
   float: right;
-  font-weight: bold;
-  font-size: 16px;
-  color: #888;
 }
 
 #homepage-products .product-loop .product-action a {
@@ -761,7 +757,7 @@ h2 span { background: {{ settings.background }}; }
 }
 
 #homepage-products .product-loop .show-wrapper {
-  box-shadow: 1px 1px 3px rgba(0,0,0,.7);
+  /*box-shadow: 1px 1px 3px rgba(0,0,0,.7);*/
 }
 
 #promo-images { margin-top: 40px; margin-bottom: 40px; }
@@ -823,7 +819,7 @@ li.product { {% if settings.product-border %}border: 1px solid {{ settings.dotte
 li.product img { margin: 0 auto; max-height: 300px;}
 li.product img a { border: 0; }
 
-li.show { margin-bottom: 20px;}
+li.show { margin-bottom: 40px;}
 
 .first { clear: left; }
 
@@ -1643,7 +1639,7 @@ nav.shifter-navigation {
    border-top: 1px solid #ddd;
 }
 
-.login-container .helper-links a {
+.login-container .helper-links a, .login-container .helper-links span {
    display: inline-block;
    width: 49%;
    box-sizing: border-box;
@@ -1663,4 +1659,26 @@ nav.shifter-navigation {
    .login-container #logo {
       margin-top: 0;
    }
+}
+.error-messages {
+   color: red;
+}
+
+#forgot-password {
+   width: 400px;
+   max-width: 100%;
+}
+
+#forgot-password form label {
+   display: inline-block;
+}
+
+#forgot-password form input[type=email] {
+   min-width: 150px;
+   width: 100%;
+}
+
+#forgot-password form input[type=submit] {
+   float: right;
+   margin: 10px;
 }

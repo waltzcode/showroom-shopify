@@ -116,7 +116,7 @@
 
         <ul id="cart" class="desktop-6 mobile-3">
           <li class="searchbox">
-            <form action="/search" method="get">
+            <form action="/#/search" method="get">
               <input type="text" name="q" id="q" placeholder="{{ 'general.search.placeholder' | t }}" />
             </form>
           </li>
@@ -152,20 +152,28 @@
           <nav class="desktop-12 mobile-12">
 
             <ul id="nav">
-              {% for link in linklists.main-menu.links %}
-              <li>{{ link.title | link_to: link.url }}
-                {% capture child_list_handle %}{{ link.title | handleize }}{% endcapture %}
-                {% if linklists[child_list_handle] and linklists[child_list_handle].links.size > 0 %}
-                <span class="down"><i class="fa fa-chevron-down"></i></span>
-                <ul>
-                  {% for l in linklists[child_list_handle].links %}
-                  <li><a href="{{ l.url }}">{{ l.title }}</a></li>
-                  {% endfor %}
-                </ul>
-                {% endif %}
-              </li>
-              {% endfor %}
-
+               <li><a href="/#/">Home</a></li>
+               <li><a href="/#/featured">Futured</a></li>
+               <li><a href="/#/popular">Popular</a></li>
+               <li><a href="/#/newest">Newest</a></li>
+               <li ng-if="loggedIn"><a href="/#/myshow">My shows</a></a></li>
+               <li><a href="">Category</a>
+                  <ul>
+                     {% for link in linklists.main-menu.links %}
+                    <li>{{ link.title | link_to: link.url }}
+                      {% capture child_list_handle %}{{ link.title | handleize }}{% endcapture %}
+                      {% if linklists[child_list_handle] and linklists[child_list_handle].links.size > 0 %}
+                      <span class="down"><i class="fa fa-chevron-down"></i></span>
+                      <ul>
+                        {% for l in linklists[child_list_handle].links %}
+                        <li><a href="{{ l.url }}">{{ l.title }}</a></li>
+                        {% endfor %}
+                      </ul>
+                      {% endif %}
+                    </li>
+                    {% endfor %}
+                  </ul>
+               </li>
             </ul>
           </nav>
         </div>
@@ -243,18 +251,28 @@
 
   </div>
   <nav class="shifter-navigation">
-    {% for link in linklists.main-menu.links %}
-    <li>{{ link.title | link_to: link.url }}
-      {% capture child_list_handle %}{{ link.title | handleize }}{% endcapture %}
-      {% if linklists[child_list_handle] and linklists[child_list_handle].links.size > 0 %}
-      <ul class="sub">
-        {% for l in linklists[child_list_handle].links %}
-        <li><a href="{{ l.url }}">{{ l.title }}</a></li>
-        {% endfor %}
-      </ul>
-      {% endif %}
-    </li>
-    {% endfor %}
+     <li><a href="/#/">Home</a></li>
+     <li><a href="/#/featured">Futured</a></li>
+     <li><a href="/#/popular">Popular</a></li>
+     <li><a href="/#/newest">Newest</a></li>
+     <li ng-if="loggedIn"><a href="/#/myshow">My shows</a></a></li>
+     <li><a href="">Category</a>
+        <ul>
+           {% for link in linklists.main-menu.links %}
+           <li>{{ link.title | link_to: link.url }}
+             {% capture child_list_handle %}{{ link.title | handleize }}{% endcapture %}
+             {% if linklists[child_list_handle] and linklists[child_list_handle].links.size > 0 %}
+             <ul class="sub">
+               {% for l in linklists[child_list_handle].links %}
+               <li><a href="{{ l.url }}">{{ l.title }}</a></li>
+               {% endfor %}
+             </ul>
+             {% endif %}
+           </li>
+           {% endfor %}
+        </ul>
+     </li>
+
   </nav>
 
   <div id="fb-root"></div>

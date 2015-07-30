@@ -24,9 +24,9 @@ showroomApp.config(function($sceDelegateProvider, $sceProvider) {
 	//$sceProvider.enabled(false);
 });
 
-// showroomApp.config(function ($sceProvider) {
-//   $sceProvider.enabled(false);
-// });
+showroomApp.config(function ($sceProvider) {
+  $sceProvider.enabled(false);
+});
 
 /**
  * Routing configuration
@@ -43,11 +43,23 @@ showroomApp.config(function ($routeProvider) {
 		})
 		.when('/signup',{
 			templateUrl: "{{ 'views-signup.html' | asset_url}}",
-			controller: 'loginController'
+			controller: 'signupController'
 		})
-		.when('/forgotpwd',{
-			templateUrl: "{{ 'views-reset-password.html' | asset_url}}",
-			controller: 'loginController'
+		.when('/featured',{
+			templateUrl: "{{ 'views-featured.html' | asset_url}}",
+			controller: 'featuredController'
+		})
+		.when('/popular',{
+			templateUrl: "{{ 'views-popular.html' | asset_url}}",
+			controller: 'popularController'
+		})
+		.when('/newest',{
+			templateUrl: "{{ 'views-newest.html' | asset_url}}",
+			controller: 'newestController'
+		})
+		.when('/myshow',{
+			templateUrl: "{{ 'views-myshow.html' | asset_url}}",
+			controller: 'myshowController'
 		})
 		.otherwise({
 			templateUrl: "{{ 'views-home.html' | asset_url }}",

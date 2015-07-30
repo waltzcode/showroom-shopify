@@ -64,8 +64,7 @@ showroomControllers.controller('homeController', [
 		.catch(function(error) {
 			$log.error('Error when getting video: ' + error);
 		});
-	}
-]);
+	}]);
 
 showroomControllers.controller('loginController', [
 	'userService',
@@ -90,28 +89,34 @@ showroomControllers.controller('loginController', [
 		$scope.password = '';
 
 		$scope.loginEmail = function() {
-			userService.loginEmailAccount({
-				email: $scope.email,
-				password: $scope.password
-			}).then(function(response) {
-				$log.debug(response);
-				if (response.code == 1000) {
-					$rootScope.loggedIn = true;
-					// update user info to rootScope
-					userService.getLoggedInAccountInfo()
-						.then(function(response) {
-							if (response.code == 1000) {
-								$rootScope.userInfo = response.payload;
-							}
-						}, function(error) {
-							$log.error(error);
-						}).finally(function() {
-							$location.path('/');
-						});
-				}
-			}).catch(function(error) {
-				$log.error(error);
-			});
+			if ($scope.loginForm.$invalid) {
+				$scope.showMessages = true;
+			} else {
+				userService.loginEmailAccount({
+					email: $scope.email,
+					password: $scope.password
+				}).then(function(response) {
+					if (response.code == 1000) {
+						$rootScope.loggedIn = true;
+						// update user info to rootScope
+						userService.getLoggedInAccountInfo()
+							.then(function(response) {
+								if (response.code == 1000) {
+									$rootScope.userInfo = response.payload;
+								}
+							}, function(error) {
+								$log.error(error);
+							}).finally(function() {
+								$location.path('/');
+							});
+					} else {
+						$scope.message = 'Email or password is invalid.';
+					}
+				}).catch(function(error) {
+					$log.error(error);
+					$scope.message = 'Internal server error.';
+				});
+			}
 		};
 
 		$scope.connectFacebook = function() {
@@ -126,7 +131,6 @@ showroomControllers.controller('loginController', [
 				})
 				.then(function(response) {
 					if (response.code === 1000) {
-						$log.debug(response);
 						if (response.code == 1000) {
 							$rootScope.loggedIn = true;
 							// update user info to rootScope
@@ -146,15 +150,166 @@ showroomControllers.controller('loginController', [
 					$log.error(error);
 				});
 		};
-	}
-]);
+		$scope.popupForgetPwd = function() {
+			$.fancybox({
+				href: "#forgot-password"
+			});
+		};
+	}]);
 
-showroomControllers.controller('headerController', [
+showroomControllers.controller('forgotPwdController', [
+	'$scope',
 	'userService',
+	'$log',
+	function($scope, userService, $log) {
+		$scope.headerText = 'FORGOT PASSWORDS?';
+		$scope.message = '<p>Having a hard time remembering your SHOWROOM password? No worries. </p><p>We\'ll email you a link to reset it.</p>';
+
+		$scope.sendEmail = function() {
+			if ($scope.forgotPasswordForm.$valid) {
+				userService.resetEmailAccountPassword({
+					email: $scope.email
+				})
+				.then(function(response) {
+					if (response.code === 1000) {
+						$scope.resetSuccess = true;
+						$scope.headerText = 'You\'re almost back to SHOWROOM.';
+						$scope.message = '<p>We\'ve just sent an email that includes instructions and a link to reset your password.</p> ' + '<p>We\'ll have you back to the SHOWROOM in no time!</p>';
+					} else {
+						$scope.headerText = 'FAIL!';
+						$scope.message = '<p>' + response.message + '</p>';
+					}
+				})
+				.catch(function(error) {
+					$log.error(error);
+				});
+			} else {
+				$scope.showForgotMessages = true;
+			}
+		};
+	}]);
+
+showroomControllers.controller('signupController', [
 	'$scope',
 	'$rootScope',
+	'userService',
 	'$log',
-	function(userService, $scope, $rootScope, $log) {
+	'$location',
+	function($scope, $rootScope, userService, $log, $location) {
 
-	}
-]);
+		// Display Settings
+		$rootScope.removeHeader = true;
+		$rootScope.removeBrand = true;
+		$rootScope.removeNav = true;
+		$rootScope.removeFooter = true;
+
+		$scope.signup = function() {
+			$scope.showMessages = true;
+			if ($scope.signupForm.$valid) {
+				userService.registerEmailAccount({
+					email: $scope.email,
+					password: $scope.password,
+					firstName: $scope.firstName,
+					lastName: $scope.lastName
+				})
+				.then(function(response) {
+					if (response.code === 1000) {
+						// Login and redirect to the homepages.
+						userService.loginEmailAccount({
+							email: $scope.email,
+							password: $scope.password
+						}).then(function(response) {
+							if (response.code == 1000) {
+								$rootScope.loggedIn = true;
+								// update user info to rootScope
+								userService.getLoggedInAccountInfo()
+									.then(function(response) {
+										if (response.code == 1000) {
+											$rootScope.userInfo = response.payload;
+										}
+									}, function(error) {
+										$log.error(error);
+									}).finally(function() {
+										$location.path('/');
+									});
+							} else {
+								$scope.message = 'Email or password is invalid.';
+							}
+						}).catch(function(error) {
+							$log.error(error);
+							$scope.message = 'Internal server error.';
+						});
+					} else {
+						$scope.message = response.message;
+					}
+				}, function(error) {
+					$log.error(error);
+					$scope.message = error;
+				});
+			}
+		};
+	}]);
+
+showroomControllers.controller('featuredController', [
+	'$scope',
+	'$rootScope',
+	'showService',
+	'videoService',
+	'$log',
+	function($scope, $rootScope, showService, videoService, $log) {
+		showService.getGlobalFeaturedFeed({pageNumber: 0, pageSize: 15})
+		.then(function(response) {
+			$scope.featuredVideos = videoService.parseVideo({response: response.data});
+		});
+	}]);
+
+showroomControllers.controller('popularController', [
+	'$scope',
+	'$rootScope',
+	'showService',
+	'videoService',
+	'$log',
+	function($scope, $rootScope, showService, videoService, $log) {
+		showService.getGlobalMostLikeFeed({pageNumber: 0, pageSize: 15})
+		.then(function(response) {
+			$scope.popularVideos = videoService.parseVideo({response: response.data});
+		});
+	}]);
+
+showroomControllers.controller('newestController', [
+	'$scope',
+	'$rootScope',
+	'showService',
+	'videoService',
+	'$log',
+	function($scope, $rootScope, showService, videoService, $log) {
+		showService.getGlobalLastestFeed({pageNumber: 0, pageSize: 15})
+		.then(function(response) {
+			$scope.newestVideos = videoService.parseVideo({response: response.data});
+		});
+	}]);
+
+showroomControllers.controller('myshowController', [
+	'$scope',
+	'$rootScope',
+	'showService',
+	'videoService',
+	'$log',
+	function($scope, $rootScope, showService, videoService, $log) {
+		if ($rootScope.loggedIn) {
+			showService.getPersonalShow({pageNumber: 0, pageSize: 15})
+			.then(function(response) {
+				$scope.myShowVideos = videoService.parseVideo({response: response.data});
+			});
+		}
+	}]);
+
+showroomControllers.controller('headerController', [
+	'$scope',
+	'$rootScope',
+	'showService',
+	'videoService',
+	'$log',
+	function($scope, $rootScope, showService, videoService, $log) {
+
+	}]);
