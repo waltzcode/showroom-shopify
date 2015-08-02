@@ -8,7 +8,6 @@
   <meta charset="utf-8" />
 
   {% include 'google-fonts' %}
-
   <!-- Basic Page Needs
 ================================================== -->
 
@@ -113,13 +112,7 @@
           <li><a href="/#/invite">INVITE FRIENDS</a></li>
           <li><a target="_blank" href="https://itunes.apple.com/GB/app/id787053829?mt=8">DOWNLOAD APP</a></li>
         </ul>
-
         <ul id="cart" class="desktop-6 mobile-3">
-          <li class="searchbox">
-            <form action="/#/search" method="get">
-              <input type="text" name="q" id="q" placeholder="{{ 'general.search.placeholder' | t }}" />
-            </form>
-          </li>
           <li class="cart-count">
             <a href="#">MESSAGES (0)</a>
           </li>
@@ -127,7 +120,6 @@
             <a href="/cart">{{ 'layout.cart.my_cart' | t }} ({{ cart.item_count }})</a>
           </li>
         </ul>
-
          <span class="shifter-handle">Menu</span>
 
       </div>
@@ -153,11 +145,10 @@
 
             <ul id="nav">
                <li><a href="/#/">Home</a></li>
-               <li><a href="/#/featured">Futured</a></li>
+               <li><a href="/#/featured">Featured</a></li>
                <li><a href="/#/popular">Popular</a></li>
                <li><a href="/#/newest">Newest</a></li>
-               <li ng-if="loggedIn"><a href="/#/myshow">My shows</a></a></li>
-               <li><a href="">Category</a>
+               <li><a href="">Channel</a>
                   <ul>
                      {% for link in linklists.main-menu.links %}
                     <li>{{ link.title | link_to: link.url }}
@@ -174,6 +165,8 @@
                     {% endfor %}
                   </ul>
                </li>
+               <li ng-if="loggedIn"><a href="/#/myshow">My shows</a></a></li>
+               <li><a href="" rel="nofollow" title="Search"><i class="fa fa-search fa-lg fa-fw"></i></a></li>
             </ul>
           </nav>
         </div>
@@ -252,11 +245,10 @@
   </div>
   <nav class="shifter-navigation">
      <li><a href="/#/">Home</a></li>
-     <li><a href="/#/featured">Futured</a></li>
+     <li><a href="/#/featured">Featured</a></li>
      <li><a href="/#/popular">Popular</a></li>
      <li><a href="/#/newest">Newest</a></li>
-     <li ng-if="loggedIn"><a href="/#/myshow">My shows</a></a></li>
-     <li><a href="">Category</a>
+     <li><a href="">Channel</a>
         <ul>
            {% for link in linklists.main-menu.links %}
            <li>{{ link.title | link_to: link.url }}
@@ -272,7 +264,7 @@
            {% endfor %}
         </ul>
      </li>
-
+     <li ng-if="loggedIn"><a href="/#/myshow">My shows</a></a></li>
   </nav>
 
   <div id="fb-root"></div>
