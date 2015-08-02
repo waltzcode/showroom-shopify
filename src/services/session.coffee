@@ -1,10 +1,7 @@
 angular.module 'showroomServices'
 .factory 'sessionService', [
-	'$cookies'
-	'$http'
-	'$q'
-	'SHOWROOM_CONSTANTS'
-	($cookies, $http, $q, SHOWROOM_CONSTANTS) ->
+	'$cookies', '$http', '$q', 'SHOWROOM_CONSTANTS', '$log'
+	($cookies, $http, $q, SHOWROOM_CONSTANTS, $log) ->
 		{
 			getSessionId: ->
 				deferred = $q.defer()
@@ -32,13 +29,13 @@ angular.module 'showroomServices'
 					$cookies.put SHOWROOM_CONSTANTS.sessionParam, sessionId, expires: exp
 					deferred.resolve sessionId
 				else
-					$http.post SHOWROOM_CONSTANTS.serviceHost + SHOWROOM_CONSTANTS.registerSessionURL, data: data
+					$http.post SHOWROOM_CONSTANTS.serviceHost + SHOWROOM_CONSTANTS.registerSessionURL, data
 					.then (response) ->
-						if response.code == 1000
-							$cookies.put SHOWROOM_CONSTANTS.sessionParam, response.payload.sessionId, expires: exp
-							deferred.resolve response.payload.sessionId
+						if response.data.code == 1000
+							$cookies.put SHOWROOM_CONSTANTS.sessionParam, response.data.payload.sessionId, expires: exp
+							deferred.resolve response.data.payload.sessionId
 						else
-							deferred.reject response.message
+							deferred.reject response.data.message
 					.catch (error) -> deferred.reject error
 				deferred.promise
 

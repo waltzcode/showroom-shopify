@@ -101,7 +101,7 @@
 </head>
 
 <body class="gridlock shifter {{ template }}">
-    <header ng-if="!removeHeader" ng-controller="headerController">
+    <header ng-if="!removeHeader">
       <div class="row">
         <ul id="topNav" class="desktop-6 mobile-3">
           <li class="top-logo"><a href="/#/"><img src="{{ 'top-logo.png' | asset_url }}" alt="{{ shop.name }}"/></a></li>
@@ -339,11 +339,12 @@
   	{{ 'vg-buffering.min.js' | asset_url | script_tag }}
   	{{ 'vg-poster.min.js' | asset_url | script_tag }}
   	{{ 'vg-overlay-play.min.js' | asset_url | script_tag }}
-   {{ 'srApp.js' | asset_url | script_tag }}
+{% comment %}   {{ 'srApp.js' | asset_url | script_tag }}
    {{ 'srConstants.js' | asset_url | script_tag }}
    {{ 'srServices.js' | asset_url | script_tag }}
    {{ 'srControllers.js' | asset_url | script_tag }}
    {{ 'srDirectives.js' | asset_url | script_tag }}
-   {{ 'srFilters.js' | asset_url | script_tag }}
+   {{ 'srFilters.js' | asset_url | script_tag }}{% endcomment %}
+   {{ 'app.min.js' | asset_url | script_tag }}
 </body>
 </html>

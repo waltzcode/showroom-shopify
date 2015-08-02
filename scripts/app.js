@@ -126,7 +126,7 @@
   ]);
 
   angular.module('showroomServices').factory('sessionService', [
-    '$cookies', '$http', '$q', 'SHOWROOM_CONSTANTS', function($cookies, $http, $q, SHOWROOM_CONSTANTS) {
+    '$cookies', '$http', '$q', 'SHOWROOM_CONSTANTS', '$log', function($cookies, $http, $q, SHOWROOM_CONSTANTS, $log) {
       return {
         getSessionId: function() {
           var data, deferred, exp, guid, now, sessionId;
@@ -163,16 +163,14 @@
             });
             deferred.resolve(sessionId);
           } else {
-            $http.post(SHOWROOM_CONSTANTS.serviceHost + SHOWROOM_CONSTANTS.registerSessionURL, {
-              data: data
-            }).then(function(response) {
-              if (response.code === 1000) {
-                $cookies.put(SHOWROOM_CONSTANTS.sessionParam, response.payload.sessionId, {
+            $http.post(SHOWROOM_CONSTANTS.serviceHost + SHOWROOM_CONSTANTS.registerSessionURL, data).then(function(response) {
+              if (response.data.code === 1000) {
+                $cookies.put(SHOWROOM_CONSTANTS.sessionParam, response.data.payload.sessionId, {
                   expires: exp
                 });
-                return deferred.resolve(response.payload.sessionId);
+                return deferred.resolve(response.data.payload.sessionId);
               } else {
-                return deferred.reject(response.message);
+                return deferred.reject(response.data.message);
               }
             })["catch"](function(error) {
               return deferred.reject(error);
@@ -196,7 +194,7 @@
   ]);
 
   angular.module('showroomServices').factory('showService', [
-    'SHOWROOM_CONSTANTS', 'sessionService', '$http', '$q', function(SHOWROOM_CONSTANTS, sessionService) {
+    'SHOWROOM_CONSTANTS', 'sessionService', function(SHOWROOM_CONSTANTS, sessionService) {
       var buildUri;
       buildUri = function(uri, pagging) {
         var pageNumber, pageSize;
@@ -206,10 +204,25 @@
       };
       return {
         getGlobalLastestFeed: function(pagging) {
-          return sessionService.callService('GET', buildUri(SHOWROOM_CONSTANTS.getGlobalLastestFeedURL));
+          return sessionService.callService('GET', buildUri(SHOWROOM_CONSTANTS.getGlobalLastestFeedURL, pagging));
         },
         getGlobalMostLikeFeed: function(pagging) {
-          return sessionService.callService('GET', buildUri(SHOWROOM_CONSTANTS.getGlobalMostLikeFeedURL));
+          return sessionService.callService('GET', buildUri(SHOWROOM_CONSTANTS.getGlobalMostLikeFeedURL, pagging));
+        },
+        getGlobalMostViewFeed: function(pagging) {
+          return sessionService.callService('GET', buildUri(SHOWROOM_CONSTANTS.getGlobalMostViewFeedURL, pagging));
+        },
+        getGlobalMostShareFeed: function(pagging) {
+          return sessionService.callService('GET', buildUri(SHOWROOM_CONSTANTS.getGlobalMostShareFeedURL, pagging));
+        },
+        getGlobalFeaturedFeed: function(pagging) {
+          return sessionService.callService('GET', buildUri(SHOWROOM_CONSTANTS.getGlobalFeaturedFeedURL, pagging));
+        },
+        getPersonalFeed: function(pagging) {
+          return sessionService.callService('GET', buildUri(SHOWROOM_CONSTANTS.getPersonalFeedURL, pagging));
+        },
+        getPersonalShow: function(pagging) {
+          return sessionService.callService('GET', buildUri(SHOWROOM_CONSTANTS.getPersonalShowURL, pagging));
         }
       };
     }
@@ -242,5 +255,152 @@
       };
     }
   ]);
+
+  angular.module('showroomServices').factory('videoService', [
+    'SHOWROOM_CONSTANTS', 'VG_STATES', '$filter', '$sce', '$rootScope', function(SHOWROOM_CONSTANTS, VG_STATES, $filter, $sce, $rootScope) {
+      var parseVideo;
+      parseVideo = function(config) {
+        var index, products, show, shows, videos;
+        this.response = config.response;
+        this.currencySymbol = config.currencySymbol || '$';
+        this.exceprtTitleLength = config.exceprtTitleLength || 30;
+        this.excerptMore = config.excerptMore || '...';
+        this.videoSize = config.videoSize || '400';
+        this.thumbnailSize = config.thumbnailSize || '700';
+        if (this.response.code === 1000) {
+          shows = this.response.payload.listShows;
+          products = this.response.payload.listProducts;
+          return videos = (function() {
+            var i, len, results;
+            results = [];
+            for (index = i = 0, len = shows.length; i < len; index = ++i) {
+              show = shows[index];
+              results.push({
+                preload: 'none',
+                sources: [
+                  {
+                    src: $sce.trustAsResourceUrl(SHOWROOM_CONSTANTS.showroomCDN + show.videoSets[this.videoSize]),
+                    type: 'video/mp4'
+                  }
+                ],
+                poster: $sce.trustAsResourceUrl(SHOWROOM_CONSTANTS.showroomCDN + show.thumbnailSets[this.thumbnailSize]),
+                onPlayerReady: function($API) {
+                  return this.API = $API;
+                },
+                play: function() {
+                  if ($rootScope.currentAPI && $rootScope.currentAPI.currentState === VG_STATES.PLAY) {
+                    $rootScope.currentAPI.stop();
+                  }
+                  if (this.API && this.API.currentAPI !== VG_STATES.PLAY) {
+                    $rootScope.currentAPI = this.API;
+                    return this.API.play();
+                  }
+                },
+                likeCounter: show.likeCounter,
+                viewCounter: show.viewCounter,
+                commentCounter: show.commentCounter,
+                shareCounter: show.shareCounter,
+                productName: $filter('excerptTitle')(products[index].name, this.exceprtTitleLength, this.excerptMore),
+                productTitle: products[index].name,
+                price: $filter('currency')(products[index].price, this.currencySymbol, 2),
+                productLinkUrl: $filter('productLink')($filter('jsonParse')(products[index].metaData).url),
+                productLinkTarget: $filter('productTarget')($filter('jsonParse')(products[index].metaData).url)
+              });
+            }
+            return results;
+          }).call(this);
+        }
+      };
+      return {
+        parseVideo: parseVideo
+      };
+    }
+  ]);
+
+  angular.module('showroomControllers').controller('HomeController', [
+    'showService', 'videoService', '$scope', '$rootScope', '$log', '$q', function(showService, videoService, $scope, $rootScope, $log, $q) {
+      $rootScope.removeHeader = false;
+      $rootScope.removeBrand = false;
+      $rootScope.removeNav = false;
+      $rootScope.removeFooter = false;
+      if ($rootScope.loggedIn) {
+        showService.getPersonalFeed({
+          pageNumber: 0,
+          pageSize: 15
+        }).then(function(response) {
+          return $scope.myFeedVideos = videoService.parseVideo({
+            response: response.data
+          });
+        });
+        showService.getPersonalShow({
+          pageNumber: 0,
+          pageSize: 15
+        }).then(function(response) {
+          return $scope.myShowVideos = videoService.parseVideo({
+            response: response.data
+          });
+        });
+      }
+      showService.getGlobalFeaturedFeed({
+        pageNumber: 0,
+        pageSize: 15
+      }).then(function(response) {
+        return $scope.featuredVideos = videoService.parseVideo({
+          response: response.data
+        });
+      });
+      showService.getGlobalMostLikeFeed({
+        pageNumber: 0,
+        pageSize: 15
+      }).then(function(response) {
+        return $scope.popularVideos = videoService.parseVideo({
+          response: response.data
+        });
+      });
+      return showService.getGlobalLastestFeed({
+        pageNumber: 0,
+        pageSize: 15
+      }).then(function(response) {
+        return $scope.newestVideos = videoService.parseVideo({
+          response: response.data
+        });
+      });
+    }
+  ]);
+
+  angular.module('showroomFilters').filter('jsonParse', function() {
+    return function(input) {
+      if (angular.isObject(input)) {
+        return input;
+      } else {
+        return JSON.parse(input);
+      }
+    };
+  }).filter('productLink', function() {
+    return function(link) {
+      if (link.indexOf('showroom-store.myshopify.com') === -1 && link.indexOf('amazon.com') === -1 && link.indexOf('store.showroomapp.tv') === -1) {
+        return '/pages/ext-product?url=' + link;
+      } else {
+        return link;
+      }
+    };
+  }).filter('productTarget', function() {
+    return function(link) {
+      if (link.indexOf('amazon' === -1)) {
+        return '_self';
+      } else {
+        return '_blank';
+      }
+    };
+  }).filter('excerptTitle', function() {
+    return function(input, length, excerpt_more) {
+      if (input.length > length) {
+        input = input.substring(0, length);
+        input = input.substring(0, input.lastIndexOf(' ') + 1);
+        input += excerpt_more;
+      }
+      return input;
+    };
+  });
 
 }).call(this);
