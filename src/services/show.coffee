@@ -22,5 +22,11 @@ angular.module 'showroomServices'
 				sessionService.callService 'GET', buildUri(SHOWROOM_CONSTANTS.getPersonalFeedURL, pagging)
 			getPersonalShow: (pagging) ->
 				sessionService.callService 'GET', buildUri(SHOWROOM_CONSTANTS.getPersonalShowURL, pagging)
+			searchShowByKeywords: (options) ->
+				keywords = options.keywords
+				pageNumber = options.pageNumber || 0
+				pageSize = options.pageSize || 15
+				url = SHOWROOM_CONSTANTS.searchShowByKeywordsURL + keywords + '/' + pageNumber + '/' + pageSize + '/'
+				sessionService.callService 'GET', url
 		}
 ]

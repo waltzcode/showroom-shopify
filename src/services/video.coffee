@@ -10,7 +10,7 @@ angular.module 'showroomServices'
 			@videoSize = config.videoSize || '400'
 			@thumbnailSize = config.thumbnailSize || '700'
 			if @response.code == 1000
-				shows = @response.payload.listShows
+				shows = @response.payload.listShows || @response.payload.items
 				products = @response.payload.listProducts;
 				videos = for show, index in shows
 					preload: 'none'

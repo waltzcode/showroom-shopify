@@ -20,3 +20,9 @@ angular.module 'showroomFilters'
 			input = input.substring 0, input.lastIndexOf(' ') + 1
 			input += excerpt_more
 		input
+.filter 'asset_url', [
+	'SHOWROOM_CONSTANTS',
+	(SHOWROOM_CONSTANTS) ->
+		(input) ->
+			SHOWROOM_CONSTANTS.showroomCDN + input
+]

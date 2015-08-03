@@ -84,6 +84,11 @@
       // Fancybox Join our mailing list popup
       $(document).ready(function(){
 
+        $('#search').click(function(event) {
+          $('#search, #searchPanel').toggleClass('expanded');
+
+        });
+
         var check_cookie = $.cookie('mailing_list_popup');
         if(check_cookie == null){
           $.cookie('mailing_list_popup', 'expires_seven_days', { expires: 7 });
@@ -139,7 +144,7 @@
           </div>
       </div>
 
-      <div class="row" ng-if="!removeNav">
+      <div class="row" ng-show="!removeNav" ng-controller="HeaderController">
         <div id="navigation">
           <nav class="desktop-12 mobile-12">
 
@@ -166,9 +171,17 @@
                   </ul>
                </li>
                <li ng-if="loggedIn"><a href="/#/myshow">My shows</a></a></li>
-               <li><a href="" rel="nofollow" title="Search"><i class="fa fa-search fa-lg fa-fw"></i></a></li>
+               <li><a href="" id="search" rel="nofollow" title="Search"><i class="fa fa-search fa-lg fa-fw"></i></a></li>
             </ul>
           </nav>
+        </div>
+        <div id="searchPanel" class="desktop-12 mobile-12">
+          <form name="userSearchForm" novalidate ng-submit="searchUser()">
+            <input type="text" name="q" placeholder="Search account" ng-model="userKeywords">
+          </form>
+          <form name="showSearchForm" novalidate ng-submit="searchShow()">
+            <input type="text" name="q" placeholder="Search show" ng-model="showKeywords">
+          </form>
         </div>
       </div>
 

@@ -31,6 +31,8 @@
     loginEmailAccountURL: '/account/email/login/',
     loginFacebookAccountURL: '/account/facebook/login/',
     getLoggedInAccountInfoURL: '/account/me/info/',
+    searchAccountByKeywordsURL: '/search/account/name/',
+    searchShowByKeywordsURL: '/search/show/product/',
     logoutURL: '/account/me/logout/',
     showroomCDN: '//cdn.showroomapp.tv/'
   });
@@ -87,6 +89,12 @@
       }).when('/myshow', {
         templateUrl: "{{ 'views-list-show.html' | asset_url }}",
         controller: 'MyShowController'
+      }).when('/user/search', {
+        templateUrl: "{{ 'views-user-search.html' | asset_url }}",
+        controller: 'UserSearchController'
+      }).when('/show/search', {
+        templateUrl: "{{ 'views-show-search.html' | asset_url }}",
+        controller: 'ShowSearchController'
       }).otherwise({
         templateUrl: "{{ 'views-home.html' | asset_url }}",
         controller: 'HomeController'
@@ -223,6 +231,14 @@
         },
         getPersonalShow: function(pagging) {
           return sessionService.callService('GET', buildUri(SHOWROOM_CONSTANTS.getPersonalShowURL, pagging));
+        },
+        searchShowByKeywords: function(options) {
+          var keywords, pageNumber, pageSize, url;
+          keywords = options.keywords;
+          pageNumber = options.pageNumber || 0;
+          pageSize = options.pageSize || 15;
+          url = SHOWROOM_CONSTANTS.searchShowByKeywordsURL + keywords + '/' + pageNumber + '/' + pageSize + '/';
+          return sessionService.callService('GET', url);
         }
       };
     }
@@ -251,6 +267,14 @@
         },
         logout: function() {
           return sessionService.callService('GET', SHOWROOM_CONSTANTS.logoutURL, null);
+        },
+        searchAccountByKeywords: function(options) {
+          var keywords, pageNumber, pageSize, url;
+          keywords = options.keywords;
+          pageNumber = options.pageNumber || 0;
+          pageSize = options.pageSize || 15;
+          url = SHOWROOM_CONSTANTS.searchAccountByKeywordsURL + keywords + '/' + pageNumber + '/' + pageSize + '/';
+          return sessionService.callService('GET', url);
         }
       };
     }
@@ -268,7 +292,7 @@
         this.videoSize = config.videoSize || '400';
         this.thumbnailSize = config.thumbnailSize || '700';
         if (this.response.code === 1000) {
-          shows = this.response.payload.listShows;
+          shows = this.response.payload.listShows || this.response.payload.items;
           products = this.response.payload.listProducts;
           return videos = (function() {
             var i, len, results;
@@ -331,8 +355,25 @@
     }
   ]);
 
+  angular.module('showroomControllers').controller('HeaderController', [
+    '$scope', '$location', function($scope, $location) {
+      $scope.searchUser = function() {
+        if ($scope.userKeywords) {
+          $location.search('q', $scope.userKeywords);
+          return $location.path('/user/search');
+        }
+      };
+      return $scope.searchShow = function() {
+        if ($scope.showKeywords) {
+          $location.search('q', $scope.showKeywords);
+          return $location.path('/show/search');
+        }
+      };
+    }
+  ]);
+
   angular.module('showroomControllers').controller('HomeController', [
-    'showService', 'videoService', '$scope', '$rootScope', '$log', '$q', function(showService, videoService, $scope, $rootScope, $log, $q) {
+    'showService', 'videoService', '$scope', '$rootScope', '$log', '$q', '$location', function(showService, videoService, $scope, $rootScope, $log, $q, $location) {
       $rootScope.removeHeader = false;
       $rootScope.removeBrand = false;
       $rootScope.removeNav = false;
@@ -521,6 +562,27 @@
     }
   ]);
 
+  angular.module('showroomControllers').controller('ShowSearchController', [
+    'showService', 'videoService', '$scope', '$location', '$log', function(showService, videoService, $scope, $location, $log) {
+      $scope.keywords = $location.search().q;
+      return showService.searchShowByKeywords({
+        keywords: $scope.keywords
+      }).then(function(response) {
+        $scope.header = 'Search result for \'' + $scope.keywords + '\'';
+        if (response.data.code === 1000) {
+          $scope.shows = response.data.payload.items;
+        }
+        $scope.totalItem = response.data.payload.totalItem;
+        $scope.videos = videoService.parseVideo({
+          response: response.data
+        });
+        if (response.data.code !== 1000) {
+          return $scope.message = response.data.message;
+        }
+      });
+    }
+  ]);
+
   angular.module('showroomControllers').controller('SignUpController', [
     '$scope', '$rootScope', 'userService', '$log', '$location', function($scope, $rootScope, userService, $log, $location) {
       $rootScope.removeHeader = true;
@@ -569,6 +631,22 @@
     }
   ]);
 
+  angular.module('showroomControllers').controller('UserSearchController', [
+    'userService', '$scope', '$location', '$log', function(userService, $scope, $location, $log) {
+      $scope.keywords = $location.search().q;
+      return userService.searchAccountByKeywords({
+        keywords: $scope.keywords
+      }).then(function(response) {
+        if (response.data.code === 1000) {
+          $scope.users = response.data.payload.items;
+        }
+        if (response.data.code !== 1000) {
+          return $scope.message = response.data.message;
+        }
+      });
+    }
+  ]);
+
   angular.module('showroomFilters').filter('jsonParse', function() {
     return function(input) {
       if (angular.isObject(input)) {
@@ -602,6 +680,12 @@
       }
       return input;
     };
-  });
+  }).filter('asset_url', [
+    'SHOWROOM_CONSTANTS', function(SHOWROOM_CONSTANTS) {
+      return function(input) {
+        return SHOWROOM_CONSTANTS.showroomCDN + input;
+      };
+    }
+  ]);
 
 }).call(this);

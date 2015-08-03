@@ -17,5 +17,11 @@ angular.module 'showroomServices'
 				sessionService.callService 'GET', SHOWROOM_CONSTANTS.getLoggedInAccountInfoURL, null
 			logout: ->
 				sessionService.callService 'GET', SHOWROOM_CONSTANTS.logoutURL, null
+			searchAccountByKeywords: (options) ->
+				keywords = options.keywords
+				pageNumber = options.pageNumber || 0
+				pageSize = options.pageSize || 15
+				url = SHOWROOM_CONSTANTS.searchAccountByKeywordsURL + keywords + '/' + pageNumber + '/' + pageSize + '/'
+				sessionService.callService 'GET', url
 		}
 ]

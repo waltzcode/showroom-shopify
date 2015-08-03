@@ -1,13 +1,12 @@
 angular.module 'showroomControllers'
 .controller 'HomeController', [
-	'showService', 'videoService', '$scope', '$rootScope', '$log', '$q'
-	(showService, videoService, $scope, $rootScope, $log, $q) ->
+	'showService', 'videoService', '$scope', '$rootScope', '$log', '$q', '$location'
+	(showService, videoService, $scope, $rootScope, $log, $q, $location) ->
 		# View Setttings
 		$rootScope.removeHeader = false
 		$rootScope.removeBrand = false
 		$rootScope.removeNav = false
 		$rootScope.removeFooter = false
-		
 		if $rootScope.loggedIn
 			showService.getPersonalFeed pageNumber: 0, pageSize: 15
 			.then (response) -> $scope.myFeedVideos = videoService.parseVideo response: response.data

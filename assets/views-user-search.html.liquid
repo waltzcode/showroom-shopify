@@ -1,0 +1,4 @@
+<div ng-repeat="user in users">
+	<img alt="User avatar" ng-src="{[{user.avatarUrl | asset_url}]}">
+	<span>{[{user.firstName + ' ' + user.lastName}]}</span>
+</div>

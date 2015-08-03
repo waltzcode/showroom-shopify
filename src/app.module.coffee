@@ -41,6 +41,8 @@ showroomApp.constant 'SHOWROOM_CONSTANTS', {
 	loginEmailAccountURL: '/account/email/login/'
 	loginFacebookAccountURL: '/account/facebook/login/'
 	getLoggedInAccountInfoURL: '/account/me/info/'
+	searchAccountByKeywordsURL: '/search/account/name/'
+	searchShowByKeywordsURL: '/search/show/product/'
 	logoutURL: '/account/me/logout/'
 	# Showroom CDN
 	showroomCDN: '//cdn.showroomapp.tv/'
