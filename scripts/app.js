@@ -77,13 +77,13 @@
         controller: 'SignUpController'
       }).when('/featured', {
         templateUrl: "{{ 'views-list-show.html' | asset_url }}",
-        controller: 'FeatureController'
+        controller: 'FeaturedController'
       }).when('/popular', {
         templateUrl: "{{ 'views-list-show.html' | asset_url }}",
         controller: 'PopularController'
       }).when('/newest', {
         templateUrl: "{{ 'views-list-show.html' | asset_url }}",
-        controller: 'NewsetController'
+        controller: 'NewestController'
       }).when('/myshow', {
         templateUrl: "{{ 'views-list-show.html' | asset_url }}",
         controller: 'MyShowController'
@@ -317,6 +317,20 @@
     }
   ]);
 
+  angular.module('showroomControllers').controller('FeaturedController', [
+    '$scope', 'showService', 'videoService', '$log', function($scope, showService, videoService, $log) {
+      $scope.header = 'Featured';
+      return showService.getGlobalFeaturedFeed({
+        pageNumber: 0,
+        pageSize: 15
+      }).then(function(response) {
+        return $scope.videos = videoService.parseVideo({
+          response: response.data
+        });
+      });
+    }
+  ]);
+
   angular.module('showroomControllers').controller('HomeController', [
     'showService', 'videoService', '$scope', '$rootScope', '$log', '$q', function(showService, videoService, $scope, $rootScope, $log, $q) {
       $rootScope.removeHeader = false;
@@ -365,6 +379,193 @@
           response: response.data
         });
       });
+    }
+  ]);
+
+  angular.module('showroomControllers').controller('LoginController', [
+    'userService', 'facebookService', '$scope', '$rootScope', '$log', '$location', function(userService, facebookService, $scope, $rootScope, $log, $location) {
+      $rootScope.removeHeader = true;
+      $rootScope.removeBrand = true;
+      $rootScope.removeNav = true;
+      $rootScope.removeFooter = true;
+      $scope.errors = [];
+      if ($rootScope.loggedIn) {
+        $location.patch('/');
+      }
+      $scope.email = '';
+      $scope.password = '';
+      $scope.loginEmail = function() {
+        if ($scope.loginForm.$invalid) {
+          return $scope.showMessages = true;
+        } else {
+          return userService.loginEmailAccount({
+            email: $scope.email,
+            password: $scope.password
+          }).then(function(response) {
+            if (response.data.code === 1000) {
+              $rootScope.loggedIn = true;
+              return userService.getLoggedInAccountInfo().then(function(response) {
+                if (response.data.code === 1000) {
+                  return $rootScope.userInfo = response.data.payload;
+                }
+              })["finally"](function() {
+                return $location.path('/');
+              });
+            } else {
+              return $scope.message = 'Email or password is invalid.';
+            }
+          })["catch"](function(error) {
+            $scope.message = 'Internal server error';
+            return $log.error(error);
+          });
+        }
+      };
+      $scope.connectFacebook = function() {
+        return facebookService.login().then(function(response) {
+          if (response.status === 'connected') {
+            return userService.loginFacebookAccount({
+              socialToken: response.authResponse.accessToken
+            });
+          } else {
+            return new Error('Nothing');
+          }
+        }).then(function(response) {
+          if (response.data.code === 1000) {
+            $rootScope.loggedIn = true;
+            return userService.getLoggedInAccountInfo().then(function(response) {
+              if (response.data.code === 1000) {
+                return $rootScope.userInfo = response.data.payload;
+              }
+            })["finally"](function() {
+              return $location.path('/');
+            });
+          }
+        })["catch"](function(error) {
+          return $log.error(error);
+        });
+      };
+      return $scope.popupForgetPwd = function() {
+        return $.fancybox({
+          href: "#forgot-password"
+        });
+      };
+    }
+  ]).controller('ForgotPwdController', [
+    '$scope', 'userService', '$log', function($scope, userService, $log) {
+      $scope.headerText = 'FORGOT PASSWORDS?';
+      $scope.message = '<p>Having a hard time remembering your SHOWROOM password? No worries. </p><p>We\'ll email you a link to reset it.</p>';
+      return $scope.sendEmail = function() {
+        if ($scope.forgotPasswordForm.$valid) {
+          return userService.resetEmailAccountPassword({
+            email: $scope.email
+          }).then(function(response) {
+            if (response.data.code === 1000) {
+              $scope.resetSuccess = true;
+              $scope.headerText = 'You\'re almost back to SHOWROOM.';
+              return $scope.message = '<p>We\'ve just sent an email that includes instructions and a link to reset your password.</p> ' + '<p>We\'ll have you back to the SHOWROOM in no time!</p>';
+            } else {
+              $scope.headerText = 'FAIL!';
+              return $scope.message = '<p>' + response.data.message + '</p>';
+            }
+          })["catch"](function(error) {
+            return $log.error(error);
+          });
+        } else {
+          return $scope.showForgotMessages = true;
+        }
+      };
+    }
+  ]);
+
+  angular.module('showroomControllers').controller('MyShowController', [
+    '$scope', '$rootScope', 'showService', 'videoService', '$log', function($scope, $rootScope, showService, videoService, $log) {
+      $scope.header = 'My shows';
+      if ($rootScope.loggedIn) {
+        return showService.getPersonalShow({
+          pageNumber: 0,
+          pageSize: 15
+        }).then(function(response) {
+          return $scope.videos = videoService.parseVideo({
+            response: response.data
+          });
+        });
+      }
+    }
+  ]);
+
+  angular.module('showroomControllers').controller('NewestController', [
+    '$scope', 'showService', 'videoService', '$log', function($scope, showService, videoService, $log) {
+      $scope.header = 'Newest';
+      return showService.getGlobalMostLikeFeed({
+        pageNumber: 0,
+        pageSize: 15
+      }).then(function(response) {
+        return $scope.videos = videoService.parseVideo({
+          response: response.data
+        });
+      });
+    }
+  ]);
+
+  angular.module('showroomControllers').controller('PopularController', [
+    '$scope', 'showService', 'videoService', '$log', function($scope, showService, videoService, $log) {
+      $scope.header = 'Popular';
+      return showService.getGlobalMostLikeFeed({
+        pageNumber: 0,
+        pageSize: 15
+      }).then(function(response) {
+        return $scope.videos = videoService.parseVideo({
+          response: response.data
+        });
+      });
+    }
+  ]);
+
+  angular.module('showroomControllers').controller('SignUpController', [
+    '$scope', '$rootScope', 'userService', '$log', '$location', function($scope, $rootScope, userService, $log, $location) {
+      $rootScope.removeHeader = true;
+      $rootScope.removeBrand = true;
+      $rootScope.removeNav = true;
+      $rootScope.removeFooter = true;
+      return $scope.signup = function() {
+        $scope.showMessages = true;
+        if ($scope.signupForm.$valid) {
+          return userService.registerEmailAccount({
+            email: $scope.email,
+            password: $scope.password,
+            firstName: $scope.firstName,
+            lastName: $scope.lastName
+          }).then(function(response) {
+            if (response.code === 1000) {
+              return userService.loginEmailAccount({
+                email: $scope.email,
+                password: $scope.password
+              }).then(function(response) {
+                if (response.data.code === 1000) {
+                  $rootScope.loggedIn = true;
+                  if (response.data.code === 1000.["catch"](function(error) {
+                    return $log.error(error);
+                  })["finally"](function() {
+                    return $location.path('/');
+                  })) {
+                    return userService.getLoggedInAccountInfo().then(response($rootScope.userInfo = response.payload));
+                  }
+                } else {
+                  return $scope.message = 'Email or password is invalid.';
+                }
+              })["catch"](function(error) {
+                $log.error(error);
+                return $scope.message = 'Internal server error.';
+              });
+            } else {
+              return $scope.message = response.message;
+            }
+          })["catch"](function(error) {
+            $log.error(error);
+            return $scope.message = error;
+          });
+        }
+      };
     }
   ]);
 

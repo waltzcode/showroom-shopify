@@ -1,0 +1,14 @@
+<div id="homepage-products">
+
+  <!--My code-->
+
+  <h2><span ng-bind="header"></span></h2>
+
+  <ul ng-if="videos && (videos.length > 0)" class="product-loop"  style="width: 100%">
+    <li ng-repeat="video in videos" class="show desktop-4 tablet-half mobile-full">
+      <div class="show-wrapper" ng-include="'{{ 'inc_list_show.html' | asset_url }}'"></div>
+    </li>
+  </ul>
+
+</div>
+<div class="clear"></div>
