@@ -2,7 +2,7 @@
   'use strict';
   var showroomApp, showroomControllers, showroomDirectives, showroomFilters, showroomServices;
 
-  showroomApp = angular.module('showroomApp', ['ngRoute', 'showroomServices', 'showroomControllers', 'showroomFilters', 'showroomDirectives']);
+  showroomApp = angular.module('showroomApp', ['ngRoute', 'showroomServices', 'showroomControllers', 'showroomFilters', 'showroomDirectives', 'angular-loading-bar']);
 
   showroomServices = angular.module('showroomServices', ['ngCookies', 'ngSanitize', 'com.2fdevs.videogular', 'com.2fdevs.videogular.plugins.poster']);
 
@@ -287,8 +287,8 @@
         var index, products, show, shows, videos;
         this.response = config.response;
         this.currencySymbol = config.currencySymbol || '$';
-        this.exceprtTitleLength = config.exceprtTitleLength || 30;
-        this.excerptMore = config.excerptMore || '...';
+        this.exceprtTitleLength = config.exceprtTitleLength || 36;
+        this.excerptMore = config.excerptMore || ' ...';
         this.videoSize = config.videoSize || '400';
         this.thumbnailSize = config.thumbnailSize || '700';
         if (this.response.code === 1000) {
@@ -326,7 +326,7 @@
                 shareCounter: show.shareCounter,
                 productName: $filter('excerptTitle')(products[index].name, this.exceprtTitleLength, this.excerptMore),
                 productTitle: products[index].name,
-                price: $filter('currency')(products[index].price, this.currencySymbol, 2),
+                price: $filter('number')(products[index].price, 2),
                 productLinkUrl: $filter('productLink')($filter('jsonParse')(products[index].metaData).url),
                 productLinkTarget: $filter('productTarget')($filter('jsonParse')(products[index].metaData).url)
               });
@@ -359,12 +359,14 @@
     '$scope', '$location', function($scope, $location) {
       $scope.searchUser = function() {
         if ($scope.userKeywords) {
+          $scope.showKeywords = '';
           $location.search('q', $scope.userKeywords);
           return $location.path('/user/search');
         }
       };
       return $scope.searchShow = function() {
         if ($scope.showKeywords) {
+          $scope.userKeywords = '';
           $location.search('q', $scope.showKeywords);
           return $location.path('/show/search');
         }
@@ -637,6 +639,7 @@
       return userService.searchAccountByKeywords({
         keywords: $scope.keywords
       }).then(function(response) {
+        $scope.header = 'Search result for \'' + $scope.keywords + '\'';
         if (response.data.code === 1000) {
           $scope.users = response.data.payload.items;
         }
@@ -665,7 +668,7 @@
     };
   }).filter('productTarget', function() {
     return function(link) {
-      if (link.indexOf('amazon' === -1)) {
+      if (link.indexOf('amazon') === -1) {
         return '_self';
       } else {
         return '_blank';
@@ -675,7 +678,6 @@
     return function(input, length, excerpt_more) {
       if (input.length > length) {
         input = input.substring(0, length);
-        input = input.substring(0, input.lastIndexOf(' ') + 1);
         input += excerpt_more;
       }
       return input;
@@ -684,6 +686,16 @@
     'SHOWROOM_CONSTANTS', function(SHOWROOM_CONSTANTS) {
       return function(input) {
         return SHOWROOM_CONSTANTS.showroomCDN + input;
+      };
+    }
+  ]).filter('user_avatar_url', [
+    'SHOWROOM_CONSTANTS', function(SHOWROOM_CONSTANTS) {
+      return function(input) {
+        if (input) {
+          return SHOWROOM_CONSTANTS.showroomCDN + input;
+        } else {
+          return "{{ 'no-avatar.png' | asset_url }}";
+        }
       };
     }
   ]);

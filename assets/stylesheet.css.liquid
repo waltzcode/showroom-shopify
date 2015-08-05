@@ -717,16 +717,34 @@ h2 span { background: {{ settings.background }}; }
   color: #000;
 }
 
-#homepage-products .product-loop .product-info span {
+#homepage-products .product-loop .product-info a {
+  float: left;
+  color: #000;
   display: block;
+  text-decoration: none;
 }
 
-#homepage-products .product-loop .product-info span.product-title {
-  float: left;
+#homepage-products .product-loop .product-info a:hover {
+   color: rgba(0,0,0, .5);
 }
 
 #homepage-products .product-loop .product-info span.product-price {
   float: right;
+}
+
+#homepage-products .product-loop .product-action > span {
+  display: block;
+  text-align: center;
+  font-size: 16px;
+  line-height: 35px;
+  color: #888;
+  width: 66.6666%;
+  display: block;
+  float: left;
+}
+
+#homepage-products .product-loop .product-action > span > span {
+  padding: 0 10px;
 }
 
 #homepage-products .product-loop .product-action a {
@@ -735,7 +753,7 @@ h2 span { background: {{ settings.background }}; }
   font-size: 16px;
   line-height: 35px;
   color: #888;
-  width: 25%;
+  width: 33.333%;
   float: left;
   text-align: center;
 }
@@ -749,8 +767,18 @@ h2 span { background: {{ settings.background }}; }
   font-weight: bolder;
 }
 
-#homepage-products .product-loop .product-action a.shop-btn:hover {
+#homepage-products .product-loop .product-action a.product-price {
   color: rgba(255,36, 0, .8);
+  font-weight: bold;
+  line-height: 25px;
+  background-color: #f0f0f0;
+  border-radius: 3px;
+  margin: 5px 0;
+}
+
+#homepage-products .product-loop .product-action a.product-price:hover {
+  color: #f0f0f0;
+  background-color: rgba(255,36, 0, .8);;
 }
 
 #homepage-products .product-loop .product-action a span {
@@ -1699,6 +1727,8 @@ nav.shifter-navigation {
 #searchPanel.expanded {
   height: 70px;
   opacity: 1;
+  background-color: #f0f0f0;
+  margin-bottom: 10px;
 }
 
 #searchPanel form {
@@ -1711,6 +1741,7 @@ nav.shifter-navigation {
   width: 40%;
   display: inline-block;
   margin: 15px 0;
+  border: 1px solid #ddd;
 }
 
 #search {
@@ -1728,3 +1759,46 @@ nav.shifter-navigation {
   left: 50%;
   border-color: transparent transparent #f1f1f1;
 }
+
+/* List of user */
+a.user-wrapper {
+  font-size: 14px;
+  display: block;
+  color: #777;
+  text-decoration: none;
+  transition: background-color .5s;
+  -moz-transition: background-color .5s;
+  -webkit-transition: background-color .5s;
+  -o-transition: background-color .5s;
+  height: 120px;
+}
+
+a.user-wrapper:hover {
+  background-color: #f0f0f0;
+  border-bottom: 3px solid #333;
+}
+
+.user-wrapper img {
+  display: block;
+  border: 0;
+  width: 100px;
+  border: 1px solid #f1f1f1;
+  border-radius: 3px;
+  height: 100px;
+  padding: 4px;
+  float: left;
+  margin: 10px;
+}
+
+.user-wrapper div {
+  padding: 10px;
+  margin: 10px;
+  padding: 14px 0;
+}
+
+.user-wrapper div .fullname {
+  font-weight: bold;
+  color: #777;
+
+}
+

@@ -5,6 +5,7 @@ showroomApp = angular.module 'showroomApp', [
 	'showroomControllers'
 	'showroomFilters'
 	'showroomDirectives'
+	'angular-loading-bar'
 ]
 showroomServices = angular.module 'showroomServices', [
 	'ngCookies'

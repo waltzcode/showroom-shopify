@@ -35,6 +35,7 @@
   {{ 'jquery.fancybox.css' | asset_url | stylesheet_tag }}
   {{ 'font-awesome.css' | asset_url | stylesheet_tag }}
   {{ 'videogular.css' | asset_url | stylesheet_tag }}
+  {{ 'loading-bar.min.css' | asset_url | stylesheet_tag }}
 
 
   <!-- JS
@@ -153,7 +154,7 @@
                <li><a href="/#/featured">Featured</a></li>
                <li><a href="/#/popular">Popular</a></li>
                <li><a href="/#/newest">Newest</a></li>
-               <li><a href="">Channel</a>
+               <li><a href="">Category</a>
                   <ul>
                      {% for link in linklists.main-menu.links %}
                     <li>{{ link.title | link_to: link.url }}
@@ -261,7 +262,7 @@
      <li><a href="/#/featured">Featured</a></li>
      <li><a href="/#/popular">Popular</a></li>
      <li><a href="/#/newest">Newest</a></li>
-     <li><a href="">Channel</a>
+     <li><a href="">Category</a>
         <ul>
            {% for link in linklists.main-menu.links %}
            <li>{{ link.title | link_to: link.url }}
@@ -352,6 +353,7 @@
   	{{ 'vg-buffering.min.js' | asset_url | script_tag }}
   	{{ 'vg-poster.min.js' | asset_url | script_tag }}
   	{{ 'vg-overlay-play.min.js' | asset_url | script_tag }}
+    {{ 'loading-bar.min.js' | asset_url | script_tag }}
 {% comment %}   {{ 'srApp.js' | asset_url | script_tag }}
    {{ 'srConstants.js' | asset_url | script_tag }}
    {{ 'srServices.js' | asset_url | script_tag }}

@@ -18,11 +18,13 @@ angular.module 'showroomControllers'
 					lastName: $scope.lastName
 				}
 				.then (response) ->
-					if response.code == 1000
+					if response.code == 1000 
+						# Auto login if signup success
 						userService.loginEmailAccount email: $scope.email, password: $scope.password
 						.then (response) ->
 							if response.data.code == 1000
 								$rootScope.loggedIn = true
+								# get and save user information.
 								userService.getLoggedInAccountInfo()
 								.then (response) $rootScope.userInfo = response.payload if response.data.code == 1000
 								.catch (error) -> $log.error error
@@ -33,6 +35,6 @@ angular.module 'showroomControllers'
 							$scope.message = 'Internal server error.'
 					else $scope.message = response.message
 				.catch (error) ->
-					$log.error(error);
-					$scope.message = error;
+					$log.error(error)
+					$scope.message = error
 ]

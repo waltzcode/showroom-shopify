@@ -1,0 +1,33 @@
+{
+  "name": "showroom-shopify",
+  "version": "0.0.1",
+  "homepage": "https://github.com/waltzcode/showroom-shopify",
+  "authors": [
+    "Richard Nguyen <cuongnt1987@live.com>"
+  ],
+  "description": "Shopify Theme for Showroom Store Website",
+  "moduleType": [
+    "node"
+  ],
+  "keywords": [
+    "showroom",
+    "store",
+    "showroom-store",
+    "shopify"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.4.3",
+    "angular-cookies": "~1.4.3",
+    "angular-route": "~1.4.3",
+    "videogular": "~1.2.5",
+    "angular-loading-bar": "~0.8.0"
+  }
+}

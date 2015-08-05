@@ -5,8 +5,8 @@ angular.module 'showroomServices'
 		parseVideo = (config) ->
 			@response = config.response
 			@currencySymbol = config.currencySymbol || '$'
-			@exceprtTitleLength = config.exceprtTitleLength || 30
-			@excerptMore = config.excerptMore || '...'
+			@exceprtTitleLength = config.exceprtTitleLength || 36
+			@excerptMore = config.excerptMore || ' ...'
 			@videoSize = config.videoSize || '400'
 			@thumbnailSize = config.thumbnailSize || '700'
 			if @response.code == 1000
@@ -31,7 +31,7 @@ angular.module 'showroomServices'
 					shareCounter: show.shareCounter
 					productName:$filter('excerptTitle')(products[index].name, @exceprtTitleLength, @excerptMore);
 					productTitle: products[index].name;
-					price: $filter('currency')(products[index].price, @currencySymbol, 2)
+					price: $filter('number')(products[index].price, 2)
 					productLinkUrl: $filter('productLink')($filter('jsonParse')(products[index].metaData).url)
 					productLinkTarget: $filter('productTarget')($filter('jsonParse')(products[index].metaData).url)
 		{parseVideo: parseVideo}
