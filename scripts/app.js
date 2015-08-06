@@ -48,7 +48,7 @@
   showroomApp.run([
     '$rootScope', '$log', 'userService', '$q', function($rootScope, $log, userService, $q) {
       userService.getLoggedInAccountInfo().then(function(response) {
-        if (response.code === 1000) {
+        if (response.data.code === 1000) {
           $rootScope.loggedIn = true;
           return $rootScope.userInfo = response.payload;
         }
@@ -57,8 +57,10 @@
       });
       return $rootScope.logout = function() {
         return userService.logout().then(function(response) {
-          $rootScope.loggedIn = false;
-          return $rootScope.userInfo = void 0;
+          if (response.data.code === 1000) {
+            $rootScope.loggedIn = false;
+            return $rootScope.userInfo = void 0;
+          }
         })["catch"](function(error) {
           return $log.error(error);
         });

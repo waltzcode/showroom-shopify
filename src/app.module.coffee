@@ -63,14 +63,15 @@ showroomApp.run [
 	($rootScope, $log, userService, $q) ->
 		userService.getLoggedInAccountInfo()
 			.then (response) ->
-				if response.code == 1000
+				if response.data.code == 1000
 					$rootScope.loggedIn = true
 					$rootScope.userInfo = response.payload
 			.catch (error) -> $log.error error
 		$rootScope.logout = ->
 			userService.logout()
 				.then (response) ->
-					$rootScope.loggedIn = false
-					$rootScope.userInfo = undefined
+					if response.data.code == 1000
+						$rootScope.loggedIn = false
+						$rootScope.userInfo = undefined
 				.catch (error) -> $log.error error
 ]
