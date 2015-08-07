@@ -2,7 +2,7 @@
 	<h2><span ng-bind="header"></span></h2>
 	<ul ng-if="users && (users.length > 0)" class="product-loop"  style="width: 100%">
 		<li ng-repeat="user in users" class="desktop-4 tablet-half mobile-full">
-		 	<a href="" class="user-wrapper bs-clearfix">
+		 	<a href="/#/account/{[{user.id}]}" class="user-wrapper bs-clearfix">
 		 		<img alt="User avatar" ng-src="{[{user.avatarUrl | user_avatar_url}]}">
 		 		<div>
 		 			<span class="fullname">{[{user.firstName + ' ' + user.lastName}]}</span>

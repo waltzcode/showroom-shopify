@@ -1,8 +1,8 @@
 angular.module 'showroomControllers'
 .controller 'FeaturedController', [
-	'$scope', 'showService', 'videoService', '$log'
-	($scope, showService, videoService, $log) ->
+	'$scope', 'showService', 'videoService', '$log', 'SHOWROOM_CONSTANTS'
+	($scope, showService, videoService, $log, SHOWROOM_CONSTANTS) ->
 		$scope.header = 'Featured'
-		showService.getGlobalFeaturedFeed pageNumber: 0, pageSize: 15
+		showService.getFeaturedByChannel channelId: SHOWROOM_CONSTANTS.BeautyChannelId
 		.then (response) -> $scope.videos = videoService.parseVideo({response: response.data})
 ]

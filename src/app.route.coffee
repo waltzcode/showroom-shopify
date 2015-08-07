@@ -13,5 +13,6 @@ angular.module 'showroomApp'
 		.when '/user/search', templateUrl: "{{ 'views-user-search.html' | asset_url }}", controller: 'UserSearchController'
 		.when '/show/search', templateUrl: "{{ 'views-show-search.html' | asset_url }}", controller: 'ShowSearchController'
 		.when '/category/:channelId', templateUrl: "{{ 'views-channel-detail.html' | asset_url }}", controller: 'ChannelDetailController'
+		.when '/account/:accountId', templateUrl: "{{ 'views-account-detail.html' | asset_url }}", controller: 'AccountDetailController'
 		.otherwise templateUrl: "{{ 'views-home.html' | asset_url }}", controller: 'HomeController'
 ]

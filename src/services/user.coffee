@@ -23,5 +23,7 @@ angular.module 'showroomServices'
 				pageSize = options.pageSize || 15
 				url = SHOWROOM_CONSTANTS.searchAccountByKeywordsURL + keywords + '/' + pageNumber + '/' + pageSize + '/'
 				sessionService.callService 'GET', url
+			getAccountProfile: (data) ->
+				
 		}
 ]

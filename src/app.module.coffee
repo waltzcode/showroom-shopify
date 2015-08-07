@@ -51,6 +51,7 @@ showroomApp.constant 'SHOWROOM_CONSTANTS', {
 	searchAccountByKeywordsURL: '/search/account/name/'
 	searchShowByKeywordsURL: '/search/show/product/'
 	logoutURL: '/account/me/logout/'
+	getAccontProfileURL: '/account/info/' # /:accountId/:sessionId
 	# Showroom CDN
 	showroomCDN: '//cdn.showroomapp.tv/'
 }

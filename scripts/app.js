@@ -38,6 +38,7 @@
     searchAccountByKeywordsURL: '/search/account/name/',
     searchShowByKeywordsURL: '/search/show/product/',
     logoutURL: '/account/me/logout/',
+    getAccontProfileURL: '/account/info/',
     showroomCDN: '//cdn.showroomapp.tv/'
   });
 
@@ -103,6 +104,9 @@
       }).when('/category/:channelId', {
         templateUrl: "{{ 'views-channel-detail.html' | asset_url }}",
         controller: 'ChannelDetailController'
+      }).when('/account/:accountId', {
+        templateUrl: "{{ 'views-account-detail.html' | asset_url }}",
+        controller: 'AccountDetailController'
       }).otherwise({
         templateUrl: "{{ 'views-home.html' | asset_url }}",
         controller: 'HomeController'
@@ -309,7 +313,8 @@
           pageSize = options.pageSize || 15;
           url = SHOWROOM_CONSTANTS.searchAccountByKeywordsURL + keywords + '/' + pageNumber + '/' + pageSize + '/';
           return sessionService.callService('GET', url);
-        }
+        },
+        getAccountProfile: function(data) {}
       };
     }
   ]);
@@ -375,6 +380,20 @@
     }
   ]);
 
+  angular.module('showroomControllers').controller('AccountDetailController', [
+    '$scope', 'showService', '$log', '$routeParams', 'videoService', function($scope, showService, $log, $routeParams, videoService) {
+      return showService.getShowByUser({
+        account: $routeParams.accountId
+      }).then(function(response) {
+        if (response.data.code === 1000) {
+          return $scope.header = 'Account Show';
+        } else {
+          return $log.error(response.data.message);
+        }
+      });
+    }
+  ]);
+
   angular.module('showroomControllers').controller('ChannelDetailController', [
     '$scope', 'showService', '$log', '$routeParams', 'videoService', function($scope, showService, $log, $routeParams, videoService) {
       return showService.getFeaturedByChannel({
@@ -393,11 +412,10 @@
   ]);
 
   angular.module('showroomControllers').controller('FeaturedController', [
-    '$scope', 'showService', 'videoService', '$log', function($scope, showService, videoService, $log) {
+    '$scope', 'showService', 'videoService', '$log', 'SHOWROOM_CONSTANTS', function($scope, showService, videoService, $log, SHOWROOM_CONSTANTS) {
       $scope.header = 'Featured';
-      return showService.getGlobalFeaturedFeed({
-        pageNumber: 0,
-        pageSize: 15
+      return showService.getFeaturedByChannel({
+        channelId: SHOWROOM_CONSTANTS.BeautyChannelId
       }).then(function(response) {
         return $scope.videos = videoService.parseVideo({
           response: response.data

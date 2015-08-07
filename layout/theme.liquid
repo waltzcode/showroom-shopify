@@ -156,7 +156,7 @@
 							 <li><a href="/#/newest">Newest</a></li>
 							 <li><a href="">Category</a>
 									<ul>
-										<li ng-repeat="channel in channels"><a ng-href="/#/category/{[{channel.id}]}">{[{channel.name}]}</a></li>
+										<li ng-repeat="channel in channels | orderBy:'displayIndex'"><a ng-href="/#/category/{[{channel.id}]}">{[{channel.name}]}</a></li>
 									</ul>
 							 </li>
 							 <li ng-if="loggedIn"><a href="/#/myshow">My shows</a></a></li>
@@ -169,7 +169,7 @@
 						<input type="text" name="q" placeholder="Search account" ng-model="userKeywords">
 					</form>
 					<form name="showSearchForm" novalidate ng-submit="searchShow()">
-						<input type="text" name="q" placeholder="Search show" ng-model="showKeywords">
+						<input type="text" name="q" placeholder="Search Product, Brand, Show title" ng-model="showKeywords">
 					</form>
 				</div>
 			</div>
@@ -253,7 +253,7 @@
 		 <li><a href="">Category</a>
 				<ul>
 					<ul>
-						<li ng-repeat="channel in channels"><a ng-href="/#/category/{[{channel.id}]}">{[{channel.name}]}</a></li>
+						<li ng-repeat="channel in channels | orderBy:'displayIndex'"><a ng-href="/#/category/{[{channel.id}]}">{[{channel.name}]}</a></li>
 					</ul>
 				</ul>
 		 </li>
