@@ -23,8 +23,12 @@
     getGlobalMostViewFeedURL: '/feed/most/view/',
     getGlobalMostShareFeedURL: '/feed/most/share/',
     getGlobalFeaturedFeedURL: '/feed/featured/',
+    getFeaturedByChannelURL: '/feed/channel/featured/',
     getPersonalFeedURL: '/account/me/feed/',
     getPersonalShowURL: '/show/me/list/',
+    getShowByUserURL: '/show/list/by/account/',
+    getListChannelURL: '/channel/list/',
+    BeautyChannelId: '84fccf26862232b49f2ad44fca89c667',
     registerEmailAccountURL: '/account/email/register/',
     resetEmailAccountPasswordURL: '/account/email/resetpassword/',
     changeEmailAccountPasswordURL: '/account/email/changepassword/',
@@ -40,7 +44,6 @@
   showroomApp.config([
     '$interpolateProvider', '$sceDelegateProvider', '$sceProvider', function($interpolateProvider, $sceDelegateProvider, $sceProvider) {
       $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
-      $sceDelegateProvider.resourceUrlWhitelist(['self', 'http://cdn.shopify.com/**', 'https://cdn.shopify.com/**']);
       return $sceProvider.enabled(false);
     }
   ]);
@@ -97,10 +100,23 @@
       }).when('/show/search', {
         templateUrl: "{{ 'views-show-search.html' | asset_url }}",
         controller: 'ShowSearchController'
+      }).when('/category/:channelId', {
+        templateUrl: "{{ 'views-channel-detail.html' | asset_url }}",
+        controller: 'ChannelDetailController'
       }).otherwise({
         templateUrl: "{{ 'views-home.html' | asset_url }}",
         controller: 'HomeController'
       });
+    }
+  ]);
+
+  angular.module('showroomServices').factory('channelService', [
+    'sessionService', '$q', 'SHOWROOM_CONSTANTS', '$log', function(sessionService, $q, SHOWROOM_CONSTANTS, $log) {
+      return {
+        getListChannel: function() {
+          return sessionService.callService('GET', SHOWROOM_CONSTANTS.getListChannelURL);
+        }
+      };
     }
   ]);
 
@@ -241,6 +257,22 @@
           pageSize = options.pageSize || 15;
           url = SHOWROOM_CONSTANTS.searchShowByKeywordsURL + keywords + '/' + pageNumber + '/' + pageSize + '/';
           return sessionService.callService('GET', url);
+        },
+        getShowByUser: function(options) {
+          var account, pageNumber, pageSize, url;
+          account = options.account;
+          pageNumber = options.pageNumber || 0;
+          pageSize = options.pageSize || 15;
+          url = SHOWROOM_CONSTANTS.getShowByUserURL + account + '/' + pageNumber + '/' + pageSize + '/';
+          return sessionService.callService('GET', url);
+        },
+        getFeaturedByChannel: function(options) {
+          var channelId, pageNumber, pageSize, url;
+          channelId = options.channelId;
+          pageNumber = options.pageNumber || 0;
+          pageSize = options.pageSize || 15;
+          url = SHOWROOM_CONSTANTS.getFeaturedByChannelURL + channelId + '/' + pageNumber + '/' + pageSize + '/';
+          return sessionService.callService('GET', url);
         }
       };
     }
@@ -289,7 +321,7 @@
         var index, products, show, shows, videos;
         this.response = config.response;
         this.currencySymbol = config.currencySymbol || '$';
-        this.exceprtTitleLength = config.exceprtTitleLength || 36;
+        this.exceprtTitleLength = config.exceprtTitleLength || 35;
         this.excerptMore = config.excerptMore || ' ...';
         this.videoSize = config.videoSize || '400';
         this.thumbnailSize = config.thumbnailSize || '700';
@@ -343,6 +375,23 @@
     }
   ]);
 
+  angular.module('showroomControllers').controller('ChannelDetailController', [
+    '$scope', 'showService', '$log', '$routeParams', 'videoService', function($scope, showService, $log, $routeParams, videoService) {
+      return showService.getFeaturedByChannel({
+        channelId: $routeParams.channelId
+      }).then(function(response) {
+        if (response.data.code === 1000) {
+          $scope.header = $routeParams.channelId + ' Category';
+          return $scope.videos = videoService.parseVideo({
+            response: response.data
+          });
+        } else {
+          return $log.error(response.data.message);
+        }
+      });
+    }
+  ]);
+
   angular.module('showroomControllers').controller('FeaturedController', [
     '$scope', 'showService', 'videoService', '$log', function($scope, showService, videoService, $log) {
       $scope.header = 'Featured';
@@ -358,7 +407,16 @@
   ]);
 
   angular.module('showroomControllers').controller('HeaderController', [
-    '$scope', '$location', function($scope, $location) {
+    '$scope', '$location', 'channelService', '$log', '$filter', 'SHOWROOM_CONSTANTS', function($scope, $location, channelService, $log, $filter, SHOWROOM_CONSTANTS) {
+      channelService.getListChannel().then(function(response) {
+        var channels;
+        if (response.data.code === 1000) {
+          channels = response.data.payload.items;
+          return $scope.channels = $filter('filter')(channels, {
+            parentChannelId: SHOWROOM_CONSTANTS.BeautyChannelId
+          }, true);
+        }
+      });
       $scope.searchUser = function() {
         if ($scope.userKeywords) {
           $scope.showKeywords = '';
@@ -541,7 +599,7 @@
   angular.module('showroomControllers').controller('NewestController', [
     '$scope', 'showService', 'videoService', '$log', function($scope, showService, videoService, $log) {
       $scope.header = 'Newest';
-      return showService.getGlobalMostLikeFeed({
+      return showService.getGlobalLastestFeed({
         pageNumber: 0,
         pageSize: 15
       }).then(function(response) {
@@ -572,7 +630,7 @@
       return showService.searchShowByKeywords({
         keywords: $scope.keywords
       }).then(function(response) {
-        $scope.header = 'Search result for \'' + $scope.keywords + '\'';
+        $scope.header = 'Search result for show - \'' + $scope.keywords + '\'';
         if (response.data.code === 1000) {
           $scope.shows = response.data.payload.items;
         }
@@ -641,7 +699,7 @@
       return userService.searchAccountByKeywords({
         keywords: $scope.keywords
       }).then(function(response) {
-        $scope.header = 'Search result for \'' + $scope.keywords + '\'';
+        $scope.header = 'Search result for user - \'' + $scope.keywords + '\'';
         if (response.data.code === 1000) {
           $scope.users = response.data.payload.items;
         }

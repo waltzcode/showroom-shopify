@@ -1,7 +1,13 @@
 angular.module 'showroomControllers'
 .controller 'HeaderController', [
-	'$scope', '$location'
-	($scope, $location) ->
+	'$scope', '$location', 'channelService', '$log', '$filter', 'SHOWROOM_CONSTANTS'
+	($scope, $location, channelService, $log, $filter, SHOWROOM_CONSTANTS) ->
+		# Get channal list
+		channelService.getListChannel().then (response) ->
+				if response.data.code == 1000
+					channels = response.data.payload.items
+					$scope.channels = $filter('filter') channels, {parentChannelId: SHOWROOM_CONSTANTS.BeautyChannelId}, true
+
 		$scope.searchUser = ->
 			if $scope.userKeywords
 				$scope.showKeywords = ''
@@ -12,4 +18,5 @@ angular.module 'showroomControllers'
 				$scope.userKeywords = ''
 				$location.search 'q', $scope.showKeywords
 				$location.path '/show/search'
+
 ]

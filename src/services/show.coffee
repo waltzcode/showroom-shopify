@@ -28,5 +28,17 @@ angular.module 'showroomServices'
 				pageSize = options.pageSize || 15
 				url = SHOWROOM_CONSTANTS.searchShowByKeywordsURL + keywords + '/' + pageNumber + '/' + pageSize + '/'
 				sessionService.callService 'GET', url
+			getShowByUser: (options) ->
+				account = options.account
+				pageNumber = options.pageNumber || 0
+				pageSize = options.pageSize || 15
+				url = SHOWROOM_CONSTANTS.getShowByUserURL + account + '/' + pageNumber + '/' + pageSize + '/'
+				sessionService.callService 'GET', url
+			getFeaturedByChannel: (options) ->
+				channelId = options.channelId
+				pageNumber = options.pageNumber || 0
+				pageSize = options.pageSize || 15
+				url = SHOWROOM_CONSTANTS.getFeaturedByChannelURL + channelId + '/' + pageNumber + '/' + pageSize + '/'
+				sessionService.callService 'GET', url
 		}
 ]

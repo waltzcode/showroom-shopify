@@ -416,9 +416,14 @@ ul#cart li {
 }
 
 @media screen and (max-width: 740px) {
+   ul#topNav, ul#cart {
+      display: none;
+   } 
+
    header {
       font-size: 12px;
       line-height: 30px;
+      height: 60px;
    }
 
    ul#topNav {
@@ -575,7 +580,7 @@ ul#nav li:hover ul{
 ul#nav li ul li{
   background: {{ settings.navigation }};
   color: {{ settings.nav_dropdown_color }};
-  min-width: 150px;
+  min-width: 190px;
   width: 100%:
   white-space: nowrap;
   float: left;

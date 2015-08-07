@@ -26,17 +26,23 @@ showroomApp.constant 'SHOWROOM_CONSTANTS', {
 	serviceVersion: '1.0.8'
 	# Session Services
 	registerSessionURL: '/session/register'
-	# Global Feed Services - need add page nummber and page size path param.
-	getGlobalLastestFeedURL: '/feed/latest/'
-	getGlobalMostLikeFeedURL: '/feed/most/like/'
-	getGlobalMostViewFeedURL: '/feed/most/view/'
-	getGlobalMostShareFeedURL: '/feed/most/share/'
-	getGlobalFeaturedFeedURL: '/feed/featured/'
-	# Personal Feed
-	getPersonalFeedURL: '/account/me/feed/'
-	getPersonalShowURL: '/show/me/list/'
+	# Global Feed /uri../{pageNumber}/{pageSize}/{sessionId}
+	getGlobalLastestFeedURL: '/feed/latest/' # GET
+	getGlobalMostLikeFeedURL: '/feed/most/like/' # GET
+	getGlobalMostViewFeedURL: '/feed/most/view/' # GET
+	getGlobalMostShareFeedURL: '/feed/most/share/' # GET
+	getGlobalFeaturedFeedURL: '/feed/featured/' # GET
+	getFeaturedByChannelURL: '/feed/channel/featured/' #GET
+	# User Feed /uri../{pageNumber}/{pageSize}/{sessionId}
+	getPersonalFeedURL: '/account/me/feed/' # GET
+	getPersonalShowURL: '/show/me/list/' # GET
+	getShowByUserURL: '/show/list/by/account/' # GET /:account/:pageNumber/:pageSize/:sessionId
+	# Channel Service
+	getListChannelURL: '/channel/list/' # GET /:sessionId
+	# Channel Constants
+	BeautyChannelId: '84fccf26862232b49f2ad44fca89c667'
  	# User Services
-	registerEmailAccountURL: '/account/email/register/'
+	registerEmailAccountURL: '/account/email/register/' # POST
 	resetEmailAccountPasswordURL: '/account/email/resetpassword/'
 	changeEmailAccountPasswordURL: '/account/email/changepassword/'
 	loginEmailAccountURL: '/account/email/login/'
@@ -54,7 +60,7 @@ showroomApp.config [
 	($interpolateProvider, $sceDelegateProvider, $sceProvider) ->
 		$interpolateProvider.startSymbol '{[{'
 			.endSymbol '}]}'
-		$sceDelegateProvider.resourceUrlWhitelist ['self', 'http://cdn.shopify.com/**', 'https://cdn.shopify.com/**']
+		#$sceDelegateProvider.resourceUrlWhitelist ['self', 'http://cdn.shopify.com/**', 'https://cdn.shopify.com/**']
 		$sceProvider.enabled false
 ]
 

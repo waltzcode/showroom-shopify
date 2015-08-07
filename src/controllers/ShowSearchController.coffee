@@ -5,7 +5,7 @@ angular.module 'showroomControllers'
 		$scope.keywords = $location.search().q
 		showService.searchShowByKeywords keywords: $scope.keywords
 		.then (response) ->
-			$scope.header = 'Search result for \'' + $scope.keywords + '\''
+			$scope.header = 'Search result for show - \'' + $scope.keywords + '\''
 			$scope.shows = response.data.payload.items if response.data.code is 1000
 			$scope.totalItem = response.data.payload.totalItem
 			$scope.videos = videoService.parseVideo response: response.data
