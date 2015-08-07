@@ -5,7 +5,7 @@ angular.module 'showroomControllers'
 		showService.getFeaturedByChannel channelId: $routeParams.channelId
 		.then (response) ->
 			if response.data.code == 1000
-				$scope.header = $routeParams.channelId + ' Category'
+				$scope.header = response.data.payload.channel.name + ' Category'
 				$scope.videos= videoService.parseVideo response:response.data
 			else 
 				$log.error response.data.message	

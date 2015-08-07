@@ -323,7 +323,7 @@
     'SHOWROOM_CONSTANTS', 'VG_STATES', '$filter', '$sce', '$rootScope', function(SHOWROOM_CONSTANTS, VG_STATES, $filter, $sce, $rootScope) {
       var parseVideo;
       parseVideo = function(config) {
-        var index, products, show, shows, videos;
+        var i, index, len, product, productMap, products, show, shows, videos;
         this.response = config.response;
         this.currencySymbol = config.currencySymbol || '$';
         this.exceprtTitleLength = config.exceprtTitleLength || 35;
@@ -333,10 +333,15 @@
         if (this.response.code === 1000) {
           shows = this.response.payload.listShows || this.response.payload.items;
           products = this.response.payload.listProducts;
+          productMap = {};
+          for (i = 0, len = products.length; i < len; i++) {
+            product = products[i];
+            productMap[product.id] = product;
+          }
           return videos = (function() {
-            var i, len, results;
+            var j, len1, results;
             results = [];
-            for (index = i = 0, len = shows.length; i < len; index = ++i) {
+            for (index = j = 0, len1 = shows.length; j < len1; index = ++j) {
               show = shows[index];
               results.push({
                 preload: 'none',
@@ -363,11 +368,11 @@
                 viewCounter: show.viewCounter,
                 commentCounter: show.commentCounter,
                 shareCounter: show.shareCounter,
-                productName: $filter('excerptTitle')(products[index].name, this.exceprtTitleLength, this.excerptMore),
-                productTitle: products[index].name,
-                price: $filter('number')(products[index].price, 2),
-                productLinkUrl: $filter('productLink')($filter('jsonParse')(products[index].metaData).url),
-                productLinkTarget: $filter('productTarget')($filter('jsonParse')(products[index].metaData).url)
+                productName: $filter('excerptTitle')(productMap[show.productId].name, this.exceprtTitleLength, this.excerptMore),
+                productTitle: productMap[show.productId].name,
+                price: $filter('number')(productMap[show.productId].price, 2),
+                productLinkUrl: $filter('productLink')($filter('jsonParse')(productMap[show.productId].metaData).url),
+                productLinkTarget: $filter('productTarget')($filter('jsonParse')(productMap[show.productId].metaData).url)
               });
             }
             return results;
@@ -400,7 +405,7 @@
         channelId: $routeParams.channelId
       }).then(function(response) {
         if (response.data.code === 1000) {
-          $scope.header = $routeParams.channelId + ' Category';
+          $scope.header = response.data.payload.channel.name + ' Category';
           return $scope.videos = videoService.parseVideo({
             response: response.data
           });

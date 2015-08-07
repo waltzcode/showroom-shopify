@@ -12,6 +12,8 @@ angular.module 'showroomServices'
 			if @response.code == 1000
 				shows = @response.payload.listShows || @response.payload.items
 				products = @response.payload.listProducts;
+				productMap = {}
+				productMap[product.id] = product for product in products
 				videos = for show, index in shows
 					preload: 'none'
 					sources: [{
@@ -29,10 +31,10 @@ angular.module 'showroomServices'
 					viewCounter: show.viewCounter
 					commentCounter: show.commentCounter
 					shareCounter: show.shareCounter
-					productName:$filter('excerptTitle')(products[index].name, @exceprtTitleLength, @excerptMore);
-					productTitle: products[index].name;
-					price: $filter('number')(products[index].price, 2)
-					productLinkUrl: $filter('productLink')($filter('jsonParse')(products[index].metaData).url)
-					productLinkTarget: $filter('productTarget')($filter('jsonParse')(products[index].metaData).url)
+					productName:$filter('excerptTitle')(productMap[show.productId].name, @exceprtTitleLength, @excerptMore);
+					productTitle: productMap[show.productId].name;
+					price: $filter('number')(productMap[show.productId].price, 2)
+					productLinkUrl: $filter('productLink')($filter('jsonParse')(productMap[show.productId].metaData).url)
+					productLinkTarget: $filter('productTarget')($filter('jsonParse')(productMap[show.productId].metaData).url)
 		{parseVideo: parseVideo}
 ]
