@@ -7,73 +7,101 @@ showroomApp = angular.module 'showroomApp', [
 	'showroomDirectives'
 	'angular-loading-bar'
 ]
-showroomServices = angular.module 'showroomServices', [
+
+angular.module 'showroomServices', [
 	'ngCookies'
-	'ngSanitize',
+	'ngSanitize'
 	'com.2fdevs.videogular'
 	'com.2fdevs.videogular.plugins.poster'
 ]
-showroomControllers = angular.module 'showroomControllers', []
-showroomFilters = angular.module 'showroomFilters', []
-showroomDirectives = angular.module 'showroomDirectives', []
+angular.module 'showroomControllers', []
+angular.module 'showroomFilters', []
+angular.module 'showroomDirectives', []
 
+### Showroom Store Configs ###
 showroomApp.constant 'SHOWROOM_CONSTANTS', {
-	# Service service
-	serviceHost: '//services.showroomapp.net'
-	# Showroom shopify website param
-	sessionParam: 'showroomSId'
-	serviceBundleId: 'showroom.ios'
-	serviceVersion: '1.0.8'
-	# Session Services
-	registerSessionURL: '/session/register'
-	# Global Feed /uri../{pageNumber}/{pageSize}/{sessionId}
-	getGlobalLastestFeedURL: '/feed/latest/' # GET
-	getGlobalMostLikeFeedURL: '/feed/most/like/' # GET
-	getGlobalMostViewFeedURL: '/feed/most/view/' # GET
-	getGlobalMostShareFeedURL: '/feed/most/share/' # GET
-	getGlobalFeaturedFeedURL: '/feed/featured/' # GET
-	getFeaturedByChannelURL: '/feed/channel/featured/' #GET
-	# User Feed /uri../{pageNumber}/{pageSize}/{sessionId}
-	getPersonalFeedURL: '/account/me/feed/' # GET
-	getPersonalShowURL: '/show/me/list/' # GET
-	getShowByUserURL: '/show/list/by/account/' # GET /:account/:pageNumber/:pageSize/:sessionId
-	# Channel Service
-	getListChannelURL: '/channel/list/' # GET /:sessionId
-	# Channel Constants
-	BeautyChannelId: '84fccf26862232b49f2ad44fca89c667'
- 	# User Services
-	registerEmailAccountURL: '/account/email/register/' # POST
-	resetEmailAccountPasswordURL: '/account/email/resetpassword/'
-	changeEmailAccountPasswordURL: '/account/email/changepassword/'
-	loginEmailAccountURL: '/account/email/login/'
-	loginFacebookAccountURL: '/account/facebook/login/'
-	getLoggedInAccountInfoURL: '/account/me/info/'
-	searchAccountByKeywordsURL: '/search/account/name/'
-	searchShowByKeywordsURL: '/search/show/product/'
-	logoutURL: '/account/me/logout/'
-	getAccontProfileURL: '/account/info/' # /:accountId/:sessionId
-	# Showroom CDN
-	showroomCDN: '//cdn.showroomapp.tv/'
+
+	# SERVER PARAMS
+	serviceHost: 								'//services.showroomapp.net'						# API server hostname.
+	showroomCDN: 								'//cdn.showroomapp.tv/'								# CDN server for serving static resources
+
+	# PARAMS FOR REGISTER A SESSION FOR CLIENT
+	sessionParam: 								'showroomSId'											# session param name that should be stored in browser cookie
+	serviceBundleId: 							'showroom.ios'											#
+	serviceVersion: 							'1.0.8'													#
+
+	# DISPLAY PARAMS
+	BeautyChannelId: 							'84fccf26862232b49f2ad44fca89c667'				# Showroom system currently only using this category
+
+	### ALL RESTFULL WEBSERVICE ENTRIES USED IN THE SHOWROOM SYSTEM ###
+
+	# SESSION
+	registerSessionURL: 						'/session/register'									# POST 	/:sessionId [deviceId, model, name, osName, osVersion, bundleId, bundleVersion, langeCode]
+	
+	# GLOBAL SHOW
+	getGlobalLastestFeedURL: 				'/show/browse/latest/' 								# GET 	/:pageNumber/:pageSize/:sessionId
+	getGlobalMostLikeFeedURL: 				'/show/browse/most/like/' 							# GET 	/:pageNumber/:pageSize/:sessionId
+	getGlobalMostViewFeedURL: 				'/show/browse/most/view/' 							# GET 	/:pageNumber/:pageSize/:sessionId
+	getGlobalMostShareFeedURL: 			'/show/browse/most/share/' 						# GET 	/:pageNumber/:pageSize/:sessionId
+	getGlobalFeaturedFeedURL: 				'/show/browse/featured/' 							# GET 	/:pageNumber/:pageSize/:sessionId
+
+	# SHOWS BY CHANNEL
+	getFeaturedByChannelURL: 				'/show/browse/channel/featured/' 				# GET 	/:channelId/:pageNumber/:pageSize/:sessionId
+	getLastestByChannelURL: 				'/show/browse/channel/latest/' 					# GET 	/:channelId/:pageNumber/:pageSize/:sessionId
+	getMostLikeByChannelURL: 				'/show/browse/channel/most/like/' 				# GET 	/:channelId/:pageNumber/:pageSize/:sessionId
+	getMostViewByChannelURL: 				'/show/browse/channel/most/view/' 				# GET 	/:channelId/:pageNumber/:pageSize/:sessionId
+	getMostShareByChannelURL: 				'/show/browse/channel/most/share/' 				# GET 	/:channelId/:pageNumber/:pageSize/:sessionId
+
+	# SHOW FOR CURRENT USER
+	getPersonalFeedURL: 						'/account/me/feed/' 									# GET 	/{pageNumber}/{pageSize}/{sessionId}
+	getPersonalShowURL: 						'/show/me/list/'										# GET 	/{pageNumber}/{pageSize}/{sessionId}
+
+	# SHOW BY WITH USER/ACCOUNT
+	getShowByUserURL: 						'/show/list/by/account/'							# GET 	/:accountId/:pageNumber/:pageSize/:sessionId
+
+	# CHANNEL
+	getListChannelURL: 						'/channel/list/' 										# GET 	/:sessionId
+
+ 	# USERS, ACCOUNT
+	registerEmailAccountURL: 				'/account/email/register/' 						# POST 	/:sessionId [email, password, firstName, lastName]
+	resetEmailAccountPasswordURL: 		'/account/email/resetpassword/'					# POST 	/:sessionId [email]
+	changeEmailAccountPasswordURL: 		'/account/email/changepassword/'					# POST 	/:sessionId [email, password, newPassword]
+	loginEmailAccountURL: 					'/account/email/login/'								# PUT 	/:sessionId [email, password]
+	loginFacebookAccountURL: 				'/account/facebook/login/'							# PUT 	/:sessionId [socialTokem]
+	getLoggedInAccountInfoURL: 			'/account/me/info/'									# GET 	/:sessionId 
+	logoutURL: 									'/account/me/logout/'								# GET 	/:sessionId
+	getAccontProfileURL: 					'/account/info/'										# GET 	/:accountId/:sessionId
+
+	# SEARCHING
+	searchAccountByKeywordsURL: 			'/search/account/name/'								# /:keywords/:pageNumber/:pageSize/:sessionId
+	searchShowByKeywordsURL: 				'/search/show/product/'								# /:keywords/:pageNumber/:pageSize/:sessionId
 }
 
 showroomApp.config [
-	'$interpolateProvider', '$sceDelegateProvider', '$sceProvider'
+	'$interpolateProvider'
+	'$sceDelegateProvider'
+	'$sceProvider'
 	($interpolateProvider, $sceDelegateProvider, $sceProvider) ->
-		$interpolateProvider.startSymbol '{[{'
-			.endSymbol '}]}'
-		#$sceDelegateProvider.resourceUrlWhitelist ['self', 'http://cdn.shopify.com/**', 'https://cdn.shopify.com/**']
+		$interpolateProvider.startSymbol('{[{').endSymbol('}]}')
+		# $sceDelegateProvider.resourceUrlWhitelist ['self', 'http://cdn.shopify.com/**', 'https://cdn.shopify.com/**']
 		$sceProvider.enabled false
 ]
 
 showroomApp.run [
-	'$rootScope', '$log', 'userService', '$q'
+	'$rootScope'
+	'$log'
+	'userService'
+	'$q'
 	($rootScope, $log, userService, $q) ->
+		# check current session wherever logged in
 		userService.getLoggedInAccountInfo()
 			.then (response) ->
 				if response.data.code == 1000
 					$rootScope.loggedIn = true
 					$rootScope.userInfo = response.payload
 			.catch (error) -> $log.error error
+
+		# create global logout function
 		$rootScope.logout = ->
 			userService.logout()
 				.then (response) ->

@@ -1,6 +1,10 @@
 angular.module 'showroomServices'
 .factory 'videoService', [
-	'SHOWROOM_CONSTANTS', 'VG_STATES', '$filter', '$sce', '$rootScope'
+	'SHOWROOM_CONSTANTS'
+	'VG_STATES'
+	'$filter'
+	'$sce'
+	'$rootScope'
 	(SHOWROOM_CONSTANTS, VG_STATES, $filter, $sce, $rootScope) ->
 		parseVideo = (config) ->
 			@response = config.response

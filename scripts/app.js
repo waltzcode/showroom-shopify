@@ -1,45 +1,54 @@
 (function() {
   'use strict';
-  var showroomApp, showroomControllers, showroomDirectives, showroomFilters, showroomServices;
+  var showroomApp;
 
   showroomApp = angular.module('showroomApp', ['ngRoute', 'showroomServices', 'showroomControllers', 'showroomFilters', 'showroomDirectives', 'angular-loading-bar']);
 
-  showroomServices = angular.module('showroomServices', ['ngCookies', 'ngSanitize', 'com.2fdevs.videogular', 'com.2fdevs.videogular.plugins.poster']);
+  angular.module('showroomServices', ['ngCookies', 'ngSanitize', 'com.2fdevs.videogular', 'com.2fdevs.videogular.plugins.poster']);
 
-  showroomControllers = angular.module('showroomControllers', []);
+  angular.module('showroomControllers', []);
 
-  showroomFilters = angular.module('showroomFilters', []);
+  angular.module('showroomFilters', []);
 
-  showroomDirectives = angular.module('showroomDirectives', []);
+  angular.module('showroomDirectives', []);
+
+
+  /* Showroom Store Configs */
 
   showroomApp.constant('SHOWROOM_CONSTANTS', {
     serviceHost: '//services.showroomapp.net',
+    showroomCDN: '//cdn.showroomapp.tv/',
     sessionParam: 'showroomSId',
     serviceBundleId: 'showroom.ios',
     serviceVersion: '1.0.8',
+    BeautyChannelId: '84fccf26862232b49f2ad44fca89c667',
+
+    /* ALL RESTFULL WEBSERVICE ENTRIES USED IN THE SHOWROOM SYSTEM */
     registerSessionURL: '/session/register',
-    getGlobalLastestFeedURL: '/feed/latest/',
-    getGlobalMostLikeFeedURL: '/feed/most/like/',
-    getGlobalMostViewFeedURL: '/feed/most/view/',
-    getGlobalMostShareFeedURL: '/feed/most/share/',
-    getGlobalFeaturedFeedURL: '/feed/featured/',
-    getFeaturedByChannelURL: '/feed/channel/featured/',
+    getGlobalLastestFeedURL: '/show/browse/latest/',
+    getGlobalMostLikeFeedURL: '/show/browse/most/like/',
+    getGlobalMostViewFeedURL: '/show/browse/most/view/',
+    getGlobalMostShareFeedURL: '/show/browse/most/share/',
+    getGlobalFeaturedFeedURL: '/show/browse/featured/',
+    getFeaturedByChannelURL: '/show/browse/channel/featured/',
+    getLastestByChannelURL: '/show/browse/channel/latest/',
+    getMostLikeByChannelURL: '/show/browse/channel/most/like/',
+    getMostViewByChannelURL: '/show/browse/channel/most/view/',
+    getMostShareByChannelURL: '/show/browse/channel/most/share/',
     getPersonalFeedURL: '/account/me/feed/',
     getPersonalShowURL: '/show/me/list/',
     getShowByUserURL: '/show/list/by/account/',
     getListChannelURL: '/channel/list/',
-    BeautyChannelId: '84fccf26862232b49f2ad44fca89c667',
     registerEmailAccountURL: '/account/email/register/',
     resetEmailAccountPasswordURL: '/account/email/resetpassword/',
     changeEmailAccountPasswordURL: '/account/email/changepassword/',
     loginEmailAccountURL: '/account/email/login/',
     loginFacebookAccountURL: '/account/facebook/login/',
     getLoggedInAccountInfoURL: '/account/me/info/',
-    searchAccountByKeywordsURL: '/search/account/name/',
-    searchShowByKeywordsURL: '/search/show/product/',
     logoutURL: '/account/me/logout/',
     getAccontProfileURL: '/account/info/',
-    showroomCDN: '//cdn.showroomapp.tv/'
+    searchAccountByKeywordsURL: '/search/account/name/',
+    searchShowByKeywordsURL: '/search/show/product/'
   });
 
   showroomApp.config([
@@ -255,28 +264,13 @@
           return sessionService.callService('GET', buildUri(SHOWROOM_CONSTANTS.getPersonalShowURL, pagging));
         },
         searchShowByKeywords: function(options) {
-          var keywords, pageNumber, pageSize, url;
-          keywords = options.keywords;
-          pageNumber = options.pageNumber || 0;
-          pageSize = options.pageSize || 15;
-          url = SHOWROOM_CONSTANTS.searchShowByKeywordsURL + keywords + '/' + pageNumber + '/' + pageSize + '/';
-          return sessionService.callService('GET', url);
+          return sessionService.callService('GET', buildUri(SHOWROOM_CONSTANTS.searchShowByKeywordsURL + options.keywords + '/', options));
         },
         getShowByUser: function(options) {
-          var account, pageNumber, pageSize, url;
-          account = options.account;
-          pageNumber = options.pageNumber || 0;
-          pageSize = options.pageSize || 15;
-          url = SHOWROOM_CONSTANTS.getShowByUserURL + account + '/' + pageNumber + '/' + pageSize + '/';
-          return sessionService.callService('GET', url);
+          return sessionService.callService('GET', buildUri(SHOWROOM_CONSTANTS.getShowByUserURL + options.accountId + '/', options));
         },
         getFeaturedByChannel: function(options) {
-          var channelId, pageNumber, pageSize, url;
-          channelId = options.channelId;
-          pageNumber = options.pageNumber || 0;
-          pageSize = options.pageSize || 15;
-          url = SHOWROOM_CONSTANTS.getFeaturedByChannelURL + channelId + '/' + pageNumber + '/' + pageSize + '/';
-          return sessionService.callService('GET', url);
+          return sessionService.callService('GET', buildUri(SHOWROOM_CONSTANTS.getFeaturedByChannelURL + options.channelId + '/', options));
         }
       };
     }
@@ -388,10 +382,13 @@
   angular.module('showroomControllers').controller('AccountDetailController', [
     '$scope', 'showService', '$log', '$routeParams', 'videoService', function($scope, showService, $log, $routeParams, videoService) {
       return showService.getShowByUser({
-        account: $routeParams.accountId
+        accountId: $routeParams.accountId
       }).then(function(response) {
         if (response.data.code === 1000) {
-          return $scope.header = 'Account Show';
+          $scope.header = 'Account Show';
+          return $scope.videos = videoService.parseVideo({
+            response: response.data
+          });
         } else {
           return $log.error(response.data.message);
         }
