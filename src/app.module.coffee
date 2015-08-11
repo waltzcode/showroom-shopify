@@ -10,9 +10,6 @@ showroomApp = angular.module 'showroomApp', [
 
 angular.module 'showroomServices', [
 	'ngCookies'
-	'ngSanitize'
-	'com.2fdevs.videogular'
-	'com.2fdevs.videogular.plugins.poster'
 ]
 angular.module 'showroomControllers', []
 angular.module 'showroomFilters', []
@@ -81,10 +78,13 @@ showroomApp.config [
 	'$interpolateProvider'
 	'$sceDelegateProvider'
 	'$sceProvider'
-	($interpolateProvider, $sceDelegateProvider, $sceProvider) ->
+	'$logProvider'
+	($interpolateProvider, $sceDelegateProvider, $sceProvider, $logProvider) ->
 		$interpolateProvider.startSymbol('{[{').endSymbol('}]}')
 		# $sceDelegateProvider.resourceUrlWhitelist ['self', 'http://cdn.shopify.com/**', 'https://cdn.shopify.com/**']
 		$sceProvider.enabled false
+		# Enable/Disable Debug level message
+		$logProvider.debugEnabled false
 ]
 
 showroomApp.run [

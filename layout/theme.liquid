@@ -34,7 +34,6 @@
 	{{ 'queries.css' | asset_url | stylesheet_tag }}
 	{{ 'jquery.fancybox.css' | asset_url | stylesheet_tag }}
 	{{ 'font-awesome.css' | asset_url | stylesheet_tag }}
-	{{ 'videogular.css' | asset_url | stylesheet_tag }}
 	{{ 'loading-bar.min.css' | asset_url | stylesheet_tag }}
 
 
@@ -320,25 +319,14 @@
 </script>
 
 
-	 {% include 'ajaxify-cart' %}
-	 {% include 'currencies' %}
-	<!-- AngularJS -->
-	 {{ 'angular.min.js' | asset_url | script_tag }}
-	 {{ 'angular-route.min.js' | asset_url | script_tag }}
-	 {{ 'angular-cookies.min.js' | asset_url | script_tag }}
-		{{ 'angular-sanitize.min.js' | asset_url | script_tag }}
-		{{ 'videogular.min.js' | asset_url | script_tag }}
-		{{ 'vg-controls.min.js' | asset_url | script_tag }}
-		{{ 'vg-buffering.min.js' | asset_url | script_tag }}
-		{{ 'vg-poster.min.js' | asset_url | script_tag }}
-		{{ 'vg-overlay-play.min.js' | asset_url | script_tag }}
-		{{ 'loading-bar.min.js' | asset_url | script_tag }}
-{% comment %}   {{ 'srApp.js' | asset_url | script_tag }}
-	 {{ 'srConstants.js' | asset_url | script_tag }}
-	 {{ 'srServices.js' | asset_url | script_tag }}
-	 {{ 'srControllers.js' | asset_url | script_tag }}
-	 {{ 'srDirectives.js' | asset_url | script_tag }}
-	 {{ 'srFilters.js' | asset_url | script_tag }}{% endcomment %}
+	{% include 'ajaxify-cart' %}
+	{% include 'currencies' %}
+
+	{{ 'angular.min.js' | asset_url | script_tag }}
+	{{ 'angular-route.min.js' | asset_url | script_tag }}
+	{{ 'angular-cookies.min.js' | asset_url | script_tag }}
+	{{ 'angular-animate.min.js' | asset_url | script_tag }}
+	{{ 'loading-bar.min.js' | asset_url | script_tag }}
 	 {{ 'app.min.js' | asset_url | script_tag }}
 </body>
 </html>

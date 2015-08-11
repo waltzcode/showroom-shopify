@@ -4,7 +4,7 @@
 
   showroomApp = angular.module('showroomApp', ['ngRoute', 'showroomServices', 'showroomControllers', 'showroomFilters', 'showroomDirectives', 'angular-loading-bar']);
 
-  angular.module('showroomServices', ['ngCookies', 'ngSanitize', 'com.2fdevs.videogular', 'com.2fdevs.videogular.plugins.poster']);
+  angular.module('showroomServices', ['ngCookies']);
 
   angular.module('showroomControllers', []);
 
@@ -52,9 +52,10 @@
   });
 
   showroomApp.config([
-    '$interpolateProvider', '$sceDelegateProvider', '$sceProvider', function($interpolateProvider, $sceDelegateProvider, $sceProvider) {
+    '$interpolateProvider', '$sceDelegateProvider', '$sceProvider', '$logProvider', function($interpolateProvider, $sceDelegateProvider, $sceProvider, $logProvider) {
       $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
-      return $sceProvider.enabled(false);
+      $sceProvider.enabled(false);
+      return $logProvider.debugEnabled(false);
     }
   ]);
 
@@ -314,10 +315,10 @@
   ]);
 
   angular.module('showroomServices').factory('videoService', [
-    'SHOWROOM_CONSTANTS', 'VG_STATES', '$filter', '$sce', '$rootScope', function(SHOWROOM_CONSTANTS, VG_STATES, $filter, $sce, $rootScope) {
+    'SHOWROOM_CONSTANTS', '$filter', '$sce', function(SHOWROOM_CONSTANTS, $filter, $sce) {
       var parseVideo;
       parseVideo = function(config) {
-        var i, index, len, product, productMap, products, show, shows, videos;
+        var index, j, len, product, productMap, products, show, shows, videos;
         this.response = config.response;
         this.currencySymbol = config.currencySymbol || '$';
         this.exceprtTitleLength = config.exceprtTitleLength || 35;
@@ -328,17 +329,16 @@
           shows = this.response.payload.listShows || this.response.payload.items;
           products = this.response.payload.listProducts;
           productMap = {};
-          for (i = 0, len = products.length; i < len; i++) {
-            product = products[i];
+          for (j = 0, len = products.length; j < len; j++) {
+            product = products[j];
             productMap[product.id] = product;
           }
           return videos = (function() {
-            var j, len1, results;
+            var k, len1, results;
             results = [];
-            for (index = j = 0, len1 = shows.length; j < len1; index = ++j) {
+            for (index = k = 0, len1 = shows.length; k < len1; index = ++k) {
               show = shows[index];
               results.push({
-                preload: 'none',
                 sources: [
                   {
                     src: $sce.trustAsResourceUrl(SHOWROOM_CONSTANTS.showroomCDN + show.videoSets[this.videoSize]),
@@ -346,18 +346,6 @@
                   }
                 ],
                 poster: $sce.trustAsResourceUrl(SHOWROOM_CONSTANTS.showroomCDN + show.thumbnailSets[this.thumbnailSize]),
-                onPlayerReady: function($API) {
-                  return this.API = $API;
-                },
-                play: function() {
-                  if ($rootScope.currentAPI && $rootScope.currentAPI.currentState === VG_STATES.PLAY) {
-                    $rootScope.currentAPI.stop();
-                  }
-                  if (this.API && this.API.currentAPI !== VG_STATES.PLAY) {
-                    $rootScope.currentAPI = this.API;
-                    return this.API.play();
-                  }
-                },
                 likeCounter: show.likeCounter,
                 viewCounter: show.viewCounter,
                 commentCounter: show.commentCounter,
@@ -727,6 +715,225 @@
           return $scope.message = response.data.message;
         }
       });
+    }
+  ]);
+
+  angular.module('showroomDirectives').directive('srLazySrc', [
+    '$document', '$window', '$interval', '$timeout', '$log', function($document, $window, $interval, $timeout, $log) {
+      var LazyImage, lazyLoader, link;
+      lazyLoader = (function() {
+        var $docHeigth, addImage, checkImages, documentWatchingDeley, documentWatchingTimer, images, onWatchingDocument, publicAPI, removeImage, renderDeley, renderTimer, startRender, startWatchingWindow, stopRender, stopWatchingWindow, win;
+        images = [];
+        renderTimer = null;
+        renderDeley = 350;
+        documentWatchingTimer = null;
+        documentWatchingDeley = 1000;
+        $docHeigth = 0;
+        win = angular.element($window);
+        checkImages = function() {
+          var bottomFoldOffset, hidden, image, index, j, k, len, len1, scrollTop, topFoldOffset, visible, windowHeight;
+          windowHeight = win.height();
+          scrollTop = win.scrollTop();
+          visible = [];
+          hidden = [];
+          topFoldOffset = scrollTop;
+          bottomFoldOffset = scrollTop + windowHeight;
+          for (index = j = 0, len = images.length; j < len; index = ++j) {
+            image = images[index];
+            if (image.isVisible(topFoldOffset, bottomFoldOffset)) {
+              visible.push(image);
+            } else {
+              hidden.push(image);
+            }
+          }
+          for (k = 0, len1 = visible.length; k < len1; k++) {
+            image = visible[k];
+            image.render();
+          }
+          images = hidden;
+          stopRender();
+          if (!images.length) {
+            return stopWatchingWindow();
+          }
+        };
+        onWatchingDocument = function() {
+          var currentDocHeight;
+          currentDocHeight = $document.height();
+          if ($docHeigth && currentDocHeight !== $docHeigth) {
+            startRender();
+          }
+          return $docHeigth = currentDocHeight;
+        };
+        startRender = function() {
+          return renderTimer != null ? renderTimer : renderTimer = $timeout(checkImages, renderDeley);
+        };
+        stopRender = function() {
+          if (renderTimer) {
+            $timeout.cancel(renderTimer);
+          }
+          return renderTimer = null;
+        };
+        startWatchingWindow = function() {
+          if (documentWatchingTimer == null) {
+            documentWatchingTimer = $interval(onWatchingDocument, documentWatchingDeley);
+          }
+          return win.on('resize.srLazySrc scroll.srLazySrc', startRender);
+        };
+        stopWatchingWindow = function() {
+          $log.debug('Stop watching window');
+          if (documentWatchingTimer) {
+            $interval.cancel(documentWatchingTimer);
+          }
+          documentWatchingTimer = null;
+          return win.off('resize.srLazySrc scroll.srLazySrc');
+        };
+        addImage = function(image) {
+          images.push(image);
+          startRender();
+          if (!documentWatchingTimer) {
+            return startWatchingWindow();
+          }
+        };
+        removeImage = function(image) {
+          var i, img, j, len;
+          for (i = j = 0, len = images.length; j < len; i = ++j) {
+            img = images[i];
+            if (img === image) {
+              images.splice(i, 1);
+            }
+          }
+          if (!(images.length > 0)) {
+            stopRender();
+            return stopWatchingWindow();
+          }
+        };
+        publicAPI = {
+          addImage: addImage,
+          removeImage: removeImage
+        };
+        return publicAPI;
+      })();
+      LazyImage = (function() {
+        function LazyImage(image1) {
+          this.image = image1;
+          this.rendered = false;
+        }
+
+        LazyImage.prototype.isVisible = function(topFoldOffset, bottomFoldOffset) {
+          var bottom, height, isVisible, top;
+          if (!this.image.is(':visible')) {
+            return false;
+          }
+          height = this.image.height();
+          top = this.image.offset().top;
+          bottom = top + height;
+          isVisible = (top >= topFoldOffset && top <= bottomFoldOffset) || (bottom >= topFoldOffset && bottom <= bottomFoldOffset) || (top <= topFoldOffset && bottom >= bottomFoldOffset);
+          return isVisible;
+        };
+
+        LazyImage.prototype.render = function() {
+          this.rendered = true;
+          return this.renderSource();
+        };
+
+        LazyImage.prototype.setSource = function(source1) {
+          this.source = source1;
+          if (this.rendered) {
+            return this.renderSource();
+          }
+        };
+
+        LazyImage.prototype.renderSource = function() {
+          return this.image.attr('src', this.source);
+        };
+
+        return LazyImage;
+
+      })();
+      link = function($scope, $el, $attrs) {
+        var image;
+        image = new LazyImage($el);
+        $attrs.$observe('srLazySrc', function(source) {
+          return image.setSource(source);
+        });
+        lazyLoader.addImage(image);
+        return $scope.$on('$destroy', function() {
+          return lazyLoader.removeImage(image);
+        });
+      };
+      return {
+        link: link,
+        restrict: 'A'
+      };
+    }
+  ]);
+
+  angular.module('showroomDirectives').directive('srVideoContainer', [
+    '$log', function($log) {
+      var link, videoManager;
+      videoManager = (function() {
+        var _addVideo, _playVideo, _removeVideo, listVideos;
+        listVideos = [];
+        _addVideo = function(video) {
+          return listVideos.push(video);
+        };
+        _removeVideo = function(video) {
+          var i, j, len, results, vd;
+          results = [];
+          for (i = j = 0, len = listVideos.length; j < len; i = ++j) {
+            vd = listVideos[i];
+            if (vd === video) {
+              results.push(listVideos.splice(i, 1));
+            } else {
+              results.push(void 0);
+            }
+          }
+          return results;
+        };
+        _playVideo = function(video) {
+          var j, len, vd;
+          if (!video[0].paused) {
+            return;
+          }
+          for (j = 0, len = listVideos.length; j < len; j++) {
+            vd = listVideos[j];
+            vd[0].pause();
+          }
+          video[0].play();
+          return video[0].currentTime = 0;
+        };
+        return {
+          addVideo: _addVideo,
+          removeVideo: _removeVideo,
+          playVideo: _playVideo
+        };
+      })();
+      link = function($scope, $element, $attrs) {
+        var video;
+        video = $element.find('video').eq(0);
+        videoManager.addVideo(video);
+        video.on('play', function() {
+          return $element.addClass('loading');
+        });
+        video.on('playing', function() {
+          $element.removeClass('loading');
+          return $element.addClass('playing');
+        });
+        video.on('pause', function() {
+          $element.removeClass('playing');
+          return $element.removeClass('loading');
+        });
+        $element.on('mouseover', function() {
+          return videoManager.playVideo(video);
+        });
+        return $scope.$on('$destroy', function() {
+          return videoManager.removeVideo(video);
+        });
+      };
+      return {
+        restrict: 'A',
+        link: link
+      };
     }
   ]);
 

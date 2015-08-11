@@ -1,11 +1,9 @@
 angular.module 'showroomServices'
 .factory 'videoService', [
 	'SHOWROOM_CONSTANTS'
-	'VG_STATES'
 	'$filter'
 	'$sce'
-	'$rootScope'
-	(SHOWROOM_CONSTANTS, VG_STATES, $filter, $sce, $rootScope) ->
+	(SHOWROOM_CONSTANTS, $filter, $sce) ->
 		parseVideo = (config) ->
 			@response = config.response
 			@currencySymbol = config.currencySymbol || '$'
@@ -19,18 +17,11 @@ angular.module 'showroomServices'
 				productMap = {}
 				productMap[product.id] = product for product in products
 				videos = for show, index in shows
-					preload: 'none'
 					sources: [{
 						src: $sce.trustAsResourceUrl SHOWROOM_CONSTANTS.showroomCDN + show.videoSets[@videoSize]
 						type: 'video/mp4'
 					}]
 					poster: $sce.trustAsResourceUrl SHOWROOM_CONSTANTS.showroomCDN + show.thumbnailSets[@thumbnailSize]
-					onPlayerReady: ($API) -> @API = $API
-					play: ->
-						$rootScope.currentAPI.stop() if $rootScope.currentAPI and $rootScope.currentAPI.currentState == VG_STATES.PLAY
-						if @API and @API.currentAPI != VG_STATES.PLAY 
-							$rootScope.currentAPI = @API
-							@API.play()
 					likeCounter: show.likeCounter
 					viewCounter: show.viewCounter
 					commentCounter: show.commentCounter
