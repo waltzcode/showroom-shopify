@@ -46,7 +46,7 @@
     loginFacebookAccountURL: '/account/facebook/login/',
     getLoggedInAccountInfoURL: '/account/me/info/',
     logoutURL: '/account/me/logout/',
-    getAccontProfileURL: '/account/info/',
+    getAccountProfileURL: '/account/info/',
     searchAccountByKeywordsURL: '/search/account/name/',
     searchShowByKeywordsURL: '/search/show/product/'
   });
@@ -309,7 +309,12 @@
           url = SHOWROOM_CONSTANTS.searchAccountByKeywordsURL + keywords + '/' + pageNumber + '/' + pageSize + '/';
           return sessionService.callService('GET', url);
         },
-        getAccountProfile: function(data) {}
+        getAccountProfile: function(options) {
+          var accountId, url;
+          accountId = options.accountId;
+          url = SHOWROOM_CONSTANTS.getAccountProfileURL + accountId + '/';
+          return sessionService.callService('GET', url);
+        }
       };
     }
   ]);
@@ -368,18 +373,44 @@
   ]);
 
   angular.module('showroomControllers').controller('AccountDetailController', [
-    '$scope', 'showService', '$log', '$routeParams', 'videoService', function($scope, showService, $log, $routeParams, videoService) {
-      return showService.getShowByUser({
+    '$scope', 'showService', 'userService', '$log', '$routeParams', 'videoService', function($scope, showService, userService, $log, $routeParams, videoService) {
+      $scope.header = 'Account Show';
+      $scope.currentPage = 0;
+      $scope.hasMore = true;
+      $scope.totalItem = 0;
+      $scope.loadMore = function() {
+        return showService.getShowByUser({
+          accountId: $routeParams.accountId,
+          pageNumber: $scope.currentPage++
+        }).then(function(response) {
+          if (response.data.code === 1000) {
+            if ($scope.videos && angular.isArray($scope.videos)) {
+              $scope.videos = $scope.videos.concat(videoService.parseVideo({
+                response: response.data
+              }));
+            } else {
+              $scope.videos = videoService.parseVideo({
+                response: response.data
+              });
+            }
+          } else {
+            $log.error(response.data.message);
+          }
+          if (response.data.payload && $scope.videos.length >= $scope.totalItem) {
+            return $scope.hasMore = false;
+          }
+        });
+      };
+      return userService.getAccountProfile({
         accountId: $routeParams.accountId
       }).then(function(response) {
+        var accountInfo;
         if (response.data.code === 1000) {
-          $scope.header = 'Account Show';
-          return $scope.videos = videoService.parseVideo({
-            response: response.data
-          });
-        } else {
-          return $log.error(response.data.message);
+          accountInfo = response.data.payload.accountInfo;
+          $scope.totalItem = response.data.payload.showCounter;
+          $scope.header = accountInfo.firstName + ' ' + accountInfo.lastName + ' SHOW';
         }
+        return $scope.loadMore();
       });
     }
   ]);

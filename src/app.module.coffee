@@ -67,7 +67,7 @@ showroomApp.constant 'SHOWROOM_CONSTANTS', {
 	loginFacebookAccountURL: 				'/account/facebook/login/'							# PUT 	/:sessionId [socialTokem]
 	getLoggedInAccountInfoURL: 			'/account/me/info/'									# GET 	/:sessionId 
 	logoutURL: 									'/account/me/logout/'								# GET 	/:sessionId
-	getAccontProfileURL: 					'/account/info/'										# GET 	/:accountId/:sessionId
+	getAccountProfileURL: 					'/account/info/'										# GET 	/:accountId/:sessionId
 
 	# SEARCHING
 	searchAccountByKeywordsURL: 			'/search/account/name/'								# /:keywords/:pageNumber/:pageSize/:sessionId
