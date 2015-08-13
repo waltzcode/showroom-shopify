@@ -3,6 +3,16 @@ angular.module 'showroomControllers'
 	'$scope', 'showService', 'videoService', '$log'
 	($scope, showService, videoService, $log) ->
 		$scope.header = 'Newest'
-		showService.getGlobalLastestFeed pageNumber: 0, pageSize: 15
-		.then (response) -> $scope.videos = videoService.parseVideo({response: response.data})
+		$scope.currentPage = 0
+		$scope.hasMore = true
+
+		$scope.loadMore = ->
+			showService.getGlobalLastestFeed pageNumber: $scope.currentPage++ , pageSize: 15
+			.then (response) ->
+				if angular.isArray($scope.videos) 
+					$scope.videos = $scope.videos.concat videoService.parseVideo({response: response.data})		
+				else 
+					$scope.videos = videoService.parseVideo({response: response.data})
+				$scope.hasMore = false if response.data.payload && $scope.videos.length >= response.data.payload.totalItem
+		$scope.loadMore()
 ]

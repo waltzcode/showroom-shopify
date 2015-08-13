@@ -1,12 +1,13 @@
 <div id="homepage-products">
 
-  <h2><span>{[{header}]}</span></h2>
+	<h2><span>{[{header}]}</span></h2>
 
-  <ul class="product-loop"  style="width: 100%">
-    <li ng-repeat="video in videos" class="show desktop-4 tablet-half mobile-full">
-      <div class="show-wrapper" ng-include="'{{ 'inc_list_show.html' | asset_url }}'"></div>
-    </li>
-  </ul>
-
+	<ul class="product-loop"  style="width: 100%">
+		<li ng-repeat="video in videos" class="show desktop-4 tablet-half mobile-full">
+		<div class="show-wrapper" ng-include="'{{ 'inc_list_show.html' | asset_url }}'"></div>
+		</li>
+	</ul>
+	
+	<button class="load-more" ng-click="loadMore()" ng-show="videos && videos.length > 0 && hasMore">Load More</button>
 </div>
 <div class="clear"></div>

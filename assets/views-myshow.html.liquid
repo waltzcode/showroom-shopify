@@ -9,6 +9,7 @@
       <div class="show-wrapper" ng-include="'{{ 'inc_list_show.html' | asset_url }}'"></div>
     </li>
   </ul>
-
+	
+	<button class="load-more" ng-click="loadMore()" ng-show="videos && videos.length > 0" ng-disabled="!hasMore">Load More</button>
 </div>
 <div class="clear"></div>

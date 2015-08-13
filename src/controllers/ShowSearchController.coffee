@@ -3,11 +3,17 @@ angular.module 'showroomControllers'
 	'showService', 'videoService','$scope', '$location', '$log'
 	(showService, videoService, $scope, $location, $log) ->
 		$scope.keywords = $location.search().q
-		showService.searchShowByKeywords keywords: $scope.keywords
-		.then (response) ->
-			$scope.header = 'Search result for show - \'' + $scope.keywords + '\''
-			$scope.shows = response.data.payload.items if response.data.code is 1000
-			$scope.totalItem = response.data.payload.totalItem
-			$scope.videos = videoService.parseVideo response: response.data
-			$scope.message = response.data.message if response.data.code isnt 1000
+		$scope.header = 'Search result for show - \'' + $scope.keywords + '\''
+		$scope.currentPage = 0
+		$scope.hasMore = true
+
+		$scope.loadMore = ->
+			showService.searchShowByKeywords keywords: $scope.keywords, pageNumber: $scope.currentPage++
+			.then (response) ->
+				if angular.isArray($scope.videos) 
+					$scope.videos = $scope.videos.concat videoService.parseVideo({response: response.data})		
+				else 
+					$scope.videos = videoService.parseVideo({response: response.data})
+				$scope.hasMore = false if response.data.payload && $scope.videos.length >= response.data.payload.totalItem
+		$scope.loadMore()
 ]

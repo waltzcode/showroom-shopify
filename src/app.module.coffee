@@ -84,7 +84,7 @@ showroomApp.config [
 		# $sceDelegateProvider.resourceUrlWhitelist ['self', 'http://cdn.shopify.com/**', 'https://cdn.shopify.com/**']
 		$sceProvider.enabled false
 		# Enable/Disable Debug level message
-		$logProvider.debugEnabled false
+		$logProvider.debugEnabled true
 ]
 
 showroomApp.run [

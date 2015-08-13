@@ -55,7 +55,7 @@
     '$interpolateProvider', '$sceDelegateProvider', '$sceProvider', '$logProvider', function($interpolateProvider, $sceDelegateProvider, $sceProvider, $logProvider) {
       $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
       $sceProvider.enabled(false);
-      return $logProvider.debugEnabled(false);
+      return $logProvider.debugEnabled(true);
     }
   ]);
 
@@ -386,31 +386,61 @@
 
   angular.module('showroomControllers').controller('ChannelDetailController', [
     '$scope', 'showService', '$log', '$routeParams', 'videoService', function($scope, showService, $log, $routeParams, videoService) {
-      return showService.getFeaturedByChannel({
-        channelId: $routeParams.channelId
-      }).then(function(response) {
-        if (response.data.code === 1000) {
-          $scope.header = response.data.payload.channel.name + ' Category';
-          return $scope.videos = videoService.parseVideo({
-            response: response.data
-          });
-        } else {
-          return $log.error(response.data.message);
-        }
-      });
+      $scope.currentPage = 0;
+      $scope.hasMore = true;
+      $scope.loadMore = function() {
+        return showService.getFeaturedByChannel({
+          channelId: $routeParams.channelId,
+          pageNumber: $scope.currentPage++
+        }).then(function(response) {
+          if (response.data.code === 1000) {
+            $scope.header = response.data.payload.channel.name + ' Category';
+            if ($scope.videos && angular.isArray($scope.videos)) {
+              $scope.videos = $scope.videos.concat(videoService.parseVideo({
+                response: response.data
+              }));
+            } else {
+              $scope.videos = videoService.parseVideo({
+                response: response.data
+              });
+            }
+            if (response.data.payload && $scope.videos.length >= response.data.payload.totalItem) {
+              return $scope.hasMore = false;
+            }
+          } else {
+            return $log.error(response.data.message);
+          }
+        });
+      };
+      return $scope.loadMore();
     }
   ]);
 
   angular.module('showroomControllers').controller('FeaturedController', [
     '$scope', 'showService', 'videoService', '$log', 'SHOWROOM_CONSTANTS', function($scope, showService, videoService, $log, SHOWROOM_CONSTANTS) {
       $scope.header = 'Featured';
-      return showService.getFeaturedByChannel({
-        channelId: SHOWROOM_CONSTANTS.BeautyChannelId
-      }).then(function(response) {
-        return $scope.videos = videoService.parseVideo({
-          response: response.data
+      $scope.currentPage = 0;
+      $scope.hasMore = true;
+      $scope.loadMore = function() {
+        return showService.getFeaturedByChannel({
+          channelId: SHOWROOM_CONSTANTS.BeautyChannelId,
+          pageNumber: $scope.currentPage++
+        }).then(function(response) {
+          if (angular.isArray($scope.videos)) {
+            $scope.videos = $scope.videos.concat(videoService.parseVideo({
+              response: response.data
+            }));
+          } else {
+            $scope.videos = videoService.parseVideo({
+              response: response.data
+            });
+          }
+          if (response.data.payload && $scope.videos.length >= response.data.payload.totalItem) {
+            return $scope.hasMore = false;
+          }
         });
-      });
+      };
+      return $scope.loadMore();
     }
   ]);
 
@@ -591,15 +621,29 @@
   angular.module('showroomControllers').controller('MyShowController', [
     '$scope', '$rootScope', 'showService', 'videoService', '$log', function($scope, $rootScope, showService, videoService, $log) {
       $scope.header = 'My shows';
+      $scope.pageNumber = 0;
+      $scope.hasMore = true;
       if ($rootScope.loggedIn) {
-        return showService.getPersonalShow({
-          pageNumber: 0,
-          pageSize: 15
-        }).then(function(response) {
-          return $scope.videos = videoService.parseVideo({
-            response: response.data
+        $scope.loadMore = function() {
+          return showService.getPersonalShow({
+            pageNumber: $scope.pageNumber++,
+            pageSize: 15
+          }).then(function(response) {
+            if ($scope.videos && angular.isArray($scope.videos)) {
+              $scope.videos = $scope.videos.concat(videoService.parseVideo({
+                response: response.data
+              }));
+            } else {
+              $scope.videos = videoService.parseVideo({
+                response: response.data
+              });
+            }
+            if ($scope.videos.length >= response.data.payload.totalItem) {
+              return $scope.hasMore = false;
+            }
           });
-        });
+        };
+        return $scope.loadMore();
       }
     }
   ]);
@@ -607,49 +651,85 @@
   angular.module('showroomControllers').controller('NewestController', [
     '$scope', 'showService', 'videoService', '$log', function($scope, showService, videoService, $log) {
       $scope.header = 'Newest';
-      return showService.getGlobalLastestFeed({
-        pageNumber: 0,
-        pageSize: 15
-      }).then(function(response) {
-        return $scope.videos = videoService.parseVideo({
-          response: response.data
+      $scope.currentPage = 0;
+      $scope.hasMore = true;
+      $scope.loadMore = function() {
+        return showService.getGlobalLastestFeed({
+          pageNumber: $scope.currentPage++,
+          pageSize: 15
+        }).then(function(response) {
+          if (angular.isArray($scope.videos)) {
+            $scope.videos = $scope.videos.concat(videoService.parseVideo({
+              response: response.data
+            }));
+          } else {
+            $scope.videos = videoService.parseVideo({
+              response: response.data
+            });
+          }
+          if (response.data.payload && $scope.videos.length >= response.data.payload.totalItem) {
+            return $scope.hasMore = false;
+          }
         });
-      });
+      };
+      return $scope.loadMore();
     }
   ]);
 
   angular.module('showroomControllers').controller('PopularController', [
     '$scope', 'showService', 'videoService', '$log', function($scope, showService, videoService, $log) {
       $scope.header = 'Popular';
-      return showService.getGlobalMostLikeFeed({
-        pageNumber: 0,
-        pageSize: 15
-      }).then(function(response) {
-        return $scope.videos = videoService.parseVideo({
-          response: response.data
+      $scope.currentPage = 0;
+      $scope.hasMore = true;
+      $scope.loadMore = function() {
+        return showService.getGlobalMostLikeFeed({
+          pageNumber: $scope.currentPage++,
+          pageSize: 15
+        }).then(function(response) {
+          if (angular.isArray($scope.videos)) {
+            $scope.videos = $scope.videos.concat(videoService.parseVideo({
+              response: response.data
+            }));
+          } else {
+            $scope.videos = videoService.parseVideo({
+              response: response.data
+            });
+          }
+          if (response.data.payload && $scope.videos.length >= response.data.payload.totalItem) {
+            return $scope.hasMore = false;
+          }
         });
-      });
+      };
+      return $scope.loadMore();
     }
   ]);
 
   angular.module('showroomControllers').controller('ShowSearchController', [
     'showService', 'videoService', '$scope', '$location', '$log', function(showService, videoService, $scope, $location, $log) {
       $scope.keywords = $location.search().q;
-      return showService.searchShowByKeywords({
-        keywords: $scope.keywords
-      }).then(function(response) {
-        $scope.header = 'Search result for show - \'' + $scope.keywords + '\'';
-        if (response.data.code === 1000) {
-          $scope.shows = response.data.payload.items;
-        }
-        $scope.totalItem = response.data.payload.totalItem;
-        $scope.videos = videoService.parseVideo({
-          response: response.data
+      $scope.header = 'Search result for show - \'' + $scope.keywords + '\'';
+      $scope.currentPage = 0;
+      $scope.hasMore = true;
+      $scope.loadMore = function() {
+        return showService.searchShowByKeywords({
+          keywords: $scope.keywords,
+          pageNumber: $scope.currentPage++
+        }).then(function(response) {
+          if (angular.isArray($scope.videos)) {
+            $scope.videos = $scope.videos.concat(videoService.parseVideo({
+              response: response.data
+            }));
+          } else {
+            $scope.videos = videoService.parseVideo({
+              response: response.data
+            });
+          }
+          if (response.data.payload && $scope.videos.length >= response.data.payload.totalItem) {
+            return $scope.hasMore = false;
+          }
         });
-        if (response.data.code !== 1000) {
-          return $scope.message = response.data.message;
-        }
-      });
+      };
+      return $scope.loadMore();
     }
   ]);
 
