@@ -1,0 +1,212 @@
+@import "compass/css3";
+@import "variable";
+@import "mixins";
+
+*, *::after, *::before {
+    @include box-sizing(border-box);
+}
+
+body {
+	color: shopify_exp('settings.text_color');
+	background: shopify_exp('settings.background');
+	font-size: shopify_exp('settings.font-size');
+	font-family: shopify_exp('settings.font');
+	line-height: 1.6rem;
+	-webkit-text-size-adjust: none;
+	padding: 0;
+	margin: 0;
+	@include font-smoothing;
+}
+
+img { max-width: 100%; border: 0; }
+
+h1, h2, h3, h4, h5, h6 {
+	color: shopify_exp('settings.heading_color');
+	font-family:shopify_exp('settings.headings_font');
+	font-weight: shopify_exp('settings.heading-weight');
+	letter-spacing: 1px;
+	margin-top: 0;
+
+	a {
+		font-weight: inherit;
+	}
+}
+
+h1 { font-size: shopify_exp('settings.h1-size'); }
+h2 { font-size: shopify_exp('settings.h2-size'); }
+h3 { font-size: shopify_exp('settings.h3-size'); }
+h4 { font-size: shopify_exp('settings.h4-size'); }
+h5 { font-size: shopify_exp('settings.h5-size'); }
+h6 { font-size: shopify_exp('settings.h6-size'); }
+
+h2, h3, h4, h5, h6, p, dl, hr, ol, ul, pre, table, address, fieldset { margin-bottom: 10px; }
+p { font-size: shopify_exp('settings.font-size'); margin-bottom: 1.6em; }
+strong { font-weight: bold; }
+em { font-style:italic; }
+pre { font-family: "Courier New", Courier, monospace; font-size: 13px; font-weight:bold; }
+p.date { }
+
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+
+a { 
+	text-decoration:none; 
+	color: shopify_exp('settings.link_color'); 
+	outline: none;
+
+	&:hover { 
+		color: shopify_exp('settings.link_hover_color'); 
+		text-decoration:underline; 
+	}
+
+	&:visited {
+		color: shopify_exp('settings.link_color'); 
+		text-decoration:none; 
+	}
+
+	&:active {
+		outline:1px dotted #79160d; 
+	}
+}
+
+dt { font-weight: bold; }
+ol { padding: 0; margin-left: 0; text-indent: 0; list-style-position: inside; }
+ul { padding: 0; margin: 0; list-style:disc inside;}
+li {  }
+
+blockquote { 
+	font-family: Georgia, "Times New Roman", Times, sans-serif; 
+	font-size:18px; 
+	line-height: 24px; 
+	font-style:italic; 
+	padding-left:35px; 
+	color: #999; 
+	margin: .5em 0 .5em 0; 
+}
+
+input, textarea { }
+
+hr { 
+	background: shopify_exp('settings.dotted_color'); 
+	border:none; 
+	color: shopify_exp('settings.dotted_color'); 
+	display:block; 
+	height:1px; 
+	margin-top: 20px; 
+	width:100%;
+}
+
+.clear {
+  clear: both;
+  display: block;
+  overflow: hidden;
+  visibility: hidden;
+  width: 0;
+  height: 0;
+}
+
+.pull-left {
+	float: left;
+}
+
+.pull-right {
+	float: right;
+}
+
+.clearfix {
+	@include clearfix();
+}
+
+.padded { margin-bottom: 15px; }
+
+.section-title { margin-bottom: 20px; }
+
+/* #BUTTONS
+ ============================================*/
+.button,
+button,
+input[type="submit"],
+input[type="reset"],
+input[type="button"] {
+	background: shopify_exp('settings.button_color');
+	color: shopify_exp('settings.button_text');
+	display: inline-block;
+	font-size: shopify_exp('settings.font-size');
+	font-weight: shopify_exp('settings.button_weight');
+	text-decoration: none;
+	cursor: pointer;
+	margin-bottom: 20px;
+	line-height: normal;
+	padding: 0 10px;
+	font-family: shopify_exp('settings.font');
+	border: 0;
+	min-width: 160px;
+	line-height: 38px;
+
+	&:hover {
+		color: shopify_exp('settings.button_hover_text');
+		background: shopify_exp('settings.button_hover');
+		border: 0;	
+	}
+
+	&.full-width {
+		width: 100%;
+		padding-left: 0 !important;
+		padding-right: 0 !important;
+		text-align: center;
+	}
+}
+
+/* Fix for odd Mozilla border & padding issues */
+button::-moz-focus-inner, input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+/* #Forms
+================================================== */
+
+form {
+  margin-bottom: 20px; }
+fieldset {
+  margin-bottom: 20px; }
+input[type="text"],
+input[type="password"],
+input[type="email"],
+textarea,
+select {
+  border: 1px solid shopify_exp('settings.dotted_color');
+  padding: 0 10px;
+  line-height: 38px;
+  outline: none;
+  color: shopify_exp('settings.text_color');
+  margin: 0;
+  min-width: 200px;
+  max-width: 100%;
+  display: block;
+  margin-bottom: 5px;
+  margin-top: 15px;
+  background: #fff;
+  font-size: shopify_exp('settings.font-size');
+}
+
+select {
+  padding: 0; }
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus,
+textarea:focus {
+  border: 1px solid shopify_exp('settings.dotted_color');
+  color: shopify_exp('settings.text_color');
+  -moz-box-shadow: 0 0 3px rgba(0,0,0,.2);
+  -webkit-box-shadow: 0 0 3px rgba(0,0,0,.2);
+  box-shadow:  0 0 3px rgba(0,0,0,.2); }
+textarea {
+  min-height: 60px; width: 100%; }
+label,
+legend {
+  display: block;
+  font-weight: bold;
+  font-size: 13px;
+}

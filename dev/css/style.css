@@ -1,0 +1,182 @@
+/* line 5, ../sass/style.sass */
+body {
+  background-color: {{imge.jpg}};
+}
+
+/* line 8, ../sass/style.sass */
+* {
+  margin: 0;
+  padding: 0;
+}
+
+/* line 12, ../sass/style.sass */
+#wrapper {
+  width: 645px;
+  height: 500px;
+  margin: 35px auto 0 auto;
+}
+
+/* line 17, ../sass/style.sass */
+h1 {
+  color: white;
+  font: 300 40px "Open Sans";
+  width: 300px;
+  padding: 30px;
+  float: left;
+}
+
+/* line 24, ../sass/style.sass */
+.mobile {
+  float: left;
+  position: relative;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+/* line 30, ../sass/style.sass */
+.mobile #tm {
+  display: none;
+  -moz-transition: all 0.25s;
+  -o-transition: all 0.25s;
+  -webkit-transition: all 0.25s;
+  transition: all 0.25s;
+}
+/* line 34, ../sass/style.sass */
+.mobile #tm:checked ~ section {
+  transform: translateX(150px);
+}
+/* line 38, ../sass/style.sass */
+.mobile #tm:checked ~ .sidenav b {
+  opacity: 1;
+  transform: translateX(0);
+}
+/* line 42, ../sass/style.sass */
+.mobile #tm:checked ~ .sidenav li:nth-child(1) b {
+  -moz-transition-delay: 0.08s;
+  -o-transition-delay: 0.08s;
+  -webkit-transition-delay: 0.08s;
+  transition-delay: 0.08s;
+}
+/* line 42, ../sass/style.sass */
+.mobile #tm:checked ~ .sidenav li:nth-child(2) b {
+  -moz-transition-delay: 0.16s;
+  -o-transition-delay: 0.16s;
+  -webkit-transition-delay: 0.16s;
+  transition-delay: 0.16s;
+}
+/* line 42, ../sass/style.sass */
+.mobile #tm:checked ~ .sidenav li:nth-child(3) b {
+  -moz-transition-delay: 0.24s;
+  -o-transition-delay: 0.24s;
+  -webkit-transition-delay: 0.24s;
+  transition-delay: 0.24s;
+}
+/* line 42, ../sass/style.sass */
+.mobile #tm:checked ~ .sidenav li:nth-child(4) b {
+  -moz-transition-delay: 0.32s;
+  -o-transition-delay: 0.32s;
+  -webkit-transition-delay: 0.32s;
+  transition-delay: 0.32s;
+}
+/* line 42, ../sass/style.sass */
+.mobile #tm:checked ~ .sidenav li:nth-child(5) b {
+  -moz-transition-delay: 0.4s;
+  -o-transition-delay: 0.4s;
+  -webkit-transition-delay: 0.4s;
+  transition-delay: 0.4s;
+}
+/* line 42, ../sass/style.sass */
+.mobile #tm:checked ~ .sidenav li:nth-child(6) b {
+  -moz-transition-delay: 0.48s;
+  -o-transition-delay: 0.48s;
+  -webkit-transition-delay: 0.48s;
+  transition-delay: 0.48s;
+}
+/* line 42, ../sass/style.sass */
+.mobile #tm:checked ~ .sidenav li:nth-child(7) b {
+  -moz-transition-delay: 0.56s;
+  -o-transition-delay: 0.56s;
+  -webkit-transition-delay: 0.56s;
+  transition-delay: 0.56s;
+}
+/* line 42, ../sass/style.sass */
+.mobile #tm:checked ~ .sidenav li:nth-child(8) b {
+  -moz-transition-delay: 0.64s;
+  -o-transition-delay: 0.64s;
+  -webkit-transition-delay: 0.64s;
+  transition-delay: 0.64s;
+}
+/* line 42, ../sass/style.sass */
+.mobile #tm:checked ~ .sidenav li:nth-child(9) b {
+  -moz-transition-delay: 0.72s;
+  -o-transition-delay: 0.72s;
+  -webkit-transition-delay: 0.72s;
+  transition-delay: 0.72s;
+}
+/* line 47, ../sass/style.sass */
+.mobile section {
+  background-image: url("http://thecodeplayer.com/uploads/media/mb1.png");
+  width: 285px;
+  height: 500px;
+  position: relative;
+  display: block;
+  -moz-transition: all 0.25s;
+  -o-transition: all 0.25s;
+  -webkit-transition: all 0.25s;
+  transition: all 0.25s;
+}
+/* line 56, ../sass/style.sass */
+.mobile section label {
+  color: white;
+  font: bold 14px Montserrat;
+  text-align: center;
+  border: 2px solid white;
+  border-radius: 4px;
+  display: block;
+  padding: 10px 0;
+  width: 60%;
+  position: absolute;
+  left: 20%;
+  top: 100px;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+/* line 71, ../sass/style.sass */
+.mobile .sidenav {
+  background-color: #323c3c;
+  width: 150px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  margin: 0;
+  padding-top: 100px;
+}
+/* line 81, ../sass/style.sass */
+.mobile .sidenav li {
+  list-style-type: none;
+}
+/* line 84, ../sass/style.sass */
+.mobile .sidenav a {
+  color: white;
+  text-decoration: none;
+}
+/* line 88, ../sass/style.sass */
+.mobile .sidenav b {
+  font: bold 12px/48px Montserrat;
+  display: block;
+  opacity: 1;
+  transform: translateX(40px);
+  -moz-transition: all 0.4s;
+  -o-transition: all 0.4s;
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+}
+/* line 95, ../sass/style.sass */
+.mobile .sidenav i {
+  display: block;
+  width: 50px;
+  float: left;
+  font-size: 16px;
+  line-height: 48px;
+  text-align: center;
+}

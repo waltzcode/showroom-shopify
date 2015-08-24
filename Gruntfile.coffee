@@ -25,14 +25,37 @@ module.exports = (grunt) ->
 			options:
 				mangle:
 					except: ['jQuery', 'Backbone', 'angular']
-			my_target:
+			js:
 				files:
 					'assets/app.min.js.liquid': ['scripts/app.js']
+		compass:
+			dist:
+				options:
+					require: ['./scss_cus_funcs.rb']
+					sassDir: ['scss']
+					cssDir: ['styles']
+					#outputStyle: 'compressed'
+					#environment: 'production'
+		copy:
+			styles:
+				src: 'styles/app.css'
+				dest: 'assets/app.min.css.liquid'
 		watch:
+			dev:
+				files: [
+					'dev/sass/**'
+				]
+				tasks: ['compass']
+			compass:
+				files: [
+					'scss/**'
+				]
+				tasks: ['compass', 'copy:styles']
 			shopify:
 				files: [
 					'layout/**'
 					'templates/**'
+					'config/**'
 					'snippets/**'
 					'assets/**'
 				]
@@ -52,5 +75,7 @@ module.exports = (grunt) ->
 	grunt.loadNpmTasks 'grunt-shopify'
 	grunt.loadNpmTasks 'grunt-contrib-coffee'
 	grunt.loadNpmTasks 'grunt-contrib-uglify'
+	grunt.loadNpmTasks 'grunt-contrib-compass'
+	grunt.loadNpmTasks 'grunt-contrib-copy'
 
 	grunt.registerTask 'default', ['watch']

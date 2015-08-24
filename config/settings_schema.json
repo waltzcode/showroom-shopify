@@ -107,6 +107,32 @@
       },
       {
         "type": "color",
+        "id": "button_hover_text",
+        "label": "Button hover Text color",
+        "default": "#f0f0f0"
+      },
+      {
+        "type": "select",
+        "id": "button_weight",
+        "label": "Buttons Font Weight",
+        "options": [
+          {
+            "value": "700",
+            "label": "Bold"
+          },
+          {
+            "value": "400",
+            "label": "Normal"
+          },
+          {
+            "value": "300",
+            "label": "Light"
+          }
+        ],
+        "default": "400"
+      },
+      {
+        "type": "color",
         "id": "button_hover",
         "label": "Button hover color",
         "default": "#000000"

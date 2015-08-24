@@ -1,0 +1,101 @@
+@import compass/css3
+@import compass/css3/animation
+@import compass/css3/transition
+
+body
+	background-color: shopify_exp('imge.jpg')
+
+*
+	margin: 0
+	padding: 0
+
+#wrapper
+	width: 645px
+	height: 500px
+	margin: 35px auto 0 auto
+
+h1
+	color: white
+	font: 300 40px "Open Sans"
+	width: 300px
+	padding: 30px
+	float: left
+
+.mobile
+	float: left
+	position: relative
+	box-shadow: 0 0 25px rgba(0, 0, 0, 0.5)
+	overflow: hidden
+
+	#tm
+		display: none
+		+transition(all 0.25s)
+		&:checked
+			~ section
+				transform: translateX(150px)
+
+			~ .sidenav
+				b
+					opacity: 1
+					transform: translateX(0)
+				@for $i from 1 to 10
+					li:nth-child(#{$i}) b
+						+transition-delay(#{0.08 * $i}s)
+
+
+
+	section
+		background-image: url("http://thecodeplayer.com/uploads/media/mb1.png")
+		width: 285px
+		height: 500px
+		position: relative
+		display: block
+
+		+transition(all 0.25s)
+
+		label
+			color: white
+			font: bold 14px Montserrat
+			text-align: center
+			border: 2px solid white
+			border-radius: 4px
+			display: block
+			padding: 10px 0
+			width: 60%
+			position: absolute
+			left: 20%
+			top: 100px
+			cursor: pointer
+			text-transform: uppercase
+
+	.sidenav
+		background-color: rgb(50, 60, 60)
+		width: 150px
+		position: absolute
+		left: 0
+		top: 0
+		bottom: 0
+		margin: 0
+		padding-top: 100px
+
+		li
+			list-style-type: none
+
+		a
+			color: white
+			text-decoration: none
+
+		b
+			font: bold 12px/48px Montserrat
+			display: block
+			opacity: 1
+			transform: translateX(40px)
+			+transition(all 0.4s)
+
+		i
+			display: block
+			width: 50px
+			float: left
+			font-size: 16px
+			line-height: 48px
+			text-align: center

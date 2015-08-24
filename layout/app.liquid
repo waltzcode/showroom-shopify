@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js" ng-app="showroomApp">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>{{ shop.name }}</title>
+		{% if page_description %}
+			<meta name="description" content="{{ page_description | escape }}" />
+		{% endif %}
+		<!-- Google fonts -->
+		{% include 'google-fonts' %}
+
+		<link rel="shortcut icon" href="{{ 'favicon.png' | asset_url }}">
+
+		{{ 'app.min.css' | asset_url | stylesheet_tag }}
+		{{ 'flexslider.css' | asset_url | stylesheet_tag }}
+		{{ 'font-awesome.css' | asset_url | stylesheet_tag }}
+		{{ 'loading-bar.min.css' | asset_url | stylesheet_tag }}
+
+		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		{{ content_for_header }}
+	</head>
+	<body class="gridlock {{ template }}">
+
+		{{ content_for_layout }}
+
+		<div id="fb-root"></div>
+
+		<script>
+			window.fbAsyncInit = function() {
+				FB.init({
+					 appId      : '516034861793763',
+					 xfbml      : true,
+					 version    : 'v2.4'
+				});
+			};
+			(function(d, s, id){
+				var js, fjs = d.getElementsByTagName(s)[0];
+				if (d.getElementById(id)) {return;}
+				js = d.createElement(s); js.id = id;
+				js.src = "//connect.facebook.net/en_US/sdk.js";
+				fjs.parentNode.insertBefore(js, fjs);
+			}(document, 'script', 'facebook-jssdk'));
+		</script>
+
+		<!-- Modernizr -->
+		{{ 'modernizr.js' | asset_url | script_tag }}
+		<!-- jQuery -->
+		{{ 'jquery.min.js' | asset_url | script_tag }}
+
+		<!-- AngularJS and custom scripts -->
+		{{ 'angular.min.js' | asset_url | script_tag }}
+		{{ 'angular-route.min.js' | asset_url | script_tag }}
+		{{ 'angular-cookies.min.js' | asset_url | script_tag }}
+		{{ 'angular-animate.min.js' | asset_url | script_tag }}
+		{{ 'loading-bar.min.js' | asset_url | script_tag }}
+		{{ 'app.min.js' | asset_url | script_tag }}
+		
+	</body>
+</html>
