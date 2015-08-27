@@ -497,14 +497,14 @@
         if ($scope.userKeywords) {
           $scope.showKeywords = '';
           $location.search('q', $scope.userKeywords);
-          return $location.path('/user/search');
+          return $location.path('/search/user');
         }
       };
       return $scope.searchShow = function() {
         if ($scope.showKeywords) {
           $scope.userKeywords = '';
           $location.search('q', $scope.showKeywords);
-          return $location.path('/show/search');
+          return $location.path('/search/show');
         }
       };
     }

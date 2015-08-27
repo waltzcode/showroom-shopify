@@ -12,11 +12,11 @@ angular.module 'showroomControllers'
 			if $scope.userKeywords
 				$scope.showKeywords = ''
 				$location.search 'q', $scope.userKeywords
-				$location.path '/user/search'
+				$location.path '/search/user'
 		$scope.searchShow = ->
 			if $scope.showKeywords
 				$scope.userKeywords = ''
 				$location.search 'q', $scope.showKeywords
-				$location.path '/show/search'
+				$location.path '/search/show'
 
 ]
