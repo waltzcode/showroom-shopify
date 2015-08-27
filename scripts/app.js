@@ -38,6 +38,7 @@
     getPersonalFeedURL: '/account/me/feed/',
     getPersonalShowURL: '/show/me/list/',
     getShowByUserURL: '/show/list/by/account/',
+    getShowByUsernameURL: '/show/list/by/username/',
     getListChannelURL: '/channel/list/',
     registerEmailAccountURL: '/account/email/register/',
     resetEmailAccountPasswordURL: '/account/email/resetpassword/',
@@ -105,10 +106,10 @@
       }).when('/myshow', {
         templateUrl: "{{ 'views-list-show.html' | asset_url }}",
         controller: 'MyShowController'
-      }).when('/user/search', {
+      }).when('/search/user', {
         templateUrl: "{{ 'views-user-search.html' | asset_url }}",
         controller: 'UserSearchController'
-      }).when('/show/search', {
+      }).when('/search/show', {
         templateUrl: "{{ 'views-show-search.html' | asset_url }}",
         controller: 'ShowSearchController'
       }).when('/category/:channelId', {
@@ -117,6 +118,9 @@
       }).when('/account/:accountId', {
         templateUrl: "{{ 'views-account-detail.html' | asset_url }}",
         controller: 'AccountDetailController'
+      }).when('/user/:username', {
+        templateUrl: "{{ 'views-account-detail.html' | asset_url }}",
+        controller: 'UserDetailController'
       }).otherwise({
         templateUrl: "{{ 'views-home.html' | asset_url }}",
         controller: 'HomeController'
@@ -269,6 +273,9 @@
         },
         getShowByUser: function(options) {
           return sessionService.callService('GET', buildUri(SHOWROOM_CONSTANTS.getShowByUserURL + options.accountId + '/', options));
+        },
+        getShowByUsername: function(options) {
+          return sessionService.callService('GET', buildUri(SHOWROOM_CONSTANTS.getShowByUsernameURL + options.username + '/', options));
         },
         getFeaturedByChannel: function(options) {
           return sessionService.callService('GET', buildUri(SHOWROOM_CONSTANTS.getFeaturedByChannelURL + options.channelId + '/', options));
@@ -809,6 +816,39 @@
           });
         }
       };
+    }
+  ]);
+
+  angular.module('showroomControllers').controller('UserDetailController', [
+    '$scope', 'showService', 'userService', '$log', '$routeParams', 'videoService', function($scope, showService, userService, $log, $routeParams, videoService) {
+      $scope.header = 'Account Show';
+      $scope.currentPage = 0;
+      $scope.hasMore = true;
+      $scope.totalItem = 0;
+      $scope.loadMore = function() {
+        return showService.getShowByUsername({
+          username: $routeParams.username,
+          pageNumber: $scope.currentPage++
+        }).then(function(response) {
+          if (response.data.code === 1000) {
+            if ($scope.videos && angular.isArray($scope.videos)) {
+              $scope.videos = $scope.videos.concat(videoService.parseVideo({
+                response: response.data
+              }));
+            } else {
+              $scope.videos = videoService.parseVideo({
+                response: response.data
+              });
+            }
+          } else {
+            $log.error(response.data.message);
+          }
+          if (response.data.payload && $scope.videos.length >= $scope.totalItem) {
+            return $scope.hasMore = false;
+          }
+        });
+      };
+      return $scope.loadMore();
     }
   ]);
 

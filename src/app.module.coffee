@@ -55,6 +55,7 @@ showroomApp.constant 'SHOWROOM_CONSTANTS', {
 
 	# SHOW BY WITH USER/ACCOUNT
 	getShowByUserURL: 						'/show/list/by/account/'							# GET 	/:accountId/:pageNumber/:pageSize/:sessionId
+	getShowByUsernameURL:					'/show/list/by/username/'							# GET 	/:username/:pageNumber/:pageSize/:sessionId
 
 	# CHANNEL
 	getListChannelURL: 						'/channel/list/' 										# GET 	/:sessionId

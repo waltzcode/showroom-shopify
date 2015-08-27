@@ -37,6 +37,9 @@ angular.module 'showroomServices'
 			getShowByUser: (options) ->
 				sessionService.callService 'GET', buildUri(SHOWROOM_CONSTANTS.getShowByUserURL + options.accountId  + '/', options)
 
+			getShowByUsername: (options) ->
+				sessionService.callService 'GET', buildUri(SHOWROOM_CONSTANTS.getShowByUsernameURL + options.username  + '/', options)
+
 			getFeaturedByChannel: (options) ->
 				sessionService.callService 'GET', buildUri(SHOWROOM_CONSTANTS.getFeaturedByChannelURL + options.channelId  + '/', options)
 		}
