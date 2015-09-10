@@ -42,5 +42,8 @@ angular.module 'showroomServices'
 
 			getFeaturedByChannel: (options) ->
 				sessionService.callService 'GET', buildUri(SHOWROOM_CONSTANTS.getFeaturedByChannelURL + options.channelId  + '/', options)
+			getShowById: (showId) ->
+				url = SHOWROOM_CONSTANTS.getShowByIdURL + showId + '/'
+				sessionService.callService 'GET', url
 		}
 ]

@@ -11,6 +11,8 @@ angular.module 'showroomControllers'
 		$location.patch '/' if $rootScope.loggedIn
 		$scope.email = ''
 		$scope.password = ''
+		$scope.backUrl = $location.search().backUrl
+		$scope.backUrl ?= '/'
 
 		$scope.loginEmail = ->
 			if $scope.loginForm.$invalid
@@ -22,7 +24,8 @@ angular.module 'showroomControllers'
 						$rootScope.loggedIn = true
 						userService.getLoggedInAccountInfo()
 						.then (response) -> $rootScope.userInfo = response.data.payload if response.data.code == 1000
-						.finally -> $location.path '/'
+						.finally -> 
+							$location.path($scope.backUrl).search('').replace()
 					else $scope.message = 'Email or password is invalid.'
 				.catch (error) ->
 					$scope.message = 'Internal server error'
@@ -40,7 +43,7 @@ angular.module 'showroomControllers'
 					$rootScope.loggedIn = true
 					userService.getLoggedInAccountInfo()
 					.then (response) -> $rootScope.userInfo = response.data.payload if response.data.code == 1000
-					.finally -> $location.path '/'
+					.finally -> $location.path($scope.backUrl).search('').replace()
 			.catch (error) -> $log.error error
 
 		$scope.popupForgetPwd = -> $.fancybox href: "#forgot-password"

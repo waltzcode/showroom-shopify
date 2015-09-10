@@ -37,6 +37,7 @@
     getMostShareByChannelURL: '/show/browse/channel/most/share/',
     getPersonalFeedURL: '/account/me/feed/',
     getPersonalShowURL: '/show/me/list/',
+    getShowByIdURL: '/show/info/',
     getShowByUserURL: '/show/list/by/account/',
     getShowByUsernameURL: '/show/list/by/username/',
     getListChannelURL: '/channel/list/',
@@ -49,7 +50,15 @@
     logoutURL: '/account/me/logout/',
     getAccountProfileURL: '/account/info/',
     searchAccountByKeywordsURL: '/search/account/name/',
-    searchShowByKeywordsURL: '/search/show/product/'
+    searchShowByKeywordsURL: '/search/show/product/',
+    getProductByIdURL: '/product/info/',
+    likeAShowURL: '/social/me/show/like/',
+    unlikeAShowURL: '/social/me/show/unlike/',
+    checkLikeAShowURL: '/social/me/show/islike/',
+    commentAShowURL: '/social/me/show/comment/',
+    removeCommentAShowURL: '/social/me/show/comment/remove/',
+    listCommentByShowDescURL: '/social/show/list/comment/desc/',
+    listCommentByShowAscURL: '/social/show/list/comment/asc/'
   });
 
   showroomApp.config([
@@ -61,16 +70,16 @@
   ]);
 
   showroomApp.run([
-    '$rootScope', '$log', 'userService', '$q', function($rootScope, $log, userService, $q) {
+    '$rootScope', '$log', 'userService', '$location', '$q', function($rootScope, $log, userService, $location, $q) {
       userService.getLoggedInAccountInfo().then(function(response) {
         if (response.data.code === 1000) {
           $rootScope.loggedIn = true;
-          return $rootScope.userInfo = response.payload;
+          return $rootScope.userInfo = response.data.payload;
         }
       })["catch"](function(error) {
         return $log.error(error);
       });
-      return $rootScope.logout = function() {
+      $rootScope.logout = function() {
         return userService.logout().then(function(response) {
           if (response.data.code === 1000) {
             $rootScope.loggedIn = false;
@@ -79,6 +88,28 @@
         })["catch"](function(error) {
           return $log.error(error);
         });
+      };
+      $rootScope.getUserInfo = function() {
+        if ($rootScope.userInfo) {
+          return q.when($rootScope.userInfo);
+        }
+        return userService.getLoggedInAccountInfo().then(function(response) {
+          if (response.data.code === 1000) {
+            return $q.when(response.payload);
+          } else {
+            return $q.when(void 0);
+          }
+        })["catch"](function(error) {
+          return $log.error(error);
+        });
+      };
+      return $rootScope.goToLogin = function() {
+        var currentPath;
+        currentPath = $location.path();
+        $log.debug(currentPath);
+        return $location.path('/login').search({
+          backUrl: currentPath
+        }).replace();
       };
     }
   ]);
@@ -121,6 +152,9 @@
       }).when('/user/:username', {
         templateUrl: "{{ 'views-account-detail.html' | asset_url }}",
         controller: 'UserDetailController'
+      }).when('/show/:showId', {
+        templateUrl: "{{ 'views-show-detail.html' | asset_url }}",
+        controller: 'ShowDetailController'
       }).otherwise({
         templateUrl: "{{ 'views-home.html' | asset_url }}",
         controller: 'HomeController'
@@ -164,6 +198,19 @@
             }
           });
           return deferred.promise;
+        }
+      };
+    }
+  ]);
+
+  angular.module('showroomServices').factory('productService', [
+    'SHOWROOM_CONSTANTS', 'sessionService', function(SHOWROOM_CONSTANTS, sessionService) {
+      buildUr;
+      return {
+        getProductById: function(productId) {
+          var url;
+          url = SHOWROOM_CONSTANTS.getProductByIdURL + productId + '/';
+          return sessionService.callService('GET', url);
         }
       };
     }
@@ -279,6 +326,57 @@
         },
         getFeaturedByChannel: function(options) {
           return sessionService.callService('GET', buildUri(SHOWROOM_CONSTANTS.getFeaturedByChannelURL + options.channelId + '/', options));
+        },
+        getShowById: function(showId) {
+          var url;
+          url = SHOWROOM_CONSTANTS.getShowByIdURL + showId + '/';
+          return sessionService.callService('GET', url);
+        }
+      };
+    }
+  ]);
+
+  angular.module('showroomServices').factory('socialService', [
+    'SHOWROOM_CONSTANTS', 'sessionService', function(SHOWROOM_CONSTANTS, sessionService) {
+      return {
+        likeAShow: function(showId) {
+          var url;
+          url = SHOWROOM_CONSTANTS.likeAShowURL + showId + '/';
+          return sessionService.callService('GET', url);
+        },
+        unlikeAShow: function(showId) {
+          var url;
+          url = SHOWROOM_CONSTANTS.unlikeAShowURL + showId + '/';
+          return sessionService.callService('GET', url);
+        },
+        checkLikeAShow: function(showId) {
+          var url;
+          url = SHOWROOM_CONSTANTS.checkLikeAShowURL + showId + '/';
+          return sessionService.callService('GET', url);
+        },
+        commentAShow: function(showId, data) {
+          var url;
+          url = SHOWROOM_CONSTANTS.commentAShowURL + showId + '/';
+          return sessionService.callService('POST', url, data);
+        },
+        removeCommentAShow: function(socialActionId) {
+          var url;
+          url = SHOWROOM_CONSTANTS.removeCommentAShowURL + socialActionId + '/';
+          return sessionService.callService('DELETE', url);
+        },
+        listCommentByShow: function(params) {
+          var pageNumber, pageSize, showId, sortType, uri, url;
+          showId = params.showId;
+          pageNumber = params.pageNumber || 0;
+          pageSize = params.pageSize || 10;
+          sortType = params.sortType || 'desc';
+          if (sortType === 'desc') {
+            uri = SHOWROOM_CONSTANTS.listCommentByShowDescURL;
+          } else {
+            uri = SHOWROOM_CONSTANTS.listCommentByShowAscURL;
+          }
+          url = uri + showId + '/' + pageNumber + '/' + pageSize + '/';
+          return sessionService.callService('GET', url);
         }
       };
     }
@@ -327,15 +425,15 @@
   ]);
 
   angular.module('showroomServices').factory('videoService', [
-    'SHOWROOM_CONSTANTS', '$filter', '$sce', function(SHOWROOM_CONSTANTS, $filter, $sce) {
-      var parseVideo;
+    'SHOWROOM_CONSTANTS', 'socialService', '$rootScope', '$filter', '$sce', function(SHOWROOM_CONSTANTS, socialService, $rootScope, $filter, $sce) {
+      var parseSingleVideo, parseVideo;
       parseVideo = function(config) {
         var index, j, len, product, productMap, products, show, shows, videos;
         this.response = config.response;
         this.currencySymbol = config.currencySymbol || '$';
         this.exceprtTitleLength = config.exceprtTitleLength || 35;
         this.excerptMore = config.excerptMore || ' ...';
-        this.videoSize = config.videoSize || '400';
+        this.videoSize = config.videoSize || '700';
         this.thumbnailSize = config.thumbnailSize || '700';
         if (this.response.code === 1000) {
           shows = this.response.payload.listShows || this.response.payload.items;
@@ -357,10 +455,16 @@
                     type: 'video/mp4'
                   }
                 ],
+                showId: show.id,
                 poster: $sce.trustAsResourceUrl(SHOWROOM_CONSTANTS.showroomCDN + show.thumbnailSets[this.thumbnailSize]),
                 likeCounter: show.likeCounter,
                 viewCounter: show.viewCounter,
                 commentCounter: show.commentCounter,
+                likeClick: function() {
+                  if (!$rootScope.loggedIn) {
+                    return $rootScope.goToLogin();
+                  }
+                },
                 shareCounter: show.shareCounter,
                 productName: $filter('excerptTitle')(productMap[show.productId].name, this.exceprtTitleLength, this.excerptMore),
                 productTitle: productMap[show.productId].name,
@@ -373,8 +477,25 @@
           }).call(this);
         }
       };
+      parseSingleVideo = function(data) {
+        var product, show, thumbnailSize, video, videoSize;
+        show = data.show;
+        product = data.product;
+        videoSize = data.videoSize || '700';
+        thumbnailSize = data.thumbnailSize || '700';
+        return video = {
+          sources: [
+            {
+              src: $sce.trustAsResourceUrl(SHOWROOM_CONSTANTS.showroomCDN + show.videoSets[videoSize]),
+              type: 'video/mp4'
+            }
+          ],
+          poster: $sce.trustAsResourceUrl(SHOWROOM_CONSTANTS.showroomCDN + show.thumbnailSets[thumbnailSize])
+        };
+      };
       return {
-        parseVideo: parseVideo
+        parseVideo: parseVideo,
+        parseSingleVideo: parseSingleVideo
       };
     }
   ]);
@@ -573,6 +694,10 @@
       }
       $scope.email = '';
       $scope.password = '';
+      $scope.backUrl = $location.search().backUrl;
+      if ($scope.backUrl == null) {
+        $scope.backUrl = '/';
+      }
       $scope.loginEmail = function() {
         if ($scope.loginForm.$invalid) {
           return $scope.showMessages = true;
@@ -588,7 +713,7 @@
                   return $rootScope.userInfo = response.data.payload;
                 }
               })["finally"](function() {
-                return $location.path('/');
+                return $location.path($scope.backUrl).search('').replace();
               });
             } else {
               return $scope.message = 'Email or password is invalid.';
@@ -616,7 +741,7 @@
                 return $rootScope.userInfo = response.data.payload;
               }
             })["finally"](function() {
-              return $location.path('/');
+              return $location.path($scope.backUrl).search('').replace();
             });
           }
         })["catch"](function(error) {
@@ -739,6 +864,169 @@
         });
       };
       return $scope.loadMore();
+    }
+  ]);
+
+  angular.module('showroomControllers').controller('ShowDetailController', [
+    '$scope', 'showService', 'socialService', '$filter', '$log', '$routeParams', 'videoService', '$location', '$rootScope', function($scope, showService, socialService, $filter, $log, $routeParams, videoService, $location, $rootScope) {
+      var showId;
+      $rootScope.removeHeader = false;
+      $rootScope.removeBrand = false;
+      $rootScope.removeNav = false;
+      $rootScope.removeFooter = false;
+      showId = $routeParams.showId;
+      if (!showId) {
+        $location.path('/').replace();
+      }
+      $scope.showId = showId;
+      $scope.likeClick = function(event) {
+        if (!$rootScope.loggedIn) {
+          $rootScope.goToLogin();
+        }
+        if ($scope.isLiked) {
+          return socialService.unlikeAShow(showId).then(function(response) {
+            if (response.data.code === 1000) {
+              $scope.isLiked = false;
+              return $scope.likeCounter--;
+            }
+          });
+        } else {
+          return socialService.likeAShow(showId).then(function(response) {
+            if (response.data.code === 1000) {
+              $scope.isLiked = true;
+              return $scope.likeCounter++;
+            }
+          });
+        }
+      };
+      $scope.loadShow = function() {
+        return showService.getShowById(showId).then(function(response) {
+          var payload, productInfo, productMetaData, productUrl, showInfo;
+          if (!response.data || response.data.code !== 1000) {
+            $location.path('/');
+          }
+          payload = response.data.payload;
+          showInfo = payload.ShowInfo;
+          productInfo = payload.ProductInfo;
+          if (!angular.isObject(productInfo.metaData)) {
+            productMetaData = JSON.parse(productInfo.metaData);
+          }
+          productUrl = productMetaData.url;
+          $scope.productName = productInfo.name;
+          $scope.productPrice = $filter('number')(productInfo.price, 2);
+          $scope.productUrl = $filter('productLink')(productUrl);
+          $scope.productTarget = $filter('productTarget')(productUrl);
+          $scope.productBrief = productInfo.brief;
+          $scope.productCategoryId = productInfo.productCategoryId;
+          $scope.video = videoService.parseSingleVideo({
+            show: payload.ShowInfo,
+            product: payload.ProductInfo
+          });
+          $scope.likeCounter = showInfo.likeCounter;
+          $scope.viewCounter = showInfo.viewCounter;
+          $scope.commentCounter = showInfo.commentCounter;
+          $scope.shareCounter = showInfo.shareCounter;
+          $scope.isLiked = payload.liked;
+          return $scope.isFollowed = payload.isFollow;
+        })["catch"](function(error) {
+          return $log.error(error);
+        });
+      };
+      return $scope.loadShow();
+    }
+  ]);
+
+  angular.module('showroomControllers').controller('ShowCommentController', [
+    '$scope', '$rootScope', 'socialService', '$log', '$routeParams', 'videoService', function($scope, $rootScope, socialService, $log, $routeParams, videoService) {
+      var accountMap, getAccountName, refineComment, showId;
+      showId = $scope.$parent.showId;
+      $scope.commentCounter = $scope.$parent.commentCounter;
+      $scope.currentPage = 0;
+      accountMap = {};
+      getAccountName = function(accountId) {
+        var account;
+        account = accountMap[accountId];
+        if (!account) {
+          return '';
+        }
+        return account.firstName + ' ' + account.lastName;
+      };
+      refineComment = function(comment) {
+        var acc, accountId, accountName, accs, j, len;
+        accs = comment.match(/\|`\|(\w+)\|`\|/g);
+        if (!accs || accs.length <= 0) {
+          return comment;
+        }
+        for (j = 0, len = accs.length; j < len; j++) {
+          acc = accs[j];
+          accountId = acc.slice(3, acc.length - 3);
+          accountName = '<b>' + getAccountName(accountId) + '</b>';
+          comment = comment.replace(acc, accountName);
+        }
+        return '<p>' + comment + '</p>';
+      };
+      $scope.deleteComment = function(socialActionId) {
+        return socialService.removeCommentAShow(socialActionId).then(function(response) {
+          if (response.data.code === 1000) {
+            return $scope.loadCommment();
+          }
+        });
+      };
+      $scope.commit = function(event) {
+        if ($scope.commentForm.$valid) {
+          return socialService.commentAShow(showId, {
+            comment: $scope.commentText
+          }).then(function(response) {
+            if (response.data.code !== 1000) {
+              return;
+            }
+            $scope.loadCommment();
+            return $scope.commentText = '';
+          });
+        }
+      };
+      $scope.loadCommment = function() {
+        return socialService.listCommentByShow({
+          showId: showId,
+          pageSize: 10,
+          sortType: 'desc'
+        }).then(function(response) {
+          var account, checkIsMime, comment, j, len, listAccounts, listComments, payload;
+          if (response.data.code !== 1000) {
+            return;
+          }
+          payload = response.data.payload;
+          listComments = payload.items.reverse();
+          listAccounts = payload.listAccounts;
+          for (j = 0, len = listAccounts.length; j < len; j++) {
+            account = listAccounts[j];
+            accountMap[account.accountId] = account;
+          }
+          checkIsMime = function(accountId) {
+            if (!($rootScope.loggedIn && $rootScope.userInfo)) {
+              return false;
+            }
+            return $rootScope.userInfo.accountId === accountId;
+          };
+          return $scope.comments = (function() {
+            var k, len1, results;
+            results = [];
+            for (k = 0, len1 = listComments.length; k < len1; k++) {
+              comment = listComments[k];
+              results.push({
+                socialActionId: comment.id,
+                authorName: getAccountName(comment.accountId),
+                authorAvatarUrl: accountMap[comment.accountId].avatarUrl,
+                updatedAt: comment.updatedAt,
+                content: refineComment(comment.metaData.comment),
+                isMime: checkIsMime(comment.accountId)
+              });
+            }
+            return results;
+          })();
+        });
+      };
+      return $scope.loadCommment();
     }
   ]);
 

@@ -21,6 +21,7 @@ module.exports = (grunt) ->
 						'src/directives/*.coffee'
 						'src/filters/*.coffee'
 					]
+					
 		uglify:
 			options:
 				mangle:

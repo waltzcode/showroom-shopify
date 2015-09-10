@@ -737,22 +737,28 @@ h2 span { background: {{ settings.background }}; }
   float: right;
 }
 
-#homepage-products .product-loop .product-action > span {
+#homepage-products .product-loop .product-action .socials{
   display: block;
   text-align: right;
   font-size: 16px;
   line-height: 35px;
   color: #888;
   width: 66.6666%;
-  display: block;
   float: left;
 }
 
-#homepage-products .product-loop .product-action > span > span {
+#homepage-products .product-loop .product-action .socials a {
   padding: 0 10px;
+  color: #999;
+  cursor: pointer;
+  text-decoration: none;
+}
+#homepage-products .product-loop .product-action .socials a.liked,
+#homepage-products .product-loop .product-action .socials a:hover {
+  color: #3b5998;
 }
 
-#homepage-products .product-loop .product-action a {
+#homepage-products .product-loop .product-action a.product-price {
   display: block;
   text-decoration: none;
   font-size: 16px;
@@ -1994,4 +2000,169 @@ button.load-more:hover {
 
 button.load-more[disabled]:hover, button.load-more[disabled] {
   color: #777;
+}
+
+/* ------------------------------- SHOW DETAIL --------------------------------------*/
+.show-detail {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.show-detail .show-video {
+  position: relative;
+}
+
+.show-detail a.video-owner {
+  display: block;
+  text-decoration: none;
+  width: 100%;
+  line-height: 80px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #f1f1f1;
+}
+
+.show-detail a.video-owner img {
+  display: block;
+  float: left;
+  height: 80px;
+  width: 80px;
+}
+
+.show-detail a.video-owner h3 {
+  padding-left: 100px;
+  font-weight: bold;
+  color: #777;
+}
+
+.show-detail .product-info {
+}
+
+.show-detail .product-info h1.title {
+  font-size: 30px;
+  color: #000;
+  padding-bottom: 5px;
+  line-height: 40px;
+}
+
+.show-detail .product-info .price {
+  font-size: 24px;
+  color: #555;
+  padding: 20px 0;
+  padding-top: 0;
+  border-bottom: 1px solid #777;
+}
+
+.show-detail .product-info .shop-button {
+  display: inline-block;
+  text-transform: uppercase;
+  font-size: 25px;
+  text-align: center;
+  line-height: 50px;
+  background-color: #f0f0f0;
+  color: rgba(255,36, 0, .8);
+  padding: 0 30px;
+  width: 100%;
+  text-decoration: none;
+  border-radius: 5px;
+  margin: 20px 0;
+  cursor: pointer;
+}
+
+.show-detail .product-info .brief {
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+.show-detail .product-info .shop-button:hover {
+  color: #f0f0f0;
+  background-color: rgba(255, 36, 0, .8);
+}
+
+.show-detail .social-action {
+  text-decoration: none;
+  text-align: center;
+  color: #999;
+  font-size: 25px;
+  width: 100%;
+  line-height: 50px;
+  display: block;
+  cursor: pointer;
+  padding: 0 30px;
+  margin: 20px 0;
+}
+
+.show-detail .social-action.like:hover,
+.show-detail .social-action.like.liked {
+  color: #3b5998;
+}
+
+.show-detail .show-comments {
+  margin: 20px 0;
+}
+
+.show-comments h1.header {
+  border-bottom: 2px solid #333;
+  color: #000;
+  line-height: 40px;
+}
+
+.show-detail .comments {
+
+}
+
+.show-detail .comment-wrapper {
+  margin: 5px 0;
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f1f1;
+  position: relative;
+}
+
+.comment-wrapper img {
+  display: block;
+  float: left;
+  height: 80px;
+  width: 80px;
+}
+
+.comment-wrapper > div {
+  padding-left: 90px;
+  padding-top: 5px;
+}
+
+.comment-wrapper .commment-content {
+  font-size: 16px;
+  line-height: 20px;
+  color: #555;
+}
+
+.comment-wrapper a.delete {
+  position: absolute;
+  display: none;
+  width: 30px;
+  height: 30px;
+  text-decoration: none;
+  cursor: pointer;
+  right: 0;
+  top: 0;
+  font-size: 18px;
+  line-height: 30px;
+  color: #999;
+}
+
+.comment-wrapper:hover {
+  background-color: #f0f0f0;
+}
+
+.comment-wrapper:hover a.delete {
+  display: block;
+}
+
+.show-comments .comment-form {
+
+}
+.show-comments input.input-comment {
+  display: block;
+  width: 100%;
+  line-height: 50px;
 }

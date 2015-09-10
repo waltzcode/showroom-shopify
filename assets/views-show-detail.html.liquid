@@ -1,0 +1,84 @@
+<article class="row show-detail">
+	<div class="row show-video">
+		<div class="desktop-third tablet-half mobile-full">
+			<div>
+				<div sr-video-container class="video-wapper bs-clearfix">
+					<div class="sk-fading-circle">
+					  <div class="sk-circle1 sk-circle"></div>
+					  <div class="sk-circle2 sk-circle"></div>
+					  <div class="sk-circle3 sk-circle"></div>
+					  <div class="sk-circle4 sk-circle"></div>
+					  <div class="sk-circle5 sk-circle"></div>
+					  <div class="sk-circle6 sk-circle"></div>
+					  <div class="sk-circle7 sk-circle"></div>
+					  <div class="sk-circle8 sk-circle"></div>
+					  <div class="sk-circle9 sk-circle"></div>
+					  <div class="sk-circle10 sk-circle"></div>
+					  <div class="sk-circle11 sk-circle"></div>
+					  <div class="sk-circle12 sk-circle"></div>
+					</div>
+					<video preload="none" autobuffer>
+						<source ng-src="{[{source.src}]}" type="{[{source.type}]}" ng-repeat="source in video.sources">
+					</video>
+					<img alt="{[{video.productTitle}]}" class="video-poster" sr-lazy-src="{[{video.poster}]}" ng-src="{{ 'default.jpg' | asset_url }}">
+				</div>
+			</div> <!-- end .show-video -->
+		</div> 
+		<div class="product-info desktop-8 tablet-half mobile-full bs-clearfix">
+			<h1 class="title" ng-bind="productName"></h1>
+			<div class="price">
+				<span class="fa fa-usd"></span>
+				<span ng-bind="productPrice"></span>
+			</div>
+			<div class="row">
+				<div class="desktop-third tablet-full mobile-full">
+					<a class="shop-button" ng-href="{[{ productUrl }]}" target="{[{ productTarget }]}">SHOP NOW</a>
+				</div>
+				<div class="desktop-third tablet-half mobile-half">
+					<span class="social-action">
+						<span class="fa fa-eye"></span>
+						<span ng-bind="viewCounter"></span>
+					</span>
+				</div>
+				<div class="desktop-third tablet-half mobile-half">
+					<a class="social-action like {[{isLiked ? 'liked' : ''}]}" ng-click="likeClick()">
+						<i class="fa fa-thumbs-up"></i>
+						<span ng-bind="likeCounter"></span>
+					</a>
+				</div>
+			</div>
+
+			<p class="brief" ng-bind="productBrief"></p>
+
+			<!--a class="video-owner" ng-href="/#/user/{[{OwnerInfo.username}]}" title="{[{OwnerInfo.firstName + ' ' + OwnerInfo.lastName}]}">
+				<img alt="{[{OwnerInfo.firstName + ' ' + OwnerInfo.lastName}]} Avatar" ng-src="{[{OwnerInfo.avatarUrl | asset_url}]}">
+				<h3>{[{OwnerInfo.firstName + ' ' + OwnerInfo.lastName}]}</h3>
+			</a-->
+		</div> <!-- end .show-info -->
+	</div>
+	<div class="desktop-full">
+		<div class="show-comments row" ng-controller="ShowCommentController">
+			<h1 class="header">Comments <span>({[{$parent.commentCounter}]})</span></h1>
+			
+			<div class="comments">
+				<div class="comment-wrapper bs-clearfix" ng-repeat="comment in comments">
+					<img ng-src="{[{ comment.authorAvatarUrl | user_avatar_url}]}">
+					<div>
+						<b class="author" ng-bind="comment.authorName">{[{getAccountName(comment.accountId)}]}</b>
+						<i class="say"> at {[{ comment.updatedAt | date:'medium'}]}:</i>
+						<div class="commment-content" ng-bind-html="comment.content"></div>
+					</div>
+					<a class="delete" ng-show="loggedIn && comment.isMime" ng-click="deleteComment(comment.socialActionId)">
+						<i class="fa fa-times"></i>
+					</a>
+				</div>
+			</div> <!-- end .comments-wrapper -->
+			<form id="commentForm" name="commentForm" class="comment-form" novalidate ng-submit="commit($event)" ng-show="loggedIn">
+				<input class="input-comment" type="text" ng-model="commentText" placeholder="Write comment ..." required>
+			</form> <!-- end comment-form -->
+			<div ng-hide="loggedIn">
+				<span>Please <a ng-click="goToLogin();">Sign in</a> to leave a comment!</span>
+			</div>
+		</div> <!-- end .show-comments -->
+	</div>
+</article> <!-- end .show-detail -->

@@ -99,7 +99,6 @@
 				}
 			});
 		};
-
 	</script>
 	{% endif %}
 
@@ -111,7 +110,7 @@
 				<ul id="topNav" class="desktop-6 mobile-3">
 					<li class="top-logo"><a href="/#/"><img src="{{ 'top-logo.png' | asset_url }}" alt="{{ shop.name }}"/></a></li>
 					<li>
-						 <a href="/#/login" ng-if="!loggedIn">SIGN IN/UP</a>
+						 <a ng-click="goToLogin()" ng-if="!loggedIn">SIGN IN/UP</a>
 						 <a href="" ng-if="loggedIn" ng-click="logout();">SIGN OUT</a>
 					</li>
 					<li><a href="/#/invite">INVITE FRIENDS</a></li>
@@ -125,7 +124,7 @@
 						<a href="/cart">{{ 'layout.cart.my_cart' | t }} ({{ cart.item_count }})</a>
 					</li>
 				</ul>
-				 <span class="shifter-handle">Menu</span>
+				<span class="shifter-handle">Menu</span>
 			</div>
 		</header><!-- End Header -->
 
@@ -314,7 +313,7 @@
 		 js = d.createElement(s); js.id = id;
 		 js.src = "//connect.facebook.net/en_US/sdk.js";
 		 fjs.parentNode.insertBefore(js, fjs);
-	 }(document, 'script', 'facebook-jssdk'));
+	}(document, 'script', 'facebook-jssdk'));
 </script>
 
 
@@ -326,6 +325,6 @@
 	{{ 'angular-cookies.min.js' | asset_url | script_tag }}
 	{{ 'angular-animate.min.js' | asset_url | script_tag }}
 	{{ 'loading-bar.min.js' | asset_url | script_tag }}
-	 {{ 'app.min.js' | asset_url | script_tag }}
+	{{ 'app.min.js' | asset_url | script_tag }}
 </body>
 </html>

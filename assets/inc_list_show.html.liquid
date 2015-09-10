@@ -19,20 +19,20 @@
 	<img alt="{[{video.productTitle}]}" class="video-poster" sr-lazy-src="{[{video.poster}]}" ng-src="{{ 'default.jpg' | asset_url }}">
 </div>
 <div class="product-info bs-clearfix">
-	<a ng-href="{[{video.productLinkUrl}]}" target="{[{video.productLinkTarget}]}">
+	<a ng-href="/#/show/{[{video.showId}]}">
 		<span class="product-title" title="{[{video.productTitle}]}">{[{video.productName}]}</span>
 	</a>
 </div>
 <div class="product-action bs-clearfix">
 	<span class="socials">
-		<span>
+		<a class="{[{video.isLiked ? 'liked' : ''}]}" ng-click="video.likeClick()">
 			<span ng-bind="video.likeCounter"></span>
 			<span class="fa fa-thumbs-up"></span>
-		</span>
-		<span>
+		</a>
+		<a ng-href="/#/show/{[{video.showId}]}">
 			<span ng-bind="video.commentCounter"></span>
 			<span class="fa fa-comments"></span>
-		</span>
+		</a>
 	</span>
 	<a href="{[{video.productLinkUrl}]}" class="product-price" target="{[{video.productLinkTarget}]}">
 		<span class="fa fa-usd"></span>

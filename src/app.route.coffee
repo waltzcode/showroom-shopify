@@ -15,5 +15,6 @@ angular.module 'showroomApp'
 		.when '/category/:channelId', templateUrl: "{{ 'views-channel-detail.html' | asset_url }}", controller: 'ChannelDetailController'
 		.when '/account/:accountId', templateUrl: "{{ 'views-account-detail.html' | asset_url }}", controller: 'AccountDetailController' # with accountId
 		.when '/user/:username', templateUrl: "{{ 'views-account-detail.html' | asset_url }}", controller: 'UserDetailController' # with username
+		.when '/show/:showId', templateUrl: "{{ 'views-show-detail.html' | asset_url }}", controller: 'ShowDetailController' # with showId
 		.otherwise templateUrl: "{{ 'views-home.html' | asset_url }}", controller: 'HomeController'
 ]

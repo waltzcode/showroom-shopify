@@ -31,7 +31,6 @@
 
  	app.controller('myController', function($scope, $location, $sce) {
  		var params = $location.search();
- 		console.log(	params);
  		$scope.iframeSrc = $sce.trustAsResourceUrl(params.url);
  	});
 </script>
