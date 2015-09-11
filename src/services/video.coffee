@@ -10,7 +10,7 @@ angular.module 'showroomServices'
 		parseVideo = (config) ->
 			@response = config.response
 			@currencySymbol = config.currencySymbol || '$'
-			@exceprtTitleLength = config.exceprtTitleLength || 35
+			@exceprtTitleLength = config.exceprtTitleLength || 32
 			@excerptMore = config.excerptMore || ' ...'
 			@videoSize = config.videoSize || '700'
 			@thumbnailSize = config.thumbnailSize || '700'

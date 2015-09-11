@@ -105,7 +105,7 @@
 </head>
 
 <body class="gridlock shifter {{ template }}">
-		<header ng-if="!removeHeader">
+		<header id="header" ng-if="!removeHeader">
 			<div class="row">
 				<ul id="topNav" class="desktop-6 mobile-3">
 					<li class="top-logo"><a href="/#/"><img src="{{ 'top-logo.png' | asset_url }}" alt="{{ shop.name }}"/></a></li>
@@ -242,19 +242,26 @@
 	{% include 'popup' %}
 
 	</div>
-	<nav class="shifter-navigation" ng-controller="HeaderController">
-		 <li><a href="/#/">Home</a></li>
-		 <li><a href="/#/featured">Featured</a></li>
-		 <li><a href="/#/popular">Popular</a></li>
-		 <li><a href="/#/newest">Newest</a></li>
-		 <li><a href="">Category</a>
+	<nav class="shifter-navigation bs-clearfix" ng-controller="HeaderController">
+		<ul>
+			 <li><a href="/#/"><i class="fa fa-home fa-fw"></i>Home</a></li>
+			 <li><a href="/#/featured"><i class="fa fa-star fa-fw"></i>Featured</a></li>
+			 <li><a href="/#/popular"><i class="fa fa-thumbs-up fa-fw"></i>Popular</a></li>
+			 <li><a href="/#/newest"><i class="fa fa-fire fa-fw"></i>Newest</a></li>
+			 <li><a href=""><i class="fa fa-list-alt fa-fw"></i>Category</a>
 				<ul>
 					<ul>
-						<li ng-repeat="channel in channels | orderBy:'displayIndex'"><a ng-href="/#/category/{[{channel.id}]}">{[{channel.name}]}</a></li>
+						<li ng-repeat="channel in channels | orderBy:'displayIndex'">
+							<a ng-href="/#/category/{[{channel.id}]}">
+								<i class="fa fa-caret-right fa-fw"></i>
+ 								{[{channel.name}]}
+							</a>
+						</li>
 					</ul>
 				</ul>
-		 </li>
-		 <li ng-if="loggedIn"><a href="/#/myshow">My shows</a></a></li>
+			 </li>
+			 <li ng-if="loggedIn"><a href="/#/myshow"><i class="fa fa-play fa-fw"></i>My shows</a></li>
+		 </ul>
 	</nav>
 
 	<div id="fb-root"></div>

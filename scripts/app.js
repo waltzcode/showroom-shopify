@@ -431,7 +431,7 @@
         var index, j, len, product, productMap, products, show, shows, videos;
         this.response = config.response;
         this.currencySymbol = config.currencySymbol || '$';
-        this.exceprtTitleLength = config.exceprtTitleLength || 35;
+        this.exceprtTitleLength = config.exceprtTitleLength || 32;
         this.excerptMore = config.excerptMore || ' ...';
         this.videoSize = config.videoSize || '700';
         this.thumbnailSize = config.thumbnailSize || '700';
