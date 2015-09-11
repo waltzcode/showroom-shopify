@@ -1,7 +1,13 @@
 angular.module 'showroomControllers'
 .controller 'AccountDetailController', [
-	'$scope', 'showService', 'userService', '$log', '$routeParams', 'videoService'
-	($scope, showService, userService, $log, $routeParams, videoService) ->
+	'$scope', '$rootScope', 'showService', 'userService', '$log', '$routeParams', 'videoService'
+	($scope, $rootScope, showService, userService, $log, $routeParams, videoService) ->
+		# display setting
+		$rootScope.removeHeader = false
+		$rootScope.removeBrand = false
+		$rootScope.removeNav = false
+		$rootScope.removeFooter = false
+
 		$scope.header = 'Account Show'
 		$scope.currentPage = 0
 		$scope.hasMore = true

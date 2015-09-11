@@ -1,7 +1,7 @@
 angular.module 'showroomControllers'
 .controller 'HomeController', [
-	'showService', 'videoService', '$scope', '$rootScope', '$log', '$q', '$location'
-	(showService, videoService, $scope, $rootScope, $log, $q, $location) ->
+	'showService', 'videoService', '$scope', '$rootScope', '$log'
+	(showService, videoService, $scope, $rootScope, $log) ->
 		# View Setttings
 		$rootScope.removeHeader = false
 		$rootScope.removeBrand = false

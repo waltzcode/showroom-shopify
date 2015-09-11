@@ -29,7 +29,12 @@
 @media only screen and (max-width: 740px) {
 
   ul#featured-posts li { margin-bottom: 20px; clear: left;  }
-  #logo { margin-bottom: 10px; text-align: center; margin-top: 100px; }
+  #logo { 
+    display: none;
+  }
+  header#header a.mobile-brand {
+    display: block;
+  }
   ul#cart { text-align: center;  }
   .search { width: 100%; }
   #q { width: 100%; }

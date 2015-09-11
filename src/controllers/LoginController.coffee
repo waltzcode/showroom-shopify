@@ -7,6 +7,7 @@ angular.module 'showroomControllers'
 		$rootScope.removeBrand = true
 		$rootScope.removeNav = true
 		$rootScope.removeFooter = true
+		
 		$scope.errors = []
 		$location.patch '/' if $rootScope.loggedIn
 		$scope.email = ''

@@ -2,10 +2,17 @@ angular.module 'showroomControllers'
 .controller 'MyShowController', [
 	'$scope', '$rootScope', 'showService', 'videoService', '$log'
 	($scope, $rootScope, showService, videoService, $log) ->
+
+		# display setting
+		$rootScope.removeHeader = false
+		$rootScope.removeBrand = false
+		$rootScope.removeNav = false
+		$rootScope.removeFooter = false
+
 		$scope.header = 'My shows'
 		$scope.pageNumber = 0
 		$scope.hasMore = true
-
+		
 		if $rootScope.loggedIn
 			$scope.loadMore = ->
 				showService.getPersonalShow pageNumber: $scope.pageNumber++ , pageSize: 15
@@ -16,5 +23,7 @@ angular.module 'showroomControllers'
 						$scope.videos = videoService.parseVideo({response: response.data})
 
 					$scope.hasMore = false if $scope.videos.length >= response.data.payload.totalItem
+
+		
 			$scope.loadMore()
 ]

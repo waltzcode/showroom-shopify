@@ -1,7 +1,14 @@
 angular.module 'showroomControllers'
 .controller 'ChannelDetailController', [
-	'$scope', 'showService', '$log', '$routeParams', 'videoService'
-	($scope, showService, $log, $routeParams, videoService) ->
+	'$scope', '$rootScope', 'showService', '$log', '$routeParams', 'videoService'
+	($scope, $rootScope, showService, $log, $routeParams, videoService) ->
+
+		# display setting
+		$rootScope.removeHeader = false
+		$rootScope.removeBrand = false
+		$rootScope.removeNav = false
+		$rootScope.removeFooter = false
+
 		$scope.currentPage = 0
 		$scope.hasMore = true
 

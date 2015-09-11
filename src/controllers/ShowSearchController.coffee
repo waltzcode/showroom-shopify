@@ -1,7 +1,19 @@
 angular.module 'showroomControllers'
 .controller 'ShowSearchController', [
-	'showService', 'videoService','$scope', '$location', '$log'
-	(showService, videoService, $scope, $location, $log) ->
+	'showService', 'videoService','$scope', '$rootScope', '$location', '$log'
+	(showService, videoService, $scope, $rootScope, $location, $log) ->
+
+		# display setting
+		$rootScope.removeHeader = false
+		$rootScope.removeBrand = false
+		$rootScope.removeNav = false
+		$rootScope.removeFooter = false
+
+		# check search panel displaying
+		unless $('#search, #searchPanel').hasClass 'expanded'
+			$('#search, #searchPanel').addClass 'expanded'
+
+
 		$scope.keywords = $location.search().q
 		$scope.header = 'Search result for show - \'' + $scope.keywords + '\''
 		$scope.currentPage = 0

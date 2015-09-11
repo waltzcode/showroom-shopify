@@ -501,7 +501,11 @@
   ]);
 
   angular.module('showroomControllers').controller('AccountDetailController', [
-    '$scope', 'showService', 'userService', '$log', '$routeParams', 'videoService', function($scope, showService, userService, $log, $routeParams, videoService) {
+    '$scope', '$rootScope', 'showService', 'userService', '$log', '$routeParams', 'videoService', function($scope, $rootScope, showService, userService, $log, $routeParams, videoService) {
+      $rootScope.removeHeader = false;
+      $rootScope.removeBrand = false;
+      $rootScope.removeNav = false;
+      $rootScope.removeFooter = false;
       $scope.header = 'Account Show';
       $scope.currentPage = 0;
       $scope.hasMore = true;
@@ -544,7 +548,11 @@
   ]);
 
   angular.module('showroomControllers').controller('ChannelDetailController', [
-    '$scope', 'showService', '$log', '$routeParams', 'videoService', function($scope, showService, $log, $routeParams, videoService) {
+    '$scope', '$rootScope', 'showService', '$log', '$routeParams', 'videoService', function($scope, $rootScope, showService, $log, $routeParams, videoService) {
+      $rootScope.removeHeader = false;
+      $rootScope.removeBrand = false;
+      $rootScope.removeNav = false;
+      $rootScope.removeFooter = false;
       $scope.currentPage = 0;
       $scope.hasMore = true;
       $scope.loadMore = function() {
@@ -605,7 +613,7 @@
 
   angular.module('showroomControllers').controller('HeaderController', [
     '$scope', '$location', 'channelService', '$log', '$filter', 'SHOWROOM_CONSTANTS', function($scope, $location, channelService, $log, $filter, SHOWROOM_CONSTANTS) {
-      channelService.getListChannel().then(function(response) {
+      return channelService.getListChannel().then(function(response) {
         var channels;
         if (response.data.code === 1000) {
           channels = response.data.payload.items;
@@ -614,25 +622,11 @@
           }, true);
         }
       });
-      $scope.searchUser = function() {
-        if ($scope.userKeywords) {
-          $scope.showKeywords = '';
-          $location.search('q', $scope.userKeywords);
-          return $location.path('/search/user');
-        }
-      };
-      return $scope.searchShow = function() {
-        if ($scope.showKeywords) {
-          $scope.userKeywords = '';
-          $location.search('q', $scope.showKeywords);
-          return $location.path('/search/show');
-        }
-      };
     }
   ]);
 
   angular.module('showroomControllers').controller('HomeController', [
-    'showService', 'videoService', '$scope', '$rootScope', '$log', '$q', '$location', function(showService, videoService, $scope, $rootScope, $log, $q, $location) {
+    'showService', 'videoService', '$scope', '$rootScope', '$log', function(showService, videoService, $scope, $rootScope, $log) {
       $rootScope.removeHeader = false;
       $rootScope.removeBrand = false;
       $rootScope.removeNav = false;
@@ -783,6 +777,10 @@
 
   angular.module('showroomControllers').controller('MyShowController', [
     '$scope', '$rootScope', 'showService', 'videoService', '$log', function($scope, $rootScope, showService, videoService, $log) {
+      $rootScope.removeHeader = false;
+      $rootScope.removeBrand = false;
+      $rootScope.removeNav = false;
+      $rootScope.removeFooter = false;
       $scope.header = 'My shows';
       $scope.pageNumber = 0;
       $scope.hasMore = true;
@@ -812,7 +810,11 @@
   ]);
 
   angular.module('showroomControllers').controller('NewestController', [
-    '$scope', 'showService', 'videoService', '$log', function($scope, showService, videoService, $log) {
+    '$scope', '$rootScope', 'showService', 'videoService', '$log', function($scope, $rootScope, showService, videoService, $log) {
+      $rootScope.removeHeader = false;
+      $rootScope.removeBrand = false;
+      $rootScope.removeNav = false;
+      $rootScope.removeFooter = false;
       $scope.header = 'Newest';
       $scope.currentPage = 0;
       $scope.hasMore = true;
@@ -840,7 +842,11 @@
   ]);
 
   angular.module('showroomControllers').controller('PopularController', [
-    '$scope', 'showService', 'videoService', '$log', function($scope, showService, videoService, $log) {
+    '$scope', '$rootScope', 'showService', 'videoService', '$log', function($scope, $rootScope, showService, videoService, $log) {
+      $rootScope.removeHeader = false;
+      $rootScope.removeBrand = false;
+      $rootScope.removeNav = false;
+      $rootScope.removeFooter = false;
       $scope.header = 'Popular';
       $scope.currentPage = 0;
       $scope.hasMore = true;
@@ -864,6 +870,44 @@
         });
       };
       return $scope.loadMore();
+    }
+  ]);
+
+  angular.module('showroomControllers').controller('SearchFormController', [
+    '$location', '$scope', function($location, $scope) {
+      var collapseMenu, path, search;
+      path = $location.path();
+      search = $location.search();
+      if (search.q) {
+        switch (path) {
+          case '/search/user':
+            $scope.userKeywords = search.q;
+            break;
+          case '/search/show':
+            $scope.showKeywords = search.q;
+        }
+      }
+      collapseMenu = function() {
+        if (jQuery && jQuery.shifter) {
+          return jQuery.shifter('close');
+        }
+      };
+      $scope.searchUser = function() {
+        if ($scope.userKeywords) {
+          $scope.showKeywords = '';
+          collapseMenu();
+          $location.search('q', $scope.userKeywords);
+          return $location.path('/search/user');
+        }
+      };
+      return $scope.searchShow = function() {
+        if ($scope.showKeywords) {
+          $scope.userKeywords = '';
+          collapseMenu();
+          $location.search('q', $scope.showKeywords);
+          return $location.path('/search/show');
+        }
+      };
     }
   ]);
 
@@ -1031,7 +1075,14 @@
   ]);
 
   angular.module('showroomControllers').controller('ShowSearchController', [
-    'showService', 'videoService', '$scope', '$location', '$log', function(showService, videoService, $scope, $location, $log) {
+    'showService', 'videoService', '$scope', '$rootScope', '$location', '$log', function(showService, videoService, $scope, $rootScope, $location, $log) {
+      $rootScope.removeHeader = false;
+      $rootScope.removeBrand = false;
+      $rootScope.removeNav = false;
+      $rootScope.removeFooter = false;
+      if (!$('#search, #searchPanel').hasClass('expanded')) {
+        $('#search, #searchPanel').addClass('expanded');
+      }
       $scope.keywords = $location.search().q;
       $scope.header = 'Search result for show - \'' + $scope.keywords + '\'';
       $scope.currentPage = 0;
@@ -1108,7 +1159,11 @@
   ]);
 
   angular.module('showroomControllers').controller('UserDetailController', [
-    '$scope', 'showService', 'userService', '$log', '$routeParams', 'videoService', function($scope, showService, userService, $log, $routeParams, videoService) {
+    '$scope', '$rootScope', 'showService', 'userService', '$log', '$routeParams', 'videoService', function($scope, $rootScope, showService, userService, $log, $routeParams, videoService) {
+      $rootScope.removeHeader = false;
+      $rootScope.removeBrand = false;
+      $rootScope.removeNav = false;
+      $rootScope.removeFooter = false;
       $scope.header = 'Account Show';
       $scope.currentPage = 0;
       $scope.hasMore = true;
@@ -1141,7 +1196,14 @@
   ]);
 
   angular.module('showroomControllers').controller('UserSearchController', [
-    'userService', '$scope', '$location', '$log', function(userService, $scope, $location, $log) {
+    'userService', '$scope', '$rootScope', '$location', '$log', function(userService, $scope, $rootScope, $location, $log) {
+      $rootScope.removeHeader = false;
+      $rootScope.removeBrand = false;
+      $rootScope.removeNav = false;
+      $rootScope.removeFooter = false;
+      if (!$('#search, #searchPanel').hasClass('expanded')) {
+        $('#search, #searchPanel').addClass('expanded');
+      }
       $scope.keywords = $location.search().q;
       return userService.searchAccountByKeywords({
         keywords: $scope.keywords
@@ -1303,6 +1365,32 @@
       return {
         link: link,
         restrict: 'A'
+      };
+    }
+  ]);
+
+  angular.module('showroomDirectives').directive('srNavHref', [
+    '$location', '$rootScope', '$timeout', function($location, $rootScope, $timeout) {
+      var link;
+      link = function($scope, $el, $attr) {
+        var onClick;
+        onClick = function($event) {
+          if ($scope.srNavHref) {
+            $location.path($scope.srNavHref);
+          }
+          if (jQuery && jQuery.shifter) {
+            jQuery.shifter('close');
+          }
+          return $scope.$apply();
+        };
+        return $el.on('click.srNavHref', onClick);
+      };
+      return {
+        restrict: 'A',
+        scope: {
+          srNavHref: '@'
+        },
+        link: link
       };
     }
   ]);

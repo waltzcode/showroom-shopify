@@ -1,7 +1,14 @@
 angular.module 'showroomControllers'
 .controller 'NewestController', [
-	'$scope', 'showService', 'videoService', '$log'
-	($scope, showService, videoService, $log) ->
+	'$scope', '$rootScope', 'showService', 'videoService', '$log'
+	($scope, $rootScope, showService, videoService, $log) ->
+
+		# display setting
+		$rootScope.removeHeader = false
+		$rootScope.removeBrand = false
+		$rootScope.removeNav = false
+		$rootScope.removeFooter = false
+
 		$scope.header = 'Newest'
 		$scope.currentPage = 0
 		$scope.hasMore = true
