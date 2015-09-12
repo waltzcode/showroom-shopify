@@ -1436,7 +1436,6 @@
           }
           video[0].play();
           if (video[0].readyState !== 4) {
-            $log.debug('readyState = ' + video[0].readyState);
             container.addClass('loading');
             video.on('canplaythrough.srVideo load.srVideo', function() {
               video.off('canplaythrough.srVideo load.srVideo');

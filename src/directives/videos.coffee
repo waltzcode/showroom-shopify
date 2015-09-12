@@ -30,13 +30,10 @@ angular.module 'showroomDirectives'
 				vd[0].pause() for vd in listVideos
 				el.removeClass 'loading playing' for el in listContainers
 
-					
-
 				# play the given video from begining
 				video[0].play()
 
 				if video[0].readyState != 4 # HAVE_ENOUGH_DATA
-					$log.debug 'readyState = ' + video[0].readyState
 					# turn on spinner
 					container.addClass 'loading'
 					video.on 'canplaythrough.srVideo load.srVideo', ->
