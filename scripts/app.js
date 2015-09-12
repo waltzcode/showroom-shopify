@@ -65,7 +65,7 @@
     '$interpolateProvider', '$sceDelegateProvider', '$sceProvider', '$logProvider', 'cfpLoadingBarProvider', function($interpolateProvider, $sceDelegateProvider, $sceProvider, $logProvider, cfpLoadingBarProvider) {
       $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
       $sceProvider.enabled(false);
-      $logProvider.debugEnabled(false);
+      $logProvider.debugEnabled(true);
       return cfpLoadingBarProvider.includeSpinner = false;
     }
   ]);
@@ -1397,13 +1397,15 @@
   ]);
 
   angular.module('showroomDirectives').directive('srVideoContainer', [
-    '$log', function($log) {
+    '$log', '$timeout', function($log, $timeout) {
       var link, videoManager;
       videoManager = (function() {
-        var _addVideo, _playVideo, _removeVideo, listVideos;
+        var _addVideo, _playVideo, _removeVideo, listContainers, listVideos;
         listVideos = [];
-        _addVideo = function(video) {
-          return listVideos.push(video);
+        listContainers = [];
+        _addVideo = function(video, container) {
+          listVideos.push(video);
+          return listContainers.push(container);
         };
         _removeVideo = function(video) {
           var i, j, len, results, vd;
@@ -1411,21 +1413,48 @@
           for (i = j = 0, len = listVideos.length; j < len; i = ++j) {
             vd = listVideos[i];
             if (vd === video) {
-              results.push(listVideos.splice(i, 1));
+              listVideos.splice(i, 1);
+              results.push(listContainers.splice(i, 1));
             } else {
               results.push(void 0);
             }
           }
           return results;
         };
-        _playVideo = function(video) {
-          var j, len, vd;
+        _playVideo = function(video, container) {
+          var el, j, k, len, len1, vd;
+          if (container.hasClass('playing loading')) {
+            return;
+          }
           for (j = 0, len = listVideos.length; j < len; j++) {
             vd = listVideos[j];
             vd[0].pause();
           }
+          for (k = 0, len1 = listContainers.length; k < len1; k++) {
+            el = listContainers[k];
+            el.removeClass('loading playing');
+          }
           video[0].play();
-          return video[0].currentTime = 0;
+          if (video[0].readyState !== 4) {
+            $log.debug('readyState = ' + video[0].readyState);
+            container.addClass('loading');
+            video.on('canplaythrough.srVideo load.srVideo', function() {
+              video.off('canplaythrough.srVideo load.srVideo');
+              container.removeClass('loading');
+              container.addClass('playing');
+              return video[0].play();
+            });
+            $timeout(function() {
+              return video[0].pause();
+            }, 1);
+          } else {
+            container.addClass('playing');
+            video.on('paused.srVideo', function() {
+              container.removeClass('playing');
+              return video[0].off('paused.srVideo');
+            });
+          }
+          return video[0].currentTime = 0.1;
         };
         return {
           addVideo: _addVideo,
@@ -1436,20 +1465,9 @@
       link = function($scope, $element, $attrs) {
         var video;
         video = $element.find('video').eq(0);
-        videoManager.addVideo(video);
-        video.on('play', function() {
-          return $element.addClass('loading');
-        });
-        video.on('playing', function() {
-          $element.removeClass('loading');
-          return $element.addClass('playing');
-        });
-        video.on('pause', function() {
-          $element.removeClass('playing');
-          return $element.removeClass('loading');
-        });
+        videoManager.addVideo(video, $element);
         $element.on('mouseover', function() {
-          return videoManager.playVideo(video);
+          return videoManager.playVideo(video, $element);
         });
         return $scope.$on('$destroy', function() {
           return videoManager.removeVideo(video);

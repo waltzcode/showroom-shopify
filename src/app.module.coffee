@@ -103,7 +103,7 @@ showroomApp.config [
 		# $sceDelegateProvider.resourceUrlWhitelist ['self', 'http://cdn.shopify.com/**', 'https://cdn.shopify.com/**']
 		$sceProvider.enabled false
 		# Enable/Disable Debug level message
-		$logProvider.debugEnabled false
+		$logProvider.debugEnabled true
 		# Turn the spinner off (loading-bar)
 		cfpLoadingBarProvider.includeSpinner = false
 ]
