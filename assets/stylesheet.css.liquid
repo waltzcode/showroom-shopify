@@ -728,7 +728,7 @@ h2 span { background: {{ settings.background }}; }
   color: {{ settings.heading_color }};
   border-bottom: 1px solid {{ settings.dotted_color }};
   overflow: visible;
-  line-height: 17px;
+  line-height: 22px;
   height: 9px;
   margin: 40px auto;
   text-align: center;
@@ -1624,7 +1624,7 @@ li.icons a {
 
 
 .shifter-open {
-  /*overflow: hidden;*/
+  overflow: hidden;
 }
 .shifter-open .shifter-page *,
 .shifter-open .shifter-header * {
@@ -1650,11 +1650,12 @@ li.icons a {
   box-shadow: 0 0 0 0;
 }
 .shifter-enabled .shifter-navigation {
-  width: 270px;
+  padding-top: 60px;
   width: 100%;
   position: fixed;
-  top: 60px;
+  top: 0;
   bottom: auto;
+  max-height: 100%;
   right: 0;
   z-index: 100;
   background: #ffffff;
@@ -1716,7 +1717,6 @@ li.icons a {
 }
 .shifter-open .shifter-page,
 .shifter-open .shifter-header {
-  
 }
 .shifter-enabled.shifter-left .shifter-navigation {
   left: 0;
@@ -1729,6 +1729,8 @@ li.icons a {
           transform: translate3D(270px, 0, 0);
 }
 .shifter-open .shifter-navigation {
+  overflow-y: auto;
+  overflow-x: hidden;
   opacity: 1;
   pointer-events: all;
   -webkit-transform: translateY(0);

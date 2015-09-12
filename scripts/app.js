@@ -2,7 +2,7 @@
   'use strict';
   var showroomApp;
 
-  showroomApp = angular.module('showroomApp', ['ngRoute', 'showroomServices', 'showroomControllers', 'showroomFilters', 'showroomDirectives', 'angular-loading-bar']);
+  showroomApp = angular.module('showroomApp', ['ngRoute', 'ngAnimate', 'showroomServices', 'showroomControllers', 'showroomFilters', 'showroomDirectives', 'angular-loading-bar']);
 
   angular.module('showroomServices', ['ngCookies']);
 
@@ -62,10 +62,11 @@
   });
 
   showroomApp.config([
-    '$interpolateProvider', '$sceDelegateProvider', '$sceProvider', '$logProvider', function($interpolateProvider, $sceDelegateProvider, $sceProvider, $logProvider) {
+    '$interpolateProvider', '$sceDelegateProvider', '$sceProvider', '$logProvider', 'cfpLoadingBarProvider', function($interpolateProvider, $sceDelegateProvider, $sceProvider, $logProvider, cfpLoadingBarProvider) {
       $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
       $sceProvider.enabled(false);
-      return $logProvider.debugEnabled(true);
+      $logProvider.debugEnabled(false);
+      return cfpLoadingBarProvider.includeSpinner = false;
     }
   ]);
 
@@ -109,7 +110,7 @@
         $log.debug(currentPath);
         return $location.path('/login').search({
           backUrl: currentPath
-        }).replace();
+        });
       };
     }
   ]);
@@ -1419,9 +1420,6 @@
         };
         _playVideo = function(video) {
           var j, len, vd;
-          if (!video[0].paused) {
-            return;
-          }
           for (j = 0, len = listVideos.length; j < len; j++) {
             vd = listVideos[j];
             vd[0].pause();

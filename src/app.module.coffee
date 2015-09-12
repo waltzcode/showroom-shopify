@@ -1,6 +1,7 @@
 'use strict'
 showroomApp = angular.module 'showroomApp', [
 	'ngRoute'
+	'ngAnimate'
 	'showroomServices'
 	'showroomControllers'
 	'showroomFilters'
@@ -96,12 +97,15 @@ showroomApp.config [
 	'$sceDelegateProvider'
 	'$sceProvider'
 	'$logProvider'
-	($interpolateProvider, $sceDelegateProvider, $sceProvider, $logProvider) ->
+	'cfpLoadingBarProvider'
+	($interpolateProvider, $sceDelegateProvider, $sceProvider, $logProvider, cfpLoadingBarProvider) ->
 		$interpolateProvider.startSymbol('{[{').endSymbol('}]}')
 		# $sceDelegateProvider.resourceUrlWhitelist ['self', 'http://cdn.shopify.com/**', 'https://cdn.shopify.com/**']
 		$sceProvider.enabled false
 		# Enable/Disable Debug level message
-		$logProvider.debugEnabled true
+		$logProvider.debugEnabled false
+		# Turn the spinner off (loading-bar)
+		cfpLoadingBarProvider.includeSpinner = false
 ]
 
 showroomApp.run [
@@ -141,6 +145,6 @@ showroomApp.run [
 		$rootScope.goToLogin = ->
 			currentPath = $location.path()
 			$log.debug currentPath
-			$location.path('/login').search({backUrl: currentPath}).replace()
+			$location.path('/login').search({backUrl: currentPath})
 
 ]

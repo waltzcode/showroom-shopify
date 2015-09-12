@@ -16,13 +16,15 @@ angular.module 'showroomDirectives'
 			_playVideo = (video) ->
 
 				# ignore unless video is paused
-				return unless video[0].paused
+				# return unless video[0].paused
 				
 				# stop all video
 				for vd in listVideos
 					vd[0].pause()
 
 				# play the given video from begining
+				#video[0].load()
+				#alert 'loading'
 				video[0].play()
 				video[0].currentTime = 0
 
@@ -42,6 +44,9 @@ angular.module 'showroomDirectives'
 			video.on 'play', ->
 				$element.addClass 'loading'
 
+			# video.on 'canplaythrough', ->
+			# 	alert 'canplaythrough'
+
 			# Flag video is playing and remove loading status
 			video.on 'playing', ->
 				$element.removeClass 'loading'
@@ -51,6 +56,9 @@ angular.module 'showroomDirectives'
 			video.on 'pause', ->
 				$element.removeClass 'playing'
 				$element.removeClass 'loading'	
+
+			# video.on 'waiting', ->
+			# 	alert 'waiting'
 
 			# play video when mouseover
 			$element.on 'mouseover', ->

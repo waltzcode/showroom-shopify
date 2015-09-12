@@ -14,7 +14,7 @@
 	  <div class="sk-circle12 sk-circle"></div>
 	</div>
 	<video preload="none" autobuffer>
-		<source ng-src="{[{source.src}]}" type="{[{source.type}]}" ng-repeat="source in video.sources">
+		<source src="{[{source.src}]}" type="{[{source.type}]}" ng-repeat="source in video.sources">
 	</video>
 	<img alt="{[{video.productTitle}]}" class="video-poster" sr-lazy-src="{[{video.poster}]}" ng-src="{{ 'default.jpg' | asset_url }}">
 </div>
