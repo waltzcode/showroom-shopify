@@ -104,8 +104,8 @@
 </head>
 
 <body class="gridlock shifter {{ template }}">
-		<header id="header" ng-if="!removeHeader">
-			<div class="row">
+		<header id="header" class="bs-clearfix" ng-if="!removeHeader">
+			<!-- <div class="row">
 				<a sr-nav-href="/" class="mobile-brand bs-clearfix">
 					<img src="{{ 'logo.png' | asset_url }}" alt="{{ shop.name }}"><span class="shop-name">{{ shop.name }}</span>
 				</a>
@@ -127,52 +127,49 @@
 					</li>
 				</ul>
 				<span class="shifter-handle"><span>Menu</span></span>
+			</div> -->
+
+			<div id="header-brand">
+				<a sr-nav-href="/">
+					<img src="{{ 'logo.png' | asset_url }}" alt="{{ shop.name }}"><span class="shop-name tablet-hidden">{{ shop.name }}</span>
+				</a>
 			</div>
+
+			<div id="navigation" class="tablet-hidden">
+				<ul>
+					 <li><a href="/#/">Home</a></li>
+					 <li><a href="/#/featured">Featured</a></li>
+					 <li><a href="/#/popular">Popular</a></li>
+					 <li><a href="/#/newest">Newest</a></li>
+					 <li class="parent" sr-toggle toggle-class="active"><a href="">Category</a>
+						<ul class="bs-clearfix">
+							<li ng-repeat="channel in channels | orderBy:'displayIndex'"><a ng-href="/#/category/{[{channel.id}]}">{[{channel.name}]}</a></li>
+						</ul>
+					 </li>
+					 <li ng-if="loggedIn"><a href="/#/myshow">My shows</a></a></li>
+					 <li>
+					 	<a href="" id="search" rel="nofollow" title="Search"><i class="fa fa-search fa-lg fa-fw"></i></a>
+					 	<!-- <div id="searchPanel" class="desktop-12 mobile-12" ng-controller="SearchFormController">
+							<form name="userSearchForm" novalidate ng-submit="searchUser()">
+								<input type="text" name="q" placeholder="Search account" ng-model="userKeywords">
+							</form>
+							<form name="showSearchForm" novalidate ng-submit="searchShow()">
+								<input type="text" name="q" placeholder="Search Product, Brand, Show title" ng-model="showKeywords">
+							</form>
+						</div> -->
+			 		 </li>
+				</ul>
+			</div>
+
+			<div id="notify" class="tablet-hidden">
+				<a ng-click="goToLogin()" ng-if="!loggedIn"><i class="fa fa-sign-in fa-fw"></i>Login/Join</a>
+				<a href="" ng-if="loggedIn" ng-click="logout();"><i class="fa fa-sign-out fa-fw"></i>Logout</a>
+			</div>
+
+			<span class="shifter-handle"><span>Menu</span></span>
 		</header><!-- End Header -->
 
 		<div class="shifter-page">
-			<div class="row" ng-if="!removeBrand">
-				<div id="logo" class="desktop-12 mobile-12 bs-clearfix">
-					{% if settings.use_logo_image %}
-					<a href="/#/">
-						<img src="{{ 'logo.png' | asset_url }}" alt="{{ shop.name }}" style="border: 0;"/>
-						<span class="shop-name">{{ shop.name }}</span>
-					</a>
-					{% else %}
-					<a href="/">{{ shop.name }}</a>
-					{% endif %}
-				</div>
-			</div>
-
-			<div class="row" ng-show="!removeNav" ng-controller="HeaderController">
-				<div id="navigation">
-					<nav class="desktop-12 mobile-12">
-
-						<ul id="nav">
-							 <li><a href="/#/">Home</a></li>
-							 <li><a href="/#/featured">Featured</a></li>
-							 <li><a href="/#/popular">Popular</a></li>
-							 <li><a href="/#/newest">Newest</a></li>
-							 <li><a href="">Category</a>
-									<ul>
-										<li ng-repeat="channel in channels | orderBy:'displayIndex'"><a ng-href="/#/category/{[{channel.id}]}">{[{channel.name}]}</a></li>
-									</ul>
-							 </li>
-							 <li ng-if="loggedIn"><a href="/#/myshow">My shows</a></a></li>
-							 <li><a href="" id="search" rel="nofollow" title="Search"><i class="fa fa-search fa-lg fa-fw"></i></a></li>
-						</ul>
-					</nav>
-				</div>
-				<div id="searchPanel" class="desktop-12 mobile-12" ng-controller="SearchFormController">
-					<form name="userSearchForm" novalidate ng-submit="searchUser()">
-						<input type="text" name="q" placeholder="Search account" ng-model="userKeywords">
-					</form>
-					<form name="showSearchForm" novalidate ng-submit="searchShow()">
-						<input type="text" name="q" placeholder="Search Product, Brand, Show title" ng-model="showKeywords">
-					</form>
-				</div>
-			</div>
-
 			<div id="content" class="row">
 				<div class="desktop-12 mobile-3" id="nav-border" ng-show="showNav"></div>
 				<!-- Hide Breadcrumbs from homepage -->
@@ -244,7 +241,7 @@
 	{% include 'popup' %}
 
 	</div>
-	<nav class="shifter-navigation bs-clearfix" ng-controller="HeaderController">
+	<nav class="shifter-navigation bs-clearfix">
 		<ul>
 			 <li class="search-form bs-clearfix" ng-controller="SearchFormController">
 		 		<form name="userSearchForm" novalidate ng-submit="searchUser()">
@@ -274,7 +271,6 @@
 			 </li>
 			 <li ng-show="loggedIn"><a sr-nav-href="/myshow"><i class="fa fa-play fa-fw"></i>My shows</a></li>
 			 <li ng-show="loggedIn"><a ng-click="logout()"><i class="fa fa-sign-out fa-fw"></i>Sign out</a></li>
-		 </ul>
 		 </ul>
 	</nav>
 

@@ -1,8 +1,6 @@
 (function() {
   'use strict';
-  var showroomApp;
-
-  showroomApp = angular.module('showroomApp', ['ngRoute', 'ngAnimate', 'showroomServices', 'showroomControllers', 'showroomFilters', 'showroomDirectives', 'angular-loading-bar']);
+  angular.module('showroomApp', ['ngRoute', 'ngAnimate', 'showroomServices', 'showroomControllers', 'showroomFilters', 'showroomDirectives', 'angular-loading-bar']);
 
   angular.module('showroomServices', ['ngCookies']);
 
@@ -12,10 +10,16 @@
 
   angular.module('showroomDirectives', []);
 
+  angular.module('showroomApp').config([
+    '$interpolateProvider', '$sceDelegateProvider', '$sceProvider', '$logProvider', 'cfpLoadingBarProvider', function($interpolateProvider, $sceDelegateProvider, $sceProvider, $logProvider, cfpLoadingBarProvider) {
+      $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
+      $sceProvider.enabled(false);
+      $logProvider.debugEnabled(true);
+      return cfpLoadingBarProvider.includeSpinner = false;
+    }
+  ]);
 
-  /* Showroom Store Configs */
-
-  showroomApp.constant('SHOWROOM_CONSTANTS', {
+  angular.module('showroomApp').constant('SHOWROOM_CONSTANTS', {
     serviceHost: '//services.showroomapp.net',
     showroomCDN: '//cdn.showroomapp.tv/',
     sessionParam: 'showroomSId',
@@ -61,17 +65,8 @@
     listCommentByShowAscURL: '/social/show/list/comment/asc/'
   });
 
-  showroomApp.config([
-    '$interpolateProvider', '$sceDelegateProvider', '$sceProvider', '$logProvider', 'cfpLoadingBarProvider', function($interpolateProvider, $sceDelegateProvider, $sceProvider, $logProvider, cfpLoadingBarProvider) {
-      $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
-      $sceProvider.enabled(false);
-      $logProvider.debugEnabled(true);
-      return cfpLoadingBarProvider.includeSpinner = false;
-    }
-  ]);
-
-  showroomApp.run([
-    '$rootScope', '$log', 'userService', '$location', '$q', function($rootScope, $log, userService, $location, $q) {
+  angular.module('showroomApp').run([
+    '$rootScope', '$log', '$filter', 'userService', 'channelService', 'SHOWROOM_CONSTANTS', '$location', '$q', function($rootScope, $log, $filter, userService, channelService, SHOWROOM_CONSTANTS, $location, $q) {
       userService.getLoggedInAccountInfo().then(function(response) {
         if (response.data.code === 1000) {
           $rootScope.loggedIn = true;
@@ -79,6 +74,15 @@
         }
       })["catch"](function(error) {
         return $log.error(error);
+      });
+      channelService.getListChannel().then(function(response) {
+        var channels;
+        if (response.data.code === 1000) {
+          channels = response.data.payload.items;
+          return $rootScope.channels = $filter('filter')(channels, {
+            parentChannelId: SHOWROOM_CONSTANTS.BeautyChannelId
+          }, true);
+        }
       });
       $rootScope.logout = function() {
         return userService.logout().then(function(response) {
@@ -160,6 +164,336 @@
         templateUrl: "{{ 'views-home.html' | asset_url }}",
         controller: 'HomeController'
       });
+    }
+  ]);
+
+  angular.module('showroomDirectives').directive('srLazySrc', [
+    '$document', '$window', '$interval', '$timeout', '$log', function($document, $window, $interval, $timeout, $log) {
+      var LazyImage, lazyLoader, link;
+      lazyLoader = (function() {
+        var $docHeigth, addImage, checkImages, documentWatchingDeley, documentWatchingTimer, images, onWatchingDocument, publicAPI, removeImage, renderDeley, renderTimer, startRender, startWatchingWindow, stopRender, stopWatchingWindow, win;
+        images = [];
+        renderTimer = null;
+        renderDeley = 350;
+        documentWatchingTimer = null;
+        documentWatchingDeley = 1000;
+        $docHeigth = 0;
+        win = angular.element($window);
+        checkImages = function() {
+          var bottomFoldOffset, hidden, image, index, j, k, len, len1, scrollTop, topFoldOffset, visible, windowHeight;
+          windowHeight = win.height();
+          scrollTop = win.scrollTop();
+          visible = [];
+          hidden = [];
+          topFoldOffset = scrollTop;
+          bottomFoldOffset = scrollTop + windowHeight;
+          for (index = j = 0, len = images.length; j < len; index = ++j) {
+            image = images[index];
+            if (image.isVisible(topFoldOffset, bottomFoldOffset)) {
+              visible.push(image);
+            } else {
+              hidden.push(image);
+            }
+          }
+          for (k = 0, len1 = visible.length; k < len1; k++) {
+            image = visible[k];
+            image.render();
+          }
+          images = hidden;
+          stopRender();
+          if (!images.length) {
+            return stopWatchingWindow();
+          }
+        };
+        onWatchingDocument = function() {
+          var currentDocHeight;
+          currentDocHeight = $document.height();
+          if ($docHeigth && currentDocHeight !== $docHeigth) {
+            startRender();
+          }
+          return $docHeigth = currentDocHeight;
+        };
+        startRender = function() {
+          return renderTimer != null ? renderTimer : renderTimer = $timeout(checkImages, renderDeley);
+        };
+        stopRender = function() {
+          if (renderTimer) {
+            $timeout.cancel(renderTimer);
+          }
+          return renderTimer = null;
+        };
+        startWatchingWindow = function() {
+          if (documentWatchingTimer == null) {
+            documentWatchingTimer = $interval(onWatchingDocument, documentWatchingDeley);
+          }
+          return win.on('resize.srLazySrc scroll.srLazySrc', startRender);
+        };
+        stopWatchingWindow = function() {
+          $log.debug('Stop watching window');
+          if (documentWatchingTimer) {
+            $interval.cancel(documentWatchingTimer);
+          }
+          documentWatchingTimer = null;
+          return win.off('resize.srLazySrc scroll.srLazySrc');
+        };
+        addImage = function(image) {
+          images.push(image);
+          startRender();
+          if (!documentWatchingTimer) {
+            return startWatchingWindow();
+          }
+        };
+        removeImage = function(image) {
+          var i, img, j, len;
+          for (i = j = 0, len = images.length; j < len; i = ++j) {
+            img = images[i];
+            if (img === image) {
+              images.splice(i, 1);
+            }
+          }
+          if (!(images.length > 0)) {
+            stopRender();
+            return stopWatchingWindow();
+          }
+        };
+        publicAPI = {
+          addImage: addImage,
+          removeImage: removeImage
+        };
+        return publicAPI;
+      })();
+      LazyImage = (function() {
+        function LazyImage(image1) {
+          this.image = image1;
+          this.rendered = false;
+        }
+
+        LazyImage.prototype.isVisible = function(topFoldOffset, bottomFoldOffset) {
+          var bottom, height, isVisible, top;
+          if (!this.image.is(':visible')) {
+            return false;
+          }
+          height = this.image.height();
+          top = this.image.offset().top;
+          bottom = top + height;
+          isVisible = (top >= topFoldOffset && top <= bottomFoldOffset) || (bottom >= topFoldOffset && bottom <= bottomFoldOffset) || (top <= topFoldOffset && bottom >= bottomFoldOffset);
+          return isVisible;
+        };
+
+        LazyImage.prototype.render = function() {
+          this.rendered = true;
+          return this.renderSource();
+        };
+
+        LazyImage.prototype.setSource = function(source1) {
+          this.source = source1;
+          if (this.rendered) {
+            return this.renderSource();
+          }
+        };
+
+        LazyImage.prototype.renderSource = function() {
+          return this.image.attr('src', this.source);
+        };
+
+        return LazyImage;
+
+      })();
+      link = function($scope, $el, $attrs) {
+        var image;
+        image = new LazyImage($el);
+        $attrs.$observe('srLazySrc', function(source) {
+          return image.setSource(source);
+        });
+        lazyLoader.addImage(image);
+        return $scope.$on('$destroy', function() {
+          return lazyLoader.removeImage(image);
+        });
+      };
+      return {
+        link: link,
+        restrict: 'A'
+      };
+    }
+  ]);
+
+  angular.module('showroomDirectives').directive('srNavHref', [
+    '$location', '$rootScope', '$timeout', function($location, $rootScope, $timeout) {
+      var link;
+      link = function($scope, $el, $attr) {
+        var onClick;
+        onClick = function($event) {
+          if ($scope.srNavHref) {
+            $location.path($scope.srNavHref);
+          }
+          if (jQuery && jQuery.shifter) {
+            jQuery.shifter('close');
+          }
+          return $scope.$apply();
+        };
+        return $el.on('click.srNavHref', onClick);
+      };
+      return {
+        restrict: 'A',
+        scope: {
+          srNavHref: '@'
+        },
+        link: link
+      };
+    }
+  ]);
+
+  angular.module('showroomDirectives').directive('srToggle', function() {
+    var link;
+    link = function($scope, $el, $attr) {
+      var classes;
+      classes = $scope.toggleClass;
+      $el.on('mouseover.srToggle', function() {
+        return $el.addClass(classes);
+      });
+      return $el.on('mouseout.srToggle', function() {
+        return $el.removeClass(classes);
+      });
+    };
+    return {
+      restrict: 'A',
+      scope: {
+        toggleClass: '@'
+      },
+      link: link
+    };
+  });
+
+  angular.module('showroomDirectives').directive('srVideoContainer', [
+    '$log', '$timeout', function($log, $timeout) {
+      var link, videoManager;
+      videoManager = (function() {
+        var _addVideo, _playVideo, _removeVideo, listContainers, listVideos;
+        listVideos = [];
+        listContainers = [];
+        _addVideo = function(video, container) {
+          listVideos.push(video);
+          return listContainers.push(container);
+        };
+        _removeVideo = function(video) {
+          var i, j, len, results, vd;
+          results = [];
+          for (i = j = 0, len = listVideos.length; j < len; i = ++j) {
+            vd = listVideos[i];
+            if (vd === video) {
+              listVideos.splice(i, 1);
+              results.push(listContainers.splice(i, 1));
+            } else {
+              results.push(void 0);
+            }
+          }
+          return results;
+        };
+        _playVideo = function(video, container) {
+          var el, j, k, len, len1, vd;
+          if (container.hasClass('playing loading')) {
+            return;
+          }
+          for (j = 0, len = listVideos.length; j < len; j++) {
+            vd = listVideos[j];
+            vd[0].pause();
+          }
+          for (k = 0, len1 = listContainers.length; k < len1; k++) {
+            el = listContainers[k];
+            el.removeClass('loading playing');
+          }
+          video[0].play();
+          if (video[0].readyState !== 4) {
+            container.addClass('loading');
+            video.on('canplaythrough.srVideo load.srVideo', function() {
+              video.off('canplaythrough.srVideo load.srVideo');
+              container.removeClass('loading');
+              container.addClass('playing');
+              return video[0].play();
+            });
+            $timeout(function() {
+              return video[0].pause();
+            }, 1);
+          } else {
+            container.addClass('playing');
+            video.on('paused.srVideo', function() {
+              container.removeClass('playing');
+              return video[0].off('paused.srVideo');
+            });
+          }
+          return video[0].currentTime = 0.1;
+        };
+        return {
+          addVideo: _addVideo,
+          removeVideo: _removeVideo,
+          playVideo: _playVideo
+        };
+      })();
+      link = function($scope, $element, $attrs) {
+        var video;
+        video = $element.find('video').eq(0);
+        videoManager.addVideo(video, $element);
+        $element.on('mouseover', function() {
+          return videoManager.playVideo(video, $element);
+        });
+        return $scope.$on('$destroy', function() {
+          return videoManager.removeVideo(video);
+        });
+      };
+      return {
+        restrict: 'A',
+        link: link
+      };
+    }
+  ]);
+
+  angular.module('showroomFilters').filter('jsonParse', function() {
+    return function(input) {
+      if (angular.isObject(input)) {
+        return input;
+      } else {
+        return JSON.parse(input);
+      }
+    };
+  }).filter('productLink', function() {
+    return function(link) {
+      if (link.indexOf('showroom-store.myshopify.com') === -1 && link.indexOf('amazon.com') === -1 && link.indexOf('store.showroomapp.tv') === -1) {
+        return '/pages/ext-product?url=' + link;
+      } else {
+        return link;
+      }
+    };
+  }).filter('productTarget', function() {
+    return function(link) {
+      if (link.indexOf('amazon') === -1) {
+        return '_self';
+      } else {
+        return '_blank';
+      }
+    };
+  }).filter('excerptTitle', function() {
+    return function(input, length, excerpt_more) {
+      if (input.length > length) {
+        input = input.substring(0, length);
+        input += excerpt_more;
+      }
+      return input;
+    };
+  }).filter('asset_url', [
+    'SHOWROOM_CONSTANTS', function(SHOWROOM_CONSTANTS) {
+      return function(input) {
+        return SHOWROOM_CONSTANTS.showroomCDN + input;
+      };
+    }
+  ]).filter('user_avatar_url', [
+    'SHOWROOM_CONSTANTS', function(SHOWROOM_CONSTANTS) {
+      return function(input) {
+        if (input) {
+          return SHOWROOM_CONSTANTS.showroomCDN + input;
+        } else {
+          return "{{ 'no-avatar.png' | asset_url }}";
+        }
+      };
     }
   ]);
 
@@ -1217,315 +1551,6 @@
           return $scope.message = response.data.message;
         }
       });
-    }
-  ]);
-
-  angular.module('showroomDirectives').directive('srLazySrc', [
-    '$document', '$window', '$interval', '$timeout', '$log', function($document, $window, $interval, $timeout, $log) {
-      var LazyImage, lazyLoader, link;
-      lazyLoader = (function() {
-        var $docHeigth, addImage, checkImages, documentWatchingDeley, documentWatchingTimer, images, onWatchingDocument, publicAPI, removeImage, renderDeley, renderTimer, startRender, startWatchingWindow, stopRender, stopWatchingWindow, win;
-        images = [];
-        renderTimer = null;
-        renderDeley = 350;
-        documentWatchingTimer = null;
-        documentWatchingDeley = 1000;
-        $docHeigth = 0;
-        win = angular.element($window);
-        checkImages = function() {
-          var bottomFoldOffset, hidden, image, index, j, k, len, len1, scrollTop, topFoldOffset, visible, windowHeight;
-          windowHeight = win.height();
-          scrollTop = win.scrollTop();
-          visible = [];
-          hidden = [];
-          topFoldOffset = scrollTop;
-          bottomFoldOffset = scrollTop + windowHeight;
-          for (index = j = 0, len = images.length; j < len; index = ++j) {
-            image = images[index];
-            if (image.isVisible(topFoldOffset, bottomFoldOffset)) {
-              visible.push(image);
-            } else {
-              hidden.push(image);
-            }
-          }
-          for (k = 0, len1 = visible.length; k < len1; k++) {
-            image = visible[k];
-            image.render();
-          }
-          images = hidden;
-          stopRender();
-          if (!images.length) {
-            return stopWatchingWindow();
-          }
-        };
-        onWatchingDocument = function() {
-          var currentDocHeight;
-          currentDocHeight = $document.height();
-          if ($docHeigth && currentDocHeight !== $docHeigth) {
-            startRender();
-          }
-          return $docHeigth = currentDocHeight;
-        };
-        startRender = function() {
-          return renderTimer != null ? renderTimer : renderTimer = $timeout(checkImages, renderDeley);
-        };
-        stopRender = function() {
-          if (renderTimer) {
-            $timeout.cancel(renderTimer);
-          }
-          return renderTimer = null;
-        };
-        startWatchingWindow = function() {
-          if (documentWatchingTimer == null) {
-            documentWatchingTimer = $interval(onWatchingDocument, documentWatchingDeley);
-          }
-          return win.on('resize.srLazySrc scroll.srLazySrc', startRender);
-        };
-        stopWatchingWindow = function() {
-          $log.debug('Stop watching window');
-          if (documentWatchingTimer) {
-            $interval.cancel(documentWatchingTimer);
-          }
-          documentWatchingTimer = null;
-          return win.off('resize.srLazySrc scroll.srLazySrc');
-        };
-        addImage = function(image) {
-          images.push(image);
-          startRender();
-          if (!documentWatchingTimer) {
-            return startWatchingWindow();
-          }
-        };
-        removeImage = function(image) {
-          var i, img, j, len;
-          for (i = j = 0, len = images.length; j < len; i = ++j) {
-            img = images[i];
-            if (img === image) {
-              images.splice(i, 1);
-            }
-          }
-          if (!(images.length > 0)) {
-            stopRender();
-            return stopWatchingWindow();
-          }
-        };
-        publicAPI = {
-          addImage: addImage,
-          removeImage: removeImage
-        };
-        return publicAPI;
-      })();
-      LazyImage = (function() {
-        function LazyImage(image1) {
-          this.image = image1;
-          this.rendered = false;
-        }
-
-        LazyImage.prototype.isVisible = function(topFoldOffset, bottomFoldOffset) {
-          var bottom, height, isVisible, top;
-          if (!this.image.is(':visible')) {
-            return false;
-          }
-          height = this.image.height();
-          top = this.image.offset().top;
-          bottom = top + height;
-          isVisible = (top >= topFoldOffset && top <= bottomFoldOffset) || (bottom >= topFoldOffset && bottom <= bottomFoldOffset) || (top <= topFoldOffset && bottom >= bottomFoldOffset);
-          return isVisible;
-        };
-
-        LazyImage.prototype.render = function() {
-          this.rendered = true;
-          return this.renderSource();
-        };
-
-        LazyImage.prototype.setSource = function(source1) {
-          this.source = source1;
-          if (this.rendered) {
-            return this.renderSource();
-          }
-        };
-
-        LazyImage.prototype.renderSource = function() {
-          return this.image.attr('src', this.source);
-        };
-
-        return LazyImage;
-
-      })();
-      link = function($scope, $el, $attrs) {
-        var image;
-        image = new LazyImage($el);
-        $attrs.$observe('srLazySrc', function(source) {
-          return image.setSource(source);
-        });
-        lazyLoader.addImage(image);
-        return $scope.$on('$destroy', function() {
-          return lazyLoader.removeImage(image);
-        });
-      };
-      return {
-        link: link,
-        restrict: 'A'
-      };
-    }
-  ]);
-
-  angular.module('showroomDirectives').directive('srNavHref', [
-    '$location', '$rootScope', '$timeout', function($location, $rootScope, $timeout) {
-      var link;
-      link = function($scope, $el, $attr) {
-        var onClick;
-        onClick = function($event) {
-          if ($scope.srNavHref) {
-            $location.path($scope.srNavHref);
-          }
-          if (jQuery && jQuery.shifter) {
-            jQuery.shifter('close');
-          }
-          return $scope.$apply();
-        };
-        return $el.on('click.srNavHref', onClick);
-      };
-      return {
-        restrict: 'A',
-        scope: {
-          srNavHref: '@'
-        },
-        link: link
-      };
-    }
-  ]);
-
-  angular.module('showroomDirectives').directive('srVideoContainer', [
-    '$log', '$timeout', function($log, $timeout) {
-      var link, videoManager;
-      videoManager = (function() {
-        var _addVideo, _playVideo, _removeVideo, listContainers, listVideos;
-        listVideos = [];
-        listContainers = [];
-        _addVideo = function(video, container) {
-          listVideos.push(video);
-          return listContainers.push(container);
-        };
-        _removeVideo = function(video) {
-          var i, j, len, results, vd;
-          results = [];
-          for (i = j = 0, len = listVideos.length; j < len; i = ++j) {
-            vd = listVideos[i];
-            if (vd === video) {
-              listVideos.splice(i, 1);
-              results.push(listContainers.splice(i, 1));
-            } else {
-              results.push(void 0);
-            }
-          }
-          return results;
-        };
-        _playVideo = function(video, container) {
-          var el, j, k, len, len1, vd;
-          if (container.hasClass('playing loading')) {
-            return;
-          }
-          for (j = 0, len = listVideos.length; j < len; j++) {
-            vd = listVideos[j];
-            vd[0].pause();
-          }
-          for (k = 0, len1 = listContainers.length; k < len1; k++) {
-            el = listContainers[k];
-            el.removeClass('loading playing');
-          }
-          video[0].play();
-          if (video[0].readyState !== 4) {
-            container.addClass('loading');
-            video.on('canplaythrough.srVideo load.srVideo', function() {
-              video.off('canplaythrough.srVideo load.srVideo');
-              container.removeClass('loading');
-              container.addClass('playing');
-              return video[0].play();
-            });
-            $timeout(function() {
-              return video[0].pause();
-            }, 1);
-          } else {
-            container.addClass('playing');
-            video.on('paused.srVideo', function() {
-              container.removeClass('playing');
-              return video[0].off('paused.srVideo');
-            });
-          }
-          return video[0].currentTime = 0.1;
-        };
-        return {
-          addVideo: _addVideo,
-          removeVideo: _removeVideo,
-          playVideo: _playVideo
-        };
-      })();
-      link = function($scope, $element, $attrs) {
-        var video;
-        video = $element.find('video').eq(0);
-        videoManager.addVideo(video, $element);
-        $element.on('mouseover', function() {
-          return videoManager.playVideo(video, $element);
-        });
-        return $scope.$on('$destroy', function() {
-          return videoManager.removeVideo(video);
-        });
-      };
-      return {
-        restrict: 'A',
-        link: link
-      };
-    }
-  ]);
-
-  angular.module('showroomFilters').filter('jsonParse', function() {
-    return function(input) {
-      if (angular.isObject(input)) {
-        return input;
-      } else {
-        return JSON.parse(input);
-      }
-    };
-  }).filter('productLink', function() {
-    return function(link) {
-      if (link.indexOf('showroom-store.myshopify.com') === -1 && link.indexOf('amazon.com') === -1 && link.indexOf('store.showroomapp.tv') === -1) {
-        return '/pages/ext-product?url=' + link;
-      } else {
-        return link;
-      }
-    };
-  }).filter('productTarget', function() {
-    return function(link) {
-      if (link.indexOf('amazon') === -1) {
-        return '_self';
-      } else {
-        return '_blank';
-      }
-    };
-  }).filter('excerptTitle', function() {
-    return function(input, length, excerpt_more) {
-      if (input.length > length) {
-        input = input.substring(0, length);
-        input += excerpt_more;
-      }
-      return input;
-    };
-  }).filter('asset_url', [
-    'SHOWROOM_CONSTANTS', function(SHOWROOM_CONSTANTS) {
-      return function(input) {
-        return SHOWROOM_CONSTANTS.showroomCDN + input;
-      };
-    }
-  ]).filter('user_avatar_url', [
-    'SHOWROOM_CONSTANTS', function(SHOWROOM_CONSTANTS) {
-      return function(input) {
-        if (input) {
-          return SHOWROOM_CONSTANTS.showroomCDN + input;
-        } else {
-          return "{{ 'no-avatar.png' | asset_url }}";
-        }
-      };
     }
   ]);
 

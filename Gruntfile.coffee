@@ -16,10 +16,11 @@ module.exports = (grunt) ->
 				files:
 					'scripts/app.js': [
 						'src/*.coffee'
-						'src/services/*.coffee'
-						'src/controllers/*.coffee'
+						'src/config/*.coffee'
 						'src/directives/*.coffee'
 						'src/filters/*.coffee'
+						'src/services/*.coffee'
+						'src/controllers/*.coffee'
 					]
 					
 		uglify:
@@ -64,6 +65,7 @@ module.exports = (grunt) ->
 			coffee:
 				files: [
 					'src/*.coffee'
+					'src/config/*.coffee'
 					'src/services/*.coffee'
 					'src/controllers/*.coffee'
 					'src/filters/*.coffee'
