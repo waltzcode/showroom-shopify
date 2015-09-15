@@ -83,11 +83,6 @@
 		if($(window).width() > 500){
 			// Fancybox Join our mailing list popup
 			$(document).ready(function(){
-
-				$('#search').click(function(event) {
-					$('#search, #searchPanel').toggleClass('expanded');
-				});
-
 				var check_cookie = $.cookie('mailing_list_popup');
 				if(check_cookie == null){
 					$.cookie('mailing_list_popup', 'expires_seven_days', { expires: 7 });
@@ -148,15 +143,15 @@
 					 </li>
 					 <li ng-if="loggedIn"><a href="/#/myshow">My shows</a></a></li>
 					 <li>
-					 	<a href="" id="search" rel="nofollow" title="Search"><i class="fa fa-search fa-lg fa-fw"></i></a>
-					 	<!-- <div id="searchPanel" class="desktop-12 mobile-12" ng-controller="SearchFormController">
+					 	<a href="" id="search" sr-toggle-search rel="nofollow" title="Search"><i class="fa fa-search fa-lg fa-fw"></i></a>
+					 	<div id="searchPanel" class="desktop-12" ng-controller="SearchFormController">
 							<form name="userSearchForm" novalidate ng-submit="searchUser()">
 								<input type="text" name="q" placeholder="Search account" ng-model="userKeywords">
 							</form>
 							<form name="showSearchForm" novalidate ng-submit="searchShow()">
 								<input type="text" name="q" placeholder="Search Product, Brand, Show title" ng-model="showKeywords">
 							</form>
-						</div> -->
+						</div>
 			 		 </li>
 				</ul>
 			</div>

@@ -343,6 +343,23 @@
     }
   ]);
 
+  angular.module('showroomDirectives').directive('srToggleSearch', [
+    '$document', function($document) {
+      var link;
+      link = function($scope, $element, $attr) {
+        var $body;
+        $body = $document.find('body');
+        return $element.on('click.srToggleSearch', function() {
+          return $body.toggleClass('search-open');
+        });
+      };
+      return {
+        restrict: 'A',
+        link: link
+      };
+    }
+  ]);
+
   angular.module('showroomDirectives').directive('srToggle', function() {
     var link;
     link = function($scope, $el, $attr) {
@@ -1415,8 +1432,8 @@
       $rootScope.removeBrand = false;
       $rootScope.removeNav = false;
       $rootScope.removeFooter = false;
-      if (!$('#search, #searchPanel').hasClass('expanded')) {
-        $('#search, #searchPanel').addClass('expanded');
+      if (!$('body').hasClass('search-open')) {
+        $('body').addClass('search-open');
       }
       $scope.keywords = $location.search().q;
       $scope.header = 'Search result for show - \'' + $scope.keywords + '\'';
@@ -1536,8 +1553,8 @@
       $rootScope.removeBrand = false;
       $rootScope.removeNav = false;
       $rootScope.removeFooter = false;
-      if (!$('#search, #searchPanel').hasClass('expanded')) {
-        $('#search, #searchPanel').addClass('expanded');
+      if (!$('body').hasClass('search-open')) {
+        $('body').addClass('search-open');
       }
       $scope.keywords = $location.search().q;
       return userService.searchAccountByKeywords({

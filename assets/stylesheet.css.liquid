@@ -477,7 +477,15 @@ header#header div:last-child {
   left: 0;
   width: 100%;
   text-align: center;
+  background-color: #777;
+  border-bottom: 1px solid #f0f0f0;
   opacity: 0;
+}
+
+#navigation ul ul li, 
+#navigation ul ul li a {
+  line-height: 70px;
+  color: #f1f1f1;
 }
 
 #navigation li.active ul {
@@ -506,6 +514,57 @@ header#header div:last-child {
     margin-left: -100px;
     top: 0;
   }
+}
+
+#searchPanel {
+  text-align: center;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+  top: 100%;
+  left: 0;
+  transition: opacity 0.4s linear 0.2s;
+  -moz-transition: opacity 0.4s linear 0.2s;
+  -webkit-transition: opacity 0.4s linear 0.2s;
+  -o-transition: opacity 0.4s linear 0.2s;
+  background-color: #777;
+}
+
+.search-open #searchPanel {
+  opacity: 1;
+  height: 70px;
+  margin-bottom: 10px;
+}
+
+#searchPanel form {
+  width: 50%;
+  margin: 10px 0;
+  display: inline;
+}
+
+#searchPanel form input {
+  width: 40%;
+  display: inline-block;
+  margin: 15px 0;
+}
+
+#search {
+  position: relative;
+}
+
+.search-open #search::after {
+  content: '';
+  border: 7px solid; 
+  margin-left: -7px;
+  position: absolute;
+  width: 0;
+  height: 0;
+  bottom: 0;
+  left: 50%;
+  border-color: transparent transparent #777;
+  opacity: 1;
 }
 
 
@@ -1730,6 +1789,17 @@ li.icons a {
 .shifter-open {
   overflow: hidden;
 }
+
+.shifter-page {
+  padding-top: 20px;
+   -webkit-transition: padding 0.2s linear;
+  -moz-transition: padding 0.2s linear;
+  -o-transition: padding 0.2s linear;
+}
+
+.search-open .shifter-page {
+  padding-top: 80px;
+}
 .shifter-open .shifter-page *,
 .shifter-open .shifter-header * {
   pointer-events: none;
@@ -1769,6 +1839,9 @@ li.icons a {
           transition: opacity 0.001s linear 0.2s, transform 0.3s ease;
   transform: translateY(-100%);
   -webkit-transform: translateY(-100%);
+  -moz-backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 .shifter-enabled .shifter-page,
 .shifter-enabled .shifter-header,
@@ -1812,6 +1885,10 @@ li.icons a {
   left: 50%;
   margin-left: -10px;
   background-color: #5B5C61;
+  transition: opacity 0.001s linear 0.2s;
+  -webkit-transition: opacity 0.001s linear 0.2s;
+  -moz-transition: opacity 0.001s linear 0.2s;
+  -o-transition: opacity 0.001s linear 0.2s;
 }
 
 .shifter-enabled .shifter-handle span::before,
@@ -1823,6 +1900,13 @@ li.icons a {
   left: 0;
   top: 0;
   background-color: #5B5C61;
+  -moz-backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transition: transform 0.3s ease;
+  -webkit-transition: -webkit-transform 0.3s ease;
+  -o-transition: -o-transform 0.3s ease;
+  -moz-transition: -moz-transform 0.3s ease;
 }
 
 .shifter-enabled .shifter-handle span::before {
@@ -1839,8 +1923,28 @@ li.icons a {
   -o-transform: translateY(6px);
 }
 
+.shifter-open .shifter-handle span {
+  background-color: rgba(91, 92, 97, 0);
+}
+
+.shifter-open .shifter-handle span::before {
+  transform: translateY(0) rotate(-45deg);
+  -moz-transform: translateY(0) rotate(-45deg);
+  -webkit-transform: translateY(0) rotate(-45deg);
+  -o-transform: translateY(0) rotate(-45deg);
+}
+
+.shifter-open .shifter-handle span::after {
+  transform: translateY(0) rotate(45deg);
+  -moz-transform: translateY(0) rotate(45deg);
+  -webkit-transform: translateY(0) rotate(45deg);
+  -o-transform: translateY(0) rotate(45deg);
+}
+
+
+
 .shifter-enabled .shifter-navigation {
-  right: 0;
+  /*right: 0;*/
 }
 .shifter-open .shifter-page,
 .shifter-open .shifter-header {
@@ -1982,10 +2086,6 @@ nav.shifter-navigation {
   color: #f1f1f1;
 }
 
-.shifter-page {
-  padding-top: 80px;
-}
-
 
 .bs-clearfix:after, .bs-clearfix:before {
   content: ' ';
@@ -2109,60 +2209,6 @@ nav.shifter-navigation {
 #forgot-password form input[type=submit] {
    float: right;
    margin: 10px;
-}
-
-#searchPanel {
-  text-align: center;
-  border-top: 1px solid #f1f1f1;
-  height: 0;
-  opacity: 0;
-  overflow: hidden;
-  transition: all .2s linear;
-  -moz-transition: all .2s linear;
-  -webkit-transition: all .2s linear;
-  -o-transition: all .2s linear;
-}
-
-#searchPanel.expanded {
-  height: 70px;
-  opacity: 1;
-  background-color: #f0f0f0;
-  margin-bottom: 10px;
-}
-
-#searchPanel form {
-  width: 50%;
-  margin: 10px 0;
-  display: inline;
-}
-
-#searchPanel form input {
-  width: 40%;
-  display: inline-block;
-  margin: 15px 0;
-  border: 1px solid #ddd;
-}
-
-@media screen and (max-width: 740px) {
-  #searchPanel {
-    display: none;
-  }
-}
-
-#search {
-  position: relative;
-}
-
-#search.expanded:after {
-  content: '';
-  border: 7px solid; 
-  margin-left: -7px;
-  position: absolute;
-  width: 0;
-  height: 0;
-  bottom: 0;
-  left: 50%;
-  border-color: transparent transparent #f1f1f1;
 }
 
 /* List of user */

@@ -10,8 +10,8 @@ angular.module 'showroomControllers'
 		$rootScope.removeFooter = false
 
 		# check search panel displaying
-		unless $('#search, #searchPanel').hasClass 'expanded'
-			$('#search, #searchPanel').addClass 'expanded'
+		unless $('body').hasClass 'search-open'
+			$('body').addClass 'search-open'
 
 
 		$scope.keywords = $location.search().q
