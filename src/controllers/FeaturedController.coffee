@@ -1,8 +1,8 @@
 angular.module 'showroomControllers'
 .controller 'FeaturedController', [
-	'$scope', 'showService', 'videoService', '$log', 'SHOWROOM_CONSTANTS'
-	($scope, showService, videoService, $log, SHOWROOM_CONSTANTS) ->
-
+	'$scope', '$rootScope', 'showService', 'videoService', '$log', 'SHOWROOM_CONSTANTS'
+	($scope, $rootScope, showService, videoService, $log, SHOWROOM_CONSTANTS) ->
+		
 		# display setting
 		$rootScope.removeHeader = false
 		$rootScope.removeBrand = false

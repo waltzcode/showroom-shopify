@@ -936,7 +936,7 @@
   ]);
 
   angular.module('showroomControllers').controller('FeaturedController', [
-    '$scope', 'showService', 'videoService', '$log', 'SHOWROOM_CONSTANTS', function($scope, showService, videoService, $log, SHOWROOM_CONSTANTS) {
+    '$scope', '$rootScope', 'showService', 'videoService', '$log', 'SHOWROOM_CONSTANTS', function($scope, $rootScope, showService, videoService, $log, SHOWROOM_CONSTANTS) {
       $rootScope.removeHeader = false;
       $rootScope.removeBrand = false;
       $rootScope.removeNav = false;
