@@ -2,6 +2,13 @@ angular.module 'showroomControllers'
 .controller 'FeaturedController', [
 	'$scope', 'showService', 'videoService', '$log', 'SHOWROOM_CONSTANTS'
 	($scope, showService, videoService, $log, SHOWROOM_CONSTANTS) ->
+
+		# display setting
+		$rootScope.removeHeader = false
+		$rootScope.removeBrand = false
+		$rootScope.removeNav = false
+		$rootScope.removeFooter = false
+
 		$scope.header = 'Featured'
 		$scope.currentPage = 0
 		$scope.hasMore = true
