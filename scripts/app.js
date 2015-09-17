@@ -385,9 +385,10 @@
     '$log', '$timeout', function($log, $timeout) {
       var link, videoManager;
       videoManager = (function() {
-        var _addVideo, _playVideo, _removeVideo, listContainers, listVideos;
+        var _addVideo, _playVideo, _removeVideo, currentVideo, listContainers, listVideos;
         listVideos = [];
         listContainers = [];
+        currentVideo = {};
         _addVideo = function(video, container) {
           listVideos.push(video);
           return listContainers.push(container);
@@ -414,6 +415,7 @@
           for (j = 0, len = listVideos.length; j < len; j++) {
             vd = listVideos[j];
             vd[0].pause();
+            vd.off('canplaythrough.srVideo load.srVideo');
           }
           for (k = 0, len1 = listContainers.length; k < len1; k++) {
             el = listContainers[k];

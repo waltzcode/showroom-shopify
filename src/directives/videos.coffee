@@ -8,6 +8,7 @@ angular.module 'showroomDirectives'
 
 			listVideos = []
 			listContainers = []
+			currentVideo = {}
 
 			# Push video and video's container to the lists
 			_addVideo = (video, container) ->
@@ -27,8 +28,11 @@ angular.module 'showroomDirectives'
 				return if container.hasClass 'playing loading'
 				
 				# stop all video
-				vd[0].pause() for vd in listVideos
-				el.removeClass 'loading playing' for el in listContainers
+				for vd in listVideos
+					vd[0].pause() 
+					vd.off 'canplaythrough.srVideo load.srVideo'
+				for el in listContainers
+					el.removeClass 'loading playing' 
 
 				# play the given video from begining
 				video[0].play()
