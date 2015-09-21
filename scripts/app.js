@@ -863,27 +863,21 @@
       $scope.header = 'Account Show';
       $scope.currentPage = 0;
       $scope.hasMore = true;
-      $scope.totalItem = 0;
+      $scope.videos = [];
       $scope.loadMore = function() {
         return showService.getShowByUser({
           accountId: $routeParams.accountId,
           pageNumber: $scope.currentPage++
         }).then(function(response) {
           if (response.data.code === 1000) {
-            if ($scope.videos && angular.isArray($scope.videos)) {
-              $scope.videos = $scope.videos.concat(videoService.parseVideo({
-                response: response.data
-              }));
-            } else {
-              $scope.videos = videoService.parseVideo({
-                response: response.data
-              });
+            $scope.videos = $scope.videos.concat(videoService.parseVideo({
+              response: response.data
+            }));
+            if ($scope.videos.length >= response.data.payload.totalItem) {
+              return $scope.hasMore = false;
             }
           } else {
-            $log.error(response.data.message);
-          }
-          if (response.data.payload && $scope.videos.length >= $scope.totalItem) {
-            return $scope.hasMore = false;
+            return $log.error(response.data.message);
           }
         });
       };
@@ -893,8 +887,7 @@
         var accountInfo;
         if (response.data.code === 1000) {
           accountInfo = response.data.payload.accountInfo;
-          $scope.totalItem = response.data.payload.showCounter;
-          $scope.header = accountInfo.firstName + ' ' + accountInfo.lastName + ' SHOW';
+          $scope.header = accountInfo.firstName + ' ' + accountInfo.lastName + '\'S SHOWS';
         }
         return $scope.loadMore();
       });
@@ -1563,17 +1556,27 @@
         $('body').addClass('search-open');
       }
       $scope.keywords = $location.search().q;
-      return userService.searchAccountByKeywords({
-        keywords: $scope.keywords
-      }).then(function(response) {
-        $scope.header = 'Search result for user - \'' + $scope.keywords + '\'';
-        if (response.data.code === 1000) {
-          $scope.users = response.data.payload.items;
-        }
-        if (response.data.code !== 1000) {
-          return $scope.message = response.data.message;
-        }
-      });
+      $scope.header = 'Search result for user - \'' + $scope.keywords + '\'';
+      $scope.currentPage = 0;
+      $scope.hasMore = true;
+      $scope.users = [];
+      $scope.loadMore = function() {
+        return userService.searchAccountByKeywords({
+          keywords: $scope.keywords,
+          pageNumber: $scope.currentPage++
+        }).then(function(response) {
+          if (response.data.code === 1000) {
+            $scope.users = $scope.users.concat(response.data.payload.items);
+            if ($scope.users.length >= response.data.payload.totalItem) {
+              return $scope.hasMore = false;
+            }
+          } else {
+            $scope.hasMore = false;
+            return $scope.message = response.data.message;
+          }
+        });
+      };
+      return $scope.loadMore();
     }
   ]);
 

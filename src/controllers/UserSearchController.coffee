@@ -13,9 +13,22 @@ angular.module 'showroomControllers'
 			$('body').addClass 'search-open'
 
 		$scope.keywords = $location.search().q
-		userService.searchAccountByKeywords keywords: $scope.keywords
-		.then (response) ->
-			$scope.header = 'Search result for user - \'' + $scope.keywords + '\''
-			$scope.users = response.data.payload.items if response.data.code is 1000
-			$scope.message = response.data.message if response.data.code isnt 1000
+
+		$scope.header = 'Search result for user - \'' + $scope.keywords + '\''
+		$scope.currentPage = 0
+		$scope.hasMore = true
+		$scope.users = []
+
+		$scope.loadMore = ->
+			userService.searchAccountByKeywords keywords: $scope.keywords, pageNumber: $scope.currentPage++
+			.then (response) ->
+				if response.data.code == 1000
+					$scope.users = $scope.users.concat response.data.payload.items
+					$scope.hasMore = false if $scope.users.length >= response.data.payload.totalItem
+				else 
+					$scope.hasMore = false
+					$scope.message = response.data.message
+
+		# First load
+		$scope.loadMore()
 ]
